@@ -4,7 +4,8 @@
   "scripts": {
     "build": "turbo run build",
     "start": "turbo run start",
-    "dev": "turbo prepare --concurrency 13 && turbo run dev",
+    "dev": "pnpm mp:dev",
+    "mp:dev": "pnpm turbo run build --filter=@cio/dashboard^... --filter=@cio/jobs-worker^... && pnpm concurrently --kill-others -n dashboard,api,agent,ui,utils,core -c blue,red,magenta,yellow,green,cyan \"pnpm --filter=@cio/dashboard run dev\" \"pnpm --filter=@cio/api run dev\" \"pnpm --filter=@cio/jobs-worker run dev:agent-course-generation\" \"pnpm --filter=@cio/ui run dev\" \"pnpm --filter=@cio/utils run dev\" \"pnpm --filter=@cio/core run dev\"",
     "lint": "turbo run lint",
     "clean": "turbo clean && rimraf --glob \"**/node_modules\"",
     "clean:pnpm": "pnpm clean && pnpm store prune",

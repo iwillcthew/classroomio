@@ -36,6 +36,8 @@ const PLAN_TOKEN_ALLOWANCES: Record<string, number> = {
 // gemini-2.5-flash kept for backward compat with historical usage records.
 const MODEL_COST_MULTIPLIER: Record<string, number> = {
   'gemini-3.1-flash-lite': 1,
+  'gemini-3.5-flash-lite': 1.48,
+  'gemini-3.8-flash': 5.4,
   'gemini-2.5-flash': 1.5,
   'gpt-5.4-mini': 4,
   'claude-sonnet-4-6': 11,
@@ -48,7 +50,11 @@ const MODEL_COST_MULTIPLIER: Record<string, number> = {
 
 function computeCostUnits(promptTokens: number, completionTokens: number, model: string): number {
   const multiplier = MODEL_COST_MULTIPLIER[model] ?? 1;
-  return Math.round((promptTokens + completionTokens) * multiplier);
+  // Google discounts Gemini 3.8 Flash by 50% through December 31, 2026 (https://ai.google.dev/gemini-api/docs/pricing).
+  const hasFlashDiscount = model === 'gemini-3.8-flash' && Date.now() < Date.UTC(2027, 0, 1);
+  const effectiveMultiplier = hasFlashDiscount ? multiplier / 2 : multiplier;
+
+  return Math.round((promptTokens + completionTokens) * effectiveMultiplier);
 }
 
 async function getPlanAllowance(orgId: string): Promise<{ planName: string; allowance: number }> {
