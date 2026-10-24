@@ -105,7 +105,7 @@
       (item) => item.type === ContentType.Lesson && item.id === lessonId
     )
   );
-  const lessonTitle = $derived(currentLessonContentItem?.title || lessonApi.lesson?.title || 'Lesson');
+  const lessonTitle = $derived(currentLessonContentItem?.title || lessonApi.lesson?.title || $t('exercises.lesson'));
   const showLessonComments = $derived(
     Boolean($currentOrg.customization?.apps?.comments) &&
       (courseApi.course?.metadata?.commentsEnabled ?? true) &&

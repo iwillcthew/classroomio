@@ -22,7 +22,7 @@
 </script>
 
 <svelte:head>
-  <title>Organization Settings - MP Learning</title>
+  <title>{$t('page_titles.organization_settings')} · MP Learning</title>
 </svelte:head>
 
 <OrgPage bind:this={orgComponent} bind:hasUnsavedChanges />

@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { MediaPlayerOptions, VideoSource } from './types';
   import PlyrPlayer from './players/plyr-player.svelte';
+  import { uiLabels } from '../../tools';
   import MusePlayer from './players/muse-player.svelte';
   import VimeoPlayer from './players/vimeo-player.svelte';
   import {
@@ -37,7 +38,7 @@
   const isVimeo = $derived(source.type === 'vimeo' || (source.type === 'generic' && isVimeoUrl(source.url)));
   const poster = $derived(source.type === 'upload' ? source.metadata?.thumbnailUrl : undefined);
 
-  const iframeTitle = $derived(source.metadata?.title?.trim() || 'Video');
+  const iframeTitle = $derived(source.metadata?.title?.trim() || uiLabels.video);
   const iframeMaxHeight = $derived(options.maxHeight ?? '400px');
   const iframeWidth = $derived(options.width ?? '100%');
   const youtubeEmbedUrl = $derived(isYouTube ? formatYoutubeEmbedUrl(source.url) : '');

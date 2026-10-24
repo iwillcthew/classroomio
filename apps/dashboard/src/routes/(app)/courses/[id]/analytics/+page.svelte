@@ -10,7 +10,7 @@
 
   const exportDocument = $derived(
     data.courseAnalytics
-      ? buildCourseAnalyticsExportDocument(data.courseAnalytics, courseApi.course?.title || 'Course', {
+      ? buildCourseAnalyticsExportDocument(data.courseAnalytics, courseApi.course?.title || $t('page_titles.course'), {
           name: $t('audience.name'),
           email: $t('audience.email'),
           lessonsCompleted: $t('analytics.lessons_completed'),

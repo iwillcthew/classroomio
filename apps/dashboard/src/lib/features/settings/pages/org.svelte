@@ -126,7 +126,7 @@
           class="cursor-pointer rounded-full border-2 {$currentOrg.theme === themes.blue &&
             'border-[#1d4ee2]'} flex h-fit items-center justify-center"
           onclick={handleChangeTheme(themes.blue)}
-          aria-label="Default blue theme"
+          aria-label={$t('settings.organization.organization_profile.theme.blue_label')}
         >
           <div class="m-1 h-6 w-6 rounded-full bg-[#1d4ee2] md:h-6 md:w-6"></div>
         </button>
@@ -135,7 +135,7 @@
           class="cursor-pointer rounded-full border-2 {$currentOrg.theme === themes.rose &&
             'border-[#be1241]'} flex h-fit items-center justify-center"
           onclick={handleChangeTheme(themes.rose)}
-          aria-label="Rose theme"
+          aria-label={$t('settings.organization.organization_profile.theme.rose_label')}
         >
           <div class="m-1 h-6 w-6 rounded-full bg-[#be1241] md:h-6 md:w-6"></div>
         </button>
@@ -144,7 +144,7 @@
           class="cursor-pointer rounded-full border-2 {$currentOrg.theme === themes.green &&
             'border-[#0c891b]'} flex h-fit items-center justify-center"
           onclick={handleChangeTheme(themes.green)}
-          aria-label="Green theme"
+          aria-label={$t('settings.organization.organization_profile.theme.green_label')}
         >
           <div class="m-1 h-6 w-6 rounded-full bg-[#0c891b] md:h-6 md:w-6"></div>
         </button>
@@ -153,7 +153,7 @@
           class="cursor-pointer rounded-full border-2 {$currentOrg.theme === themes.orange &&
             'border-[#cc4902]'} flex h-fit items-center justify-center"
           onclick={handleChangeTheme(themes.orange)}
-          aria-label="Orange theme"
+          aria-label={$t('settings.organization.organization_profile.theme.orange_label')}
         >
           <div class="m-1 h-6 w-6 rounded-full bg-[#cc4902] md:h-6 md:w-6"></div>
         </button>
@@ -162,7 +162,7 @@
           class="cursor-pointer rounded-full border-2 {$currentOrg.theme === themes.purple &&
             'border-purple-600'} flex h-fit items-center justify-center"
           onclick={handleChangeTheme(themes.purple)}
-          aria-label="Purple theme"
+          aria-label={$t('settings.organization.organization_profile.theme.purple_label')}
         >
           <div class="m-1 h-6 w-6 rounded-full bg-purple-600 md:h-6 md:w-6"></div>
         </button>

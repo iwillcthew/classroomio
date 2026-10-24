@@ -2,6 +2,7 @@
   import Button, { type ButtonElementProps } from '../../base/button/button.svelte';
   import { useImageCropperCancel } from './image-cropper-context.svelte';
   import Trash2Icon from '@lucide/svelte/icons/trash-2';
+  import { uiLabels } from '../../tools';
 
   let { ref = $bindable(null), variant = 'outline', size = 'sm', onclick, ...rest }: ButtonElementProps = $props();
 
@@ -24,5 +25,5 @@
   }}
 >
   <Trash2Icon />
-  <span>Cancel</span>
+  <span>{uiLabels.cancel}</span>
 </Button>

@@ -5,7 +5,7 @@
 </script>
 
 <svelte:head>
-  <title>Certificates - MP Learning</title>
+  <title>{$t('page_titles.certificates')} · MP Learning</title>
 </svelte:head>
 
 <Page.Root class="w-full">

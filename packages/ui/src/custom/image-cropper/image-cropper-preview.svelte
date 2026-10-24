@@ -3,7 +3,7 @@
   import type { ImageCropperPreviewProps } from './types';
   import { useImageCropperPreview } from './image-cropper-context.svelte';
   import UploadIcon from '@lucide/svelte/icons/upload';
-  import { cn } from '../../tools';
+  import { cn, uiLabels } from '../../tools';
 
   let { child, class: className }: ImageCropperPreviewProps = $props();
 
@@ -17,7 +17,7 @@
     <Avatar.Image src={previewState.rootState.src} />
     <Avatar.Fallback>
       <UploadIcon class="ui:size-4" />
-      <span class="ui:sr-only">Upload image</span>
+      <span class="ui:sr-only">{uiLabels.cropper_upload_image}</span>
     </Avatar.Fallback>
   </Avatar.Root>
 {/if}

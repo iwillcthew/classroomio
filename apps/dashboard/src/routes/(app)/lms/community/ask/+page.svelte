@@ -10,7 +10,7 @@
 </script>
 
 <svelte:head>
-  <title>Ask the Community - MP Learning</title>
+  <title>{$t('page_titles.ask_community')} · MP Learning</title>
 </svelte:head>
 
 <Page.Root class="mx-auto w-[90%]!">

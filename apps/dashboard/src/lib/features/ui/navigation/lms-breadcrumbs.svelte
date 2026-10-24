@@ -40,7 +40,7 @@
         <Breadcrumb.Item>
           {#if isDesktop.current}
             <DropdownMenu.Root bind:open>
-              <DropdownMenu.Trigger class="flex items-center gap-1" aria-label="Toggle menu">
+              <DropdownMenu.Trigger class="flex items-center gap-1" aria-label={$t('ui_shell.breadcrumbs.toggle_menu')}>
                 <Breadcrumb.Ellipsis class="size-4" />
               </DropdownMenu.Trigger>
               <DropdownMenu.Content align="start">
@@ -55,13 +55,13 @@
             </DropdownMenu.Root>
           {:else}
             <Drawer.Root bind:open>
-              <Drawer.Trigger aria-label="Toggle Menu">
+              <Drawer.Trigger aria-label={$t('ui_shell.breadcrumbs.toggle_menu')}>
                 <Breadcrumb.Ellipsis class="size-4" />
               </Drawer.Trigger>
               <Drawer.Content>
                 <Drawer.Header class="text-start">
-                  <Drawer.Title>Navigate to</Drawer.Title>
-                  <Drawer.Description>Select a page to navigate to.</Drawer.Description>
+                  <Drawer.Title>{$t('ui_shell.breadcrumbs.navigate_to')}</Drawer.Title>
+                  <Drawer.Description>{$t('ui_shell.breadcrumbs.navigate_description')}</Drawer.Description>
                 </Drawer.Header>
                 <div class="grid gap-1 px-4">
                   {#each breadcrumbs.slice(0, -ITEMS_TO_DISPLAY) as breadcrumb, i (i)}
@@ -71,7 +71,7 @@
                   {/each}
                 </div>
                 <Drawer.Footer class="pt-4">
-                  <Drawer.Close class={buttonVariants({ variant: 'outline' })}>Close</Drawer.Close>
+                  <Drawer.Close class={buttonVariants({ variant: 'outline' })}>{$t('whats_new.close')}</Drawer.Close>
                 </Drawer.Footer>
               </Drawer.Content>
             </Drawer.Root>

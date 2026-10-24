@@ -11,6 +11,7 @@ import { STATUS } from './constants';
 import type { Writable } from 'svelte/store';
 import { isUUID } from '$lib/utils/functions/isUUID';
 import { writable } from 'svelte/store';
+import { t } from '$lib/utils/functions/translations';
 import { UNTITLED_EXERCISE_SECTION_TITLE } from '$features/course/utils/exercise-section-utils';
 
 export const isQuestionnaireFetching = writable(false);
@@ -283,7 +284,7 @@ export function handleAddSection() {
     nextSectionId = sectionId;
     const nextSection: ExerciseSectionState = {
       id: sectionId,
-      title: `Section ${nextSectionDisplayNumber}`,
+      title: `${t.get('course.navItem.lessons.exercises.all_exercises.section.fallback_title')} ${nextSectionDisplayNumber}`,
       description: null,
       order: nextSectionOrder,
       colorTheme: 'blue',

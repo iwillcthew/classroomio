@@ -486,7 +486,10 @@
         if (publicConversionFlow.isActive && publicConversionFlow.courseId === courseApi.course?.id) {
           const activeQuestions = getActiveExerciseQuestions($questionnaire.questions ?? []);
           const manualQuestions = getManualQuestionsFromList(activeQuestions);
-          const exerciseTitle = exerciseApi.exercise?.title || $questionnaire.title || 'Untitled Exercise';
+          const exerciseTitle =
+            exerciseApi.exercise?.title ||
+            $questionnaire.title ||
+            t.get('course.navItem.settings.public_conversion.untitled_exercise');
 
           publicConversionFlow.syncExerciseQuestions(exerciseId, manualQuestions, exerciseTitle);
         }

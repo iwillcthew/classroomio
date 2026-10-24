@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { getIntlLocale } from '$lib/utils/functions/intl-locale';
   import { Button } from '@cio/ui/base/button';
   import { RadioIcon } from '@cio/ui/custom/moving-icons';
   import ClockIcon from '@lucide/svelte/icons/clock';
@@ -18,7 +19,7 @@
 
   function dateLabel(iso: string, tz?: string | null): string {
     try {
-      return new Intl.DateTimeFormat('en-US', {
+      return new Intl.DateTimeFormat(getIntlLocale(), {
         timeZone: tz || Intl.DateTimeFormat().resolvedOptions().timeZone,
         dateStyle: 'medium',
         timeStyle: 'short'

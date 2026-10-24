@@ -1,3 +1,4 @@
+import { t } from '$lib/utils/functions/translations';
 /**
  * Server-side file type validation utilities for preventing malicious uploads
  * Specifically designed to prevent SVG XSS attacks and other security issues
@@ -35,7 +36,7 @@ export function validateImageUpload(file: File): { isValid: boolean; error?: str
   if (!validateImageType(file)) {
     return {
       isValid: false,
-      error: 'Invalid file type. Only JPEG, PNG, GIF, and WebP files are allowed.'
+      error: t.get('validations.image_upload.invalid_type')
     };
   }
 
@@ -43,7 +44,7 @@ export function validateImageUpload(file: File): { isValid: boolean; error?: str
   if (!validateImageExtension(file.name)) {
     return {
       isValid: false,
-      error: 'Invalid file extension. Only .jpg, .jpeg, .png, .gif, and .webp files are allowed.'
+      error: t.get('validations.image_upload.invalid_extension')
     };
   }
 

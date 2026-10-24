@@ -2,7 +2,7 @@
   import CircleCheckIcon from '@lucide/svelte/icons/circle-check';
   import ChevronDownIcon from '@lucide/svelte/icons/chevron-down';
   import ChevronUpIcon from '@lucide/svelte/icons/chevron-up';
-  import pluralize from 'pluralize';
+  import { pluralizeLabel } from '$lib/utils/functions/pluralize-label';
 
   import { t } from '$lib/utils/functions/translations';
   import type { LandingPageLesson } from '../utils';
@@ -34,8 +34,8 @@
       {title}
     </span>
     <span class="text-xs font-normal">
-      {pluralize($t('course.navItem.landing_page.lessons'), lessonCount, true)},
-      {pluralize($t('course.navItem.landing_page.exercises'), exerciseCount, true)}
+      {pluralizeLabel($t('course.navItem.landing_page.lessons'), lessonCount)},
+      {pluralizeLabel($t('course.navItem.landing_page.exercises'), exerciseCount)}
     </span>
   </button>
 

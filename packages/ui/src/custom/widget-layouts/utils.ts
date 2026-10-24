@@ -1,4 +1,3 @@
-import { BRAND_ROOT_DOMAIN, TENANT_ROOT_DOMAIN } from '@cio/utils/constants';
 import {
   getWidgetThemeSerifStack,
   type TWidgetConfig,
@@ -62,34 +61,4 @@ export function formatLessonsLine(course: TWidgetPayloadCourse, showLessonsCount
   if (course.lessonCount) parts.push(`${course.lessonCount} lessons`);
   if (course.exerciseCount) parts.push(`${course.exerciseCount} exercises`);
   return parts.join(' · ');
-}
-
-/** Hostname used in UTM (custom domain or `{siteName}.${TENANT_ROOT_DOMAIN}`). */
-export function getOrgDomainForUtm(organization: TWidgetPayload['organization']): string {
-  const custom = organization.customDomain?.trim();
-  if (custom) {
-    try {
-      if (custom.includes('://')) {
-        return new URL(custom).hostname;
-      }
-    } catch {
-      /* use raw host below */
-    }
-    return custom.replace(/^\/+/, '').split('/')[0] || organization.siteName;
-  }
-  const site = organization.siteName.trim();
-  return site ? `${site}.${TENANT_ROOT_DOMAIN}` : BRAND_ROOT_DOMAIN;
-}
-
-/** Marketing homepage link with widget + org attribution for analytics. */
-export function buildPoweredByMarketingUrl(payload: TWidgetPayload): string {
-  const orgDomain = getOrgDomainForUtm(payload.organization);
-  const params = new URLSearchParams({
-    utm_source: 'classroomio_widget',
-    utm_medium: 'embed',
-    utm_campaign: 'powered_by',
-    utm_content: payload.widgetId,
-    utm_term: orgDomain
-  });
-  return `https://${BRAND_ROOT_DOMAIN}/?${params.toString()}`;
 }

@@ -305,7 +305,7 @@
       } else if (err.response) {
         formRes = err.response.data;
       } else {
-        let message = 'An error occurred while uploading the video';
+        let message = t.get(`${ADD_VIDEO}.upload_failed_generic`);
         if (err instanceof Error) {
           message = err.message;
         }
@@ -417,7 +417,7 @@
   {/if}
 {:else if formRes?.type === 'FILE_TOO_LARGE'}
   <div class="flex h-full w-full flex-col items-center justify-center rounded-xl">
-    <img src="/video-upload-error.svg" alt="upload error" />
+    <img src="/video-upload-error.svg" alt={$t('course.navItem.lessons.materials.tabs.document.upload_error_title')} />
     <span class="pt-3 pb-2">
       <h3 class="text-center text-base font-normal dark:text-white">
         {$t(`${ADD_VIDEO}.oops`)}
@@ -433,7 +433,7 @@
   </div>
 {:else if formRes?.status !== 200}
   <div class="flex h-full w-full flex-col items-center justify-center rounded-xl">
-    <img src="/video-upload-error.svg" alt="upload error" />
+    <img src="/video-upload-error.svg" alt={$t('course.navItem.lessons.materials.tabs.document.upload_error_title')} />
     <span class="pt-3 pb-2">
       <h3 class="text-center text-base font-normal dark:text-white">
         {$t(`${ADD_VIDEO}.oops`)}

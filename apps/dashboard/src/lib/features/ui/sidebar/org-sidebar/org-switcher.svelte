@@ -20,6 +20,7 @@
     mergeAccountOrgFromServer
   } from '$lib/utils/store/org';
   import { t } from '$lib/utils/functions/translations';
+  import { PLAN } from '@cio/utils/plans';
 
   import ComingSoon from '$features/ui/coming-soon.svelte';
   import { PUBLIC_IS_SELFHOSTED } from '$env/static/public';
@@ -38,7 +39,13 @@
   }
 
   const accountRootId = $derived(rootIdFor($currentOrg));
-  const currentPlanName = $derived($currentOrgPlan?.planName || 'Free');
+  const currentPlanName = $derived(
+    $currentOrgPlan?.planName === PLAN.ENTERPRISE
+      ? $t('pricing.plan_names.enterprise')
+      : $currentOrgPlan?.planName === PLAN.EARLY_ADOPTER
+        ? $t('pricing.plan_names.early')
+        : $t('pricing.plan_names.free')
+  );
 
   const switchableOrgs = $derived($managedOrgs);
   const accountWorkspaces = $derived(switchableOrgs.filter((org) => rootIdFor(org) === accountRootId));
@@ -152,7 +159,7 @@
         <div class="flex size-6 items-center justify-center rounded-md border bg-transparent">
           <PlusIcon class="size-4" />
         </div>
-        <div class="ui:text-muted-foreground font-normal">Add Organization</div>
+        <div class="ui:text-muted-foreground font-normal">{$t('ui_shell.org_switcher.add_organization')}</div>
 
         <ComingSoon />
       </DropdownMenu.Item>
@@ -238,7 +245,7 @@
             <div class="flex size-6 items-center justify-center rounded-md border bg-transparent">
               <PlusIcon class="size-4" />
             </div>
-            <div class="ui:text-muted-foreground font-normal">Add Organization</div>
+            <div class="ui:text-muted-foreground font-normal">{$t('ui_shell.org_switcher.add_organization')}</div>
 
             <ComingSoon />
           </DropdownMenu.Item>

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import pluralize from 'pluralize';
+  import { pluralizeLabel } from '$lib/utils/functions/pluralize-label';
   import UsersIcon from '@lucide/svelte/icons/users';
   import SendHorizontalIcon from '@lucide/svelte/icons/send-horizontal';
   import EllipsisVerticalIcon from '@lucide/svelte/icons/ellipsis-vertical';
@@ -120,7 +120,7 @@
       class="justify-start"
     >
       <UsersIcon size={16} />
-      <p class="py-2 text-sm">{pluralize($t('cohorts.newsfeed.comments.comment'), totalCount, true)}</p>
+      <p class="py-2 text-sm">{pluralizeLabel($t('cohorts.newsfeed.comments.comment'), totalCount)}</p>
 
       {#if totalCount > shownCount}
         <span class="ml-auto text-xs text-gray-600">

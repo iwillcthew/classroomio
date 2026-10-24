@@ -155,7 +155,7 @@
                   {#if !key.revokedAt}
                     <DropdownMenu.Root>
                       <DropdownMenu.Trigger class="inline-flex items-center justify-center">
-                        <IconButton aria-label="actions">
+                        <IconButton aria-label={$t('automation.actions_aria')}>
                           <EllipsisVerticalIcon size={16} />
                         </IconButton>
                       </DropdownMenu.Trigger>

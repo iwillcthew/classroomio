@@ -341,7 +341,9 @@
                         {#if getMemberAvatarUrl(person)}
                           <Avatar.Image
                             src={getMemberAvatarUrl(person)}
-                            alt={person.profile.fullname ? person.profile.fullname : 'User'}
+                            alt={person.profile.fullname
+                              ? person.profile.fullname
+                              : $t('course.navItem.news_feed.user')}
                           />
                         {/if}
                         <Avatar.Fallback>

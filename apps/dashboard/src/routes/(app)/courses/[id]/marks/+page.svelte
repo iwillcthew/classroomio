@@ -21,7 +21,7 @@
       data.marksData?.students ?? [],
       exercises,
       data.marksData?.studentMarksByExerciseId ?? {},
-      courseApi.course?.title || 'Course',
+      courseApi.course?.title || $t('page_titles.course'),
       {
         name: $t('audience.name'),
         email: $t('audience.email'),

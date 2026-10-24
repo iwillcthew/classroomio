@@ -8,7 +8,7 @@
 </script>
 
 <svelte:head>
-  <title>Community - MP Learning</title>
+  <title>{$t('page_titles.community')} · MP Learning</title>
 </svelte:head>
 
 <Page.Root class="mx-auto w-full max-w-3xl">

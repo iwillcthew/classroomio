@@ -208,7 +208,7 @@
 
     return buildAudienceExportDocument(
       response?.data ?? [],
-      $currentOrg?.name ?? 'Organization',
+      $currentOrg?.name ?? $t('settings.emails.variables.organization'),
       audienceExportHeaders()
     );
   }

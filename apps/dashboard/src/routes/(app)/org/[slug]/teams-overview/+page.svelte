@@ -87,7 +87,8 @@
                     {$t('cohorts.goals.tile.on_track')}
                   </span>
                   <span class="ui:text-muted-foreground">
-                    <span class="font-medium">{totalLearners}</span> learners
+                    <span class="font-medium">{totalLearners}</span>
+                    {$t('cohorts.goals.tile.learners')}
                   </span>
                   {#if atRiskLearners > 0}
                     <span class="text-amber-700">
@@ -108,8 +109,8 @@
                 <Table.Root>
                   <Table.Header>
                     <Table.Row>
-                      <Table.Head>Goal</Table.Head>
-                      <Table.Head>Type</Table.Head>
+                      <Table.Head>{$t('settings.emails.variables.goal_title')}</Table.Head>
+                      <Table.Head>{$t('cohorts.goals.modal.type_label')}</Table.Head>
                       <Table.Head>{$t('cohorts.goals.status.completed')}</Table.Head>
                       <Table.Head>{$t('cohorts.goals.status.in_progress')}</Table.Head>
                       <Table.Head>{$t('cohorts.goals.status.at_risk')}</Table.Head>

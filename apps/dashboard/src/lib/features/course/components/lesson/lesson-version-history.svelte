@@ -233,7 +233,7 @@
       if (requestId !== historyRequestId) return;
 
       console.error(error);
-      snackbar.error('Failed to fetch history');
+      snackbar.error('course.navItem.lessons.version_history.fetch_failed');
     } finally {
       if (requestId === historyRequestId) {
         isHistoryLoading = false;
@@ -258,7 +258,7 @@
       dispatch('restore');
     } catch (error) {
       console.error(error);
-      snackbar.error('Failed to restore');
+      snackbar.error('course.navItem.lessons.version_history.restore_failed');
     } finally {
       contentRestoreLoading = false;
     }

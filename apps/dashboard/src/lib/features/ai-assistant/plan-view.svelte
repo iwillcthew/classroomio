@@ -188,9 +188,13 @@
         </button>
       {/if}
       <p class="ui:text-muted-foreground text-xs">
-        {editablePlan.sections.length} sections, {totalLessons} lessons{totalExercises > 0
-          ? `, ${totalExercises} exercises`
-          : ''}
+        {totalExercises > 0
+          ? $t('ai_assistant.plan_view.summary_with_exercises', {
+              sections: editablePlan.sections.length,
+              lessons: totalLessons,
+              exercises: totalExercises
+            })
+          : $t('ai_assistant.plan_view.summary', { sections: editablePlan.sections.length, lessons: totalLessons })}
       </p>
     </div>
   </div>
@@ -223,7 +227,7 @@
                 onclick={() => startEditing(`section-${sectionIndex}-title`)}
                 class="group ui:hover:text-primary flex items-center gap-1 text-left"
               >
-                Section {section.order}: {section.title}
+                {$t('ai_assistant.plan_view.section_title', { order: section.order, title: section.title })}
                 <PencilIcon size={9} class="opacity-0 group-hover:opacity-50" />
               </button>
             {/if}
@@ -284,7 +288,7 @@
                     {#if item.type === 'lesson' && item.hasExercise}
                       <div class="ui:text-muted-foreground mt-0.5 flex items-center gap-1">
                         <FileQuestionIcon size={10} />
-                        <span>Exercise included</span>
+                        <span>{$t('ai_assistant.plan_view.exercise_included')}</span>
                       </div>
                     {/if}
                   </div>
@@ -300,9 +304,9 @@
     <div class="space-y-2 border-t px-3 py-2">
       {#if estimatedTokens > 0}
         <p class="text-xs {isHighCost ? 'text-amber-600 dark:text-amber-400' : 'ui:text-muted-foreground'}">
-          Estimated cost: ~{estimatedTokens.toLocaleString()} tokens
+          {$t('ai_assistant.plan_view.estimated_cost', { tokens: estimatedTokens.toLocaleString() })}
           {#if costPercentage !== null}
-            ({costPercentage}% of remaining)
+            {$t('ai_assistant.plan_view.cost_percentage', { percent: costPercentage })}
           {/if}
         </p>
       {/if}

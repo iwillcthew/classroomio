@@ -3,7 +3,7 @@
   import SearchIcon from '@lucide/svelte/icons/search';
   import XIcon from '@lucide/svelte/icons/x';
   import type { ComponentProps } from 'svelte';
-  import { cn } from '../../tools';
+  import { cn, uiLabels } from '../../tools';
 
   interface Props {
     placeholder?: string;
@@ -40,7 +40,7 @@
   <InputGroup.Input {placeholder} bind:value oninput={handleInput} />
   {#if value}
     <InputGroup.Addon align="inline-end">
-      <InputGroup.Button aria-label="Clear search" onclick={clearValue}>
+      <InputGroup.Button aria-label={uiLabels.clear_search} onclick={clearValue}>
         <XIcon />
       </InputGroup.Button>
     </InputGroup.Addon>

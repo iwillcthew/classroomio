@@ -6,7 +6,7 @@ import { escapeHtml } from '../utils/functions/email-helpers';
 
 export const contentReportAlertEmail = defineEmail({
   id: 'contentReportAlert',
-  subject: 'New content report — ClassroomIO',
+  subject: 'New content report — MP Learning',
   schema: z.object({
     reportId: z.string().min(1),
     reason: z.string().min(1),
@@ -33,7 +33,7 @@ export const contentReportAlertEmail = defineEmail({
       : '';
 
     const content = `
-      <p>A user reported content on ClassroomIO.</p>
+      <p>A user reported content on MP Learning.</p>
       <p><strong>Report ID:</strong> ${escapeHtml(fields.reportId)}</p>
       <p><strong>Reason:</strong> ${escapeHtml(fields.reason)}</p>
       ${detailsBlock}

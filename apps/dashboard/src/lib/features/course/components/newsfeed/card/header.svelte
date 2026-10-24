@@ -31,9 +31,15 @@
 <div class="relative px-3 pt-2.5 pb-0">
   <div class="mb-1.5 flex items-center justify-between">
     <div class="flex items-center gap-2">
-      <UserAvatar src={feed.authorAvatarUrl} class="size-8" />
+      <UserAvatar
+        src={feed.authorAvatarUrl}
+        alt={feed.authorFullname || $t('course.common_labels.anonymous')}
+        class="size-8"
+      />
       <div class="flex flex-col">
-        <p class="ui:text-foreground text-sm font-semibold capitalize">{feed.authorFullname || 'Anonymous'}</p>
+        <p class="ui:text-foreground text-sm font-semibold capitalize">
+          {feed.authorFullname || $t('course.common_labels.anonymous')}
+        </p>
         <p class="ui:text-muted-foreground text-xs font-normal">{calDateDiff(feed.createdAt)}</p>
       </div>
     </div>

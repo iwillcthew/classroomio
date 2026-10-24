@@ -50,7 +50,11 @@
   <div class="border-gray w-full rounded-lg border">
     <header class="flex items-center justify-between p-2 leading-none">
       <div class="flex items-center text-black">
-        <UserAvatar src={comment.author?.avatarUrl} alt={comment.author?.fullname ?? 'User'} class="size-7" />
+        <UserAvatar
+          src={comment.author?.avatarUrl}
+          alt={comment.author?.fullname ?? $t('cohorts.newsfeed.user_avatar_alt')}
+          class="size-7"
+        />
 
         <p class="ml-2 text-sm dark:text-white">{comment.author?.fullname}</p>
 

@@ -26,7 +26,7 @@
 
   function buildBody() {
     return {
-      studentName: $profile.fullname || 'Recipient',
+      studentName: $profile.fullname || t.get('course.certificate_reports.recipient'),
       studentId: $profile.id || undefined,
       issuedAt: normalizeCertificateIssuedAt(evaluation?.certificateEarnedAt)
     } as const;

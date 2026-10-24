@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { getIntlLocale } from '$lib/utils/functions/intl-locale';
   function loadChart() {
     if (typeof window === 'undefined') return Promise.reject(new Error('browser-only'));
 
@@ -96,7 +97,7 @@
             props={{
               xAxis: {
                 format: (d: Date) =>
-                  d.toLocaleDateString('en-US', {
+                  d.toLocaleDateString(getIntlLocale(), {
                     month: 'short',
                     day: 'numeric'
                   })

@@ -4,7 +4,7 @@
   import { Button } from '../../base/button';
   import { HoverableItem, PremiumIcon } from '../moving-icons';
   import type { PlanData } from './types';
-  import { cn } from '../../tools';
+  import { cn, uiLabels } from '../../tools';
 
   interface Props {
     plan: PlanData;
@@ -28,8 +28,8 @@
     isLoadingPlan = null,
     planName,
     handleClick = () => {},
-    popularLabel = 'Popular',
-    perOrgLabel = 'Per Organization',
+    popularLabel = uiLabels.pricing_popular,
+    perOrgLabel = uiLabels.pricing_per_organization,
     ctaLabel = plan.CTA.DASHBOARD_LABEL,
     isDisabled = plan.CTA.IS_DISABLED
   }: Props = $props();
@@ -90,7 +90,7 @@
 
   <!-- Features List -->
   <div class="ui:flex-1">
-    <p class="ui:mb-4 ui:text-sm ui:font-semibold ui:text-foreground">What's included:</p>
+    <p class="ui:mb-4 ui:text-sm ui:font-semibold ui:text-foreground">{uiLabels.pricing_whats_included}</p>
     <ul class="ui:space-y-2">
       {#each plan.FEATURES as feature}
         <li class="ui:flex ui:items-start ui:gap-3">

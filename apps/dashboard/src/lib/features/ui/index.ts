@@ -9,7 +9,6 @@ export { default as CourseLandingPage } from './course-landing-page/course-landi
 export { default as ComingSoon } from './coming-soon.svelte';
 export { default as Confetti } from './confetti/confetti.svelte';
 export { default as DeleteModal } from './delete-modal.svelte';
-export { default as EarlyAdopterCallout } from './early-adopter-callout.svelte';
 export { default as HeroProfileCard } from './analytics/hero-profile-card.svelte';
 export { default as HTMLRender } from './html-render.svelte';
 export { default as Image } from './image.svelte';
@@ -18,7 +17,6 @@ export { default as LoadingPage } from './analytics/loading-page.svelte';
 export * from './question';
 export { default as UploadWidget } from './upload-widget/upload-widget.svelte';
 export { default as PageLoadProgress } from './page-load-progress.svelte';
-export { default as PoweredBy } from './powered-by.svelte';
 export { default as RefreshPageData } from './refresh-page-data.svelte';
 export { default as RoleBasedSecurity } from './role-based-security.svelte';
 export { default as Search } from './search.svelte';

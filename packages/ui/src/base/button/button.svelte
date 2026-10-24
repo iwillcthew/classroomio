@@ -4,10 +4,10 @@
   import { type VariantProps, tv } from 'tailwind-variants';
 
   export const buttonVariants = tv({
-    base: "ui:aria-invalid:ring-destructive/20 ui:dark:aria-invalid:ring-destructive/40 ui:aria-invalid:border-destructive ui:focus-visible:border-ring ui:focus-visible:ring-ring/50 ui:relative ui:inline-flex ui:shrink-0 ui:items-center ui:justify-center ui:gap-2 ui:overflow-hidden ui:rounded-md ui:text-sm ui:font-medium ui:whitespace-nowrap ui:outline-hidden ui:transition-all ui:select-none ui:focus-visible:ring-[3px] ui:disabled:pointer-events-none ui:disabled:cursor-not-allowed ui:disabled:opacity-50 ui:[&_svg]:pointer-events-none ui:[&_svg]:shrink-0 ui:[&_svg:not([class*='ui:size-'])]:size-4 ui:cursor-pointer",
+    base: "ui:aria-invalid:ring-destructive/20 ui:dark:aria-invalid:ring-destructive/40 ui:aria-invalid:border-destructive ui:focus-visible:border-ring ui:focus-visible:ring-ring/50 ui:relative ui:inline-flex ui:shrink-0 ui:items-center ui:justify-center ui:gap-2 ui:overflow-hidden ui:rounded-lg ui:text-sm ui:font-medium ui:whitespace-nowrap ui:outline-hidden ui:transition-all ui:select-none ui:focus-visible:ring-[3px] ui:disabled:pointer-events-none ui:disabled:cursor-not-allowed ui:disabled:opacity-50 ui:[&_svg]:pointer-events-none ui:[&_svg]:shrink-0 ui:[&_svg:not([class*='ui:size-'])]:size-4 ui:cursor-pointer",
     variants: {
       variant: {
-        default: 'ui:bg-primary ui:text-primary-foreground ui:[a&]:hover:bg-primary/90 ui:shadow-2xs',
+        default: 'ui:bg-primary ui:text-primary-foreground ui:hover:bg-primary/90 ui:shadow-2xs',
         'light-default': 'ui:bg-primary/20 ui:text-primary ui:[a&]:hover:bg-primary/30 ui:shadow-2xs',
         destructive:
           'ui:bg-destructive ui:[a&]:hover:bg-destructive/90 ui:focus-visible:ring-destructive/20 ui:dark:bg-destructive/60 ui:dark:focus-visible:ring-destructive/40 ui:text-white ui:shadow-2xs',
@@ -76,7 +76,7 @@
 </script>
 
 <script lang="ts">
-  import { cn } from '../../tools';
+  import { cn, uiLabels } from '../../tools';
   import { Spinner } from '../spinner';
 
   let {
@@ -127,11 +127,11 @@
         <Spinner class="custom ui:size-4" />
       </div>
     </div>
-    <span class="ui:sr-only">Loading</span>
+    <span class="ui:sr-only">{uiLabels.loading}</span>
   {/if}
 
   {#if loading && size.includes('icon')}
-    <span class="ui:sr-only">Loading</span>
+    <span class="ui:sr-only">{uiLabels.loading}</span>
   {:else}
     {@render children?.()}
   {/if}

@@ -1,3 +1,4 @@
+import { getIntlLocale } from '$lib/utils/functions/intl-locale';
 import {
   dedupe,
   getVideoMediaType,
@@ -12,6 +13,7 @@ import {
 import { lessonApi } from '$features/course/api';
 import { mediaApi } from '$features/media/api';
 import { snackbar } from '$features/ui/snackbar/store';
+import { t } from '$lib/utils/functions/translations';
 import type { LessonVideoType } from '$features/course/utils/types';
 export type { LessonVideoType };
 
@@ -151,12 +153,12 @@ export function getVideoTitle(video: LessonVideo, index: number): string {
   }
 
   const mediaType = getVideoMediaType(video);
-  if (mediaType === 'youtube') return 'YouTube video';
-  if (mediaType === 'vimeo') return 'Vimeo video';
-  if (mediaType === 'generic') return 'Embedded video';
-  if (mediaType === 'google_drive') return 'Google Drive video';
+  if (mediaType === 'youtube') return t.get('course.navItem.lessons.materials.tabs.video.titles.youtube');
+  if (mediaType === 'vimeo') return t.get('course.navItem.lessons.materials.tabs.video.titles.vimeo');
+  if (mediaType === 'generic') return t.get('course.navItem.lessons.materials.tabs.video.titles.embedded');
+  if (mediaType === 'google_drive') return t.get('course.navItem.lessons.materials.tabs.video.titles.google_drive');
 
-  return `Video ${index + 1}`;
+  return t.get('course.navItem.lessons.materials.tabs.video.titles.numbered', { number: index + 1 });
 }
 
 /**
@@ -184,7 +186,7 @@ export function formatVideoCreatedAt(isoString: string | null | undefined): stri
   if (!isoString || typeof isoString !== 'string') return null;
   const d = new Date(isoString);
   if (Number.isNaN(d.getTime())) return null;
-  return new Intl.DateTimeFormat('en-US', { dateStyle: 'medium' }).format(d);
+  return new Intl.DateTimeFormat(getIntlLocale(), { dateStyle: 'medium' }).format(d);
 }
 
 export function isEnforceableLessonVideo(video: LessonVideo): boolean {

@@ -1,5 +1,4 @@
 <script lang="ts">
-  import pluralize from 'pluralize';
   // import EllipsisIcon from '@lucide/svelte/icons/ellipsis';
 
   import { currentOrgPath } from '$lib/utils/store/org';
@@ -57,7 +56,7 @@
   >
     <Image
       src={themeImages[quiz.theme]?.card || themeImages.standard.card}
-      alt="quiz-card"
+      alt={$t('quiz.card.image_alt')}
       className="max-w-[300px] min-w-[200px]"
     />
 
@@ -76,7 +75,7 @@
 
       <div class="flex flex-col justify-between md:flex-row">
         <div>
-          <p class="mb-2">{pluralize('question', totalQuestions, true)}</p>
+          <p class="mb-2">{$t('quiz.card.question_count', { count: totalQuestions })}</p>
           <p class="mb-2 md:mb-0">{$t('components.quiz.updated')} {calDateDiff(quiz.updated_at)}</p>
         </div>
 

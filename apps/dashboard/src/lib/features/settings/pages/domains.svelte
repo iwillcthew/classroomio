@@ -129,7 +129,7 @@
     }
 
     if (blockedSubdomain.includes(siteName || '')) {
-      errors.siteName = 'Sitename already exists.';
+      errors.siteName = $t('validations.site_name.already_exists');
       return;
     }
 
@@ -231,7 +231,7 @@
     if (!isDomainValid) return;
 
     if ($isFreePlan) {
-      errors.customDomain = 'Custom domains are only available on paid plans';
+      errors.customDomain = $t('components.settings.domains.paid_plan_only');
       return;
     }
 
@@ -242,7 +242,7 @@
     try {
       const response = await sendDomainRequest('connect', sanitizedDomain);
       if (!response.success || !response.data) {
-        throw new Error(response.message || 'Failed to connect domain');
+        throw new Error(response.message || $t('components.settings.domains.connect_failed'));
       }
 
       applyDomainSetup(response.data);
@@ -262,7 +262,7 @@
     try {
       const response = await sendDomainRequest('connect', $currentOrg.customDomain);
       if (!response.success || !response.data) {
-        throw new Error(response.message || 'Failed to reconnect domain');
+        throw new Error(response.message || $t('components.settings.domains.reconnect_failed'));
       }
 
       applyDomainSetup(response.data);
@@ -282,7 +282,7 @@
     try {
       const response = await sendDomainRequest('remove', $currentOrg.customDomain);
       if (!response.success || !response.data) {
-        throw new Error(response.message || 'Failed to remove domain');
+        throw new Error(response.message || $t('components.settings.domains.remove_failed'));
       }
 
       applyDomainSetup(response.data);
@@ -302,7 +302,7 @@
     try {
       const response = await sendDomainRequest('refresh', $currentOrg.customDomain);
       if (!response.success || !response.data) {
-        throw new Error(response.message || 'Failed to refresh domain');
+        throw new Error(response.message || $t('components.settings.domains.refresh_failed'));
       }
 
       applyDomainSetup(response.data);
@@ -493,7 +493,10 @@
                       {record.type}
                     </span>
                     <span class="ui:text-muted-foreground text-xs">
-                      Record {i + 1} of {domainSetup.dnsRecords.length}
+                      {$t('components.settings.domains.record_count', {
+                        current: i + 1,
+                        total: domainSetup.dnsRecords.length
+                      })}
                     </span>
 
                     <span
@@ -529,7 +532,7 @@
                             text={field.value}
                             variant="outline"
                             size="icon-sm"
-                            aria-label={'Copy ' + field.label}
+                            aria-label={$t('components.settings.domains.copy_field', { field: field.label })}
                             class="shrink-0"
                           />
                         </div>
@@ -642,7 +645,7 @@
     <Field.Field>
       <Textarea
         bind:value={customCode}
-        placeholder="e.g <link rel='stylesheet' href='https://example.com/style.css' />"
+        placeholder={`${$t('components.settings.domains.example_prefix')} <link rel='stylesheet' href='https://example.com/style.css' />`}
         class="w-4/5"
         rows={7}
         disabled={true}

@@ -186,16 +186,36 @@
   function makeTrueFalseOptions(correctValue = true) {
     const ts = Date.now();
     return [
-      { id: `${ts}-true-form`, label: 'True', value: 'true', isCorrect: correctValue },
-      { id: `${ts}-false-form`, label: 'False', value: 'false', isCorrect: !correctValue }
+      {
+        id: `${ts}-true-form`,
+        label: t.get('course.navItem.lessons.exercises.all_exercises.shared_question.true_false.true_label'),
+        value: 'true',
+        isCorrect: correctValue
+      },
+      {
+        id: `${ts}-false-form`,
+        label: t.get('course.navItem.lessons.exercises.all_exercises.shared_question.true_false.false_label'),
+        value: 'false',
+        isCorrect: !correctValue
+      }
     ];
   }
 
   function makeThumbsOptions() {
     const ts = Date.now();
     return [
-      { id: `${ts}-yes-form`, label: 'Yes', value: 'true', isCorrect: false },
-      { id: `${ts}-no-form`, label: 'No', value: 'false', isCorrect: false }
+      {
+        id: `${ts}-yes-form`,
+        label: t.get('course.navItem.lessons.exercises.all_exercises.shared_question.thumbs.yes_label'),
+        value: 'true',
+        isCorrect: false
+      },
+      {
+        id: `${ts}-no-form`,
+        label: t.get('course.navItem.lessons.exercises.all_exercises.shared_question.thumbs.no_label'),
+        value: 'false',
+        isCorrect: false
+      }
     ];
   }
 

@@ -2,6 +2,7 @@
   import Button, { type ButtonElementProps } from '../../base/button/button.svelte';
   import { useImageCropperUseOriginal } from './image-cropper-context.svelte';
   import ImageIcon from '@lucide/svelte/icons/image';
+  import { uiLabels } from '../../tools';
 
   let {
     ref = $bindable(null),
@@ -34,6 +35,6 @@
   {#if children}
     {@render children()}
   {:else}
-    <span>Don't Crop</span>
+    <span>{uiLabels.cropper_use_original}</span>
   {/if}
 </Button>

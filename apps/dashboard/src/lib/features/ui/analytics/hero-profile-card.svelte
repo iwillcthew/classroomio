@@ -32,7 +32,7 @@
     </Button>
   {/if}
   <div class="flex w-full flex-col items-center justify-start gap-4 text-start md:flex-row">
-    <UserAvatar src={user.avatarUrl} alt={user.fullName ?? 'User'} class="h-16 w-16" />
+    <UserAvatar src={user.avatarUrl} alt={user.fullName ?? $t('course.navItem.news_feed.user')} class="h-16 w-16" />
     <div class="flex flex-col space-y-2">
       <p class="text-center text-2xl md:text-left dark:text-white">
         {user.fullName}

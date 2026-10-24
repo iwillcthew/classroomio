@@ -83,7 +83,7 @@ export class NewsfeedApi extends BaseApiWithErrors {
       },
       onError: (result) => {
         if (typeof result === 'string') {
-          snackbar.error('Failed to list newsfeed');
+          snackbar.error('snackbar.course.error.news_feed_fail');
         }
       }
     });
@@ -101,7 +101,7 @@ export class NewsfeedApi extends BaseApiWithErrors {
       logContext: 'fetching newsfeed item',
       onError: (result) => {
         if (typeof result === 'string') {
-          snackbar.error('Failed to fetch newsfeed item');
+          snackbar.error('snackbar.course.error.feed_fetch_error');
         }
       }
     });
@@ -134,7 +134,7 @@ export class NewsfeedApi extends BaseApiWithErrors {
       logContext: 'creating newsfeed',
       onSuccess: (response) => {
         if (response.data) {
-          snackbar.success('Post created successfully');
+          snackbar.success('snackbar.course_api.post_created');
           const feedsArray = Array.isArray(this.feeds) ? this.feeds : [];
           const author = get(profile);
 
@@ -154,7 +154,7 @@ export class NewsfeedApi extends BaseApiWithErrors {
       },
       onError: (result) => {
         if (typeof result === 'string') {
-          snackbar.error('Failed to create post');
+          snackbar.error('snackbar.course_api.post_create_failed');
           return;
         }
         if ('error' in result && 'field' in result && result.field) {
@@ -177,7 +177,7 @@ export class NewsfeedApi extends BaseApiWithErrors {
         ZNewsfeedUpdate.safeParse({ ...fields, content: '' }).error!,
         'newsfeed'
       );
-      snackbar.error(this.errors.content ?? 'Failed to update post');
+      snackbar.error(this.errors.content ?? 'snackbar.course_api.post_update_failed');
       return;
     }
 
@@ -197,7 +197,7 @@ export class NewsfeedApi extends BaseApiWithErrors {
       logContext: 'updating newsfeed',
       onSuccess: (response) => {
         if (response.data) {
-          snackbar.success('Post updated successfully');
+          snackbar.success('snackbar.course_api.post_updated');
           this.feeds = this.feeds.map((feed) => {
             if (feed.id !== feedId) {
               return feed;
@@ -217,7 +217,7 @@ export class NewsfeedApi extends BaseApiWithErrors {
       },
       onError: (result) => {
         if (typeof result === 'string') {
-          snackbar.error('Failed to update post');
+          snackbar.error('snackbar.course_api.post_update_failed');
           return;
         }
         if ('error' in result && 'field' in result && result.field) {
@@ -268,7 +268,7 @@ export class NewsfeedApi extends BaseApiWithErrors {
       },
       onError: (result) => {
         if (typeof result === 'string') {
-          snackbar.error('Failed to update reaction');
+          snackbar.error('snackbar.course_api.reaction_update_failed');
           return;
         }
         if ('error' in result && 'field' in result && result.field) {
@@ -294,13 +294,13 @@ export class NewsfeedApi extends BaseApiWithErrors {
       logContext: 'deleting newsfeed',
       onSuccess: (response) => {
         if (response.data) {
-          snackbar.success('Post deleted successfully');
+          snackbar.success('snackbar.course_api.post_deleted');
           this.feeds = this.feeds.filter((feed) => feed.id !== feedId);
         }
       },
       onError: (result) => {
         if (typeof result === 'string') {
-          snackbar.error('Failed to delete post');
+          snackbar.error('snackbar.course_api.post_delete_failed');
         }
       }
     });
@@ -468,7 +468,7 @@ export class NewsfeedApi extends BaseApiWithErrors {
       onError: (result) => {
         this.threadByFeedId[feedId].isLoading = false;
         if (typeof result === 'string') {
-          snackbar.error('Failed to fetch comments');
+          snackbar.error('snackbar.course_api.comments_fetch_failed');
         }
       }
     });
@@ -497,7 +497,7 @@ export class NewsfeedApi extends BaseApiWithErrors {
       onError: (result) => {
         thread.isLoading = false;
         if (typeof result === 'string') {
-          snackbar.error('Failed to load more comments');
+          snackbar.error('snackbar.lessons.load_more_comments_failed');
         }
       }
     });
@@ -541,7 +541,7 @@ export class NewsfeedApi extends BaseApiWithErrors {
         const current = this.nodeState(parentId);
         if (current) current.isLoading = false;
         if (typeof result === 'string') {
-          snackbar.error('Failed to load more replies');
+          snackbar.error('snackbar.course_api.replies_load_failed');
         }
       }
     });
@@ -670,7 +670,7 @@ export class NewsfeedApi extends BaseApiWithErrors {
       onError: (result) => {
         rollback();
         if (typeof result === 'string') {
-          snackbar.error('Failed to add comment');
+          snackbar.error('snackbar.lessons.comment_add_failed');
         }
       }
     });
@@ -693,14 +693,14 @@ export class NewsfeedApi extends BaseApiWithErrors {
       onSuccess: (response) => {
         if (!response.data) return;
 
-        snackbar.success('Comment updated successfully');
+        snackbar.success('snackbar.lessons.comment_updated');
 
         const existing = this.commentById[commentId];
         if (existing) existing.content = response.data.content ?? content;
       },
       onError: (result) => {
         if (typeof result === 'string') {
-          snackbar.error('Failed to update comment');
+          snackbar.error('snackbar.lessons.comment_update_failed');
         }
       }
     });
@@ -716,7 +716,7 @@ export class NewsfeedApi extends BaseApiWithErrors {
       onSuccess: (response) => {
         if (!response.data) return;
 
-        snackbar.success('Comment deleted successfully');
+        snackbar.success('snackbar.lessons.comment_deleted');
 
         const numericId = Number(commentId);
         const state = this.nodeState(numericId);
@@ -748,7 +748,7 @@ export class NewsfeedApi extends BaseApiWithErrors {
       },
       onError: (result) => {
         if (typeof result === 'string') {
-          snackbar.error('Failed to delete comment');
+          snackbar.error('snackbar.lessons.comment_delete_failed');
         }
       }
     });

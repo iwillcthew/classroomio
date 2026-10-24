@@ -588,7 +588,7 @@
         <div class="flex flex-col items-start gap-4 sm:flex-row">
           <img
             alt={$t('course.navItem.settings.cover_image')}
-            src={$settings.bannerImage ? $settings.bannerImage : '/images/classroomio-course-img-template.jpg'}
+            src={$settings.bannerImage ? $settings.bannerImage : '/images/course-img-template.jpg'}
             class="h-[120px] w-[168px] rounded-md border object-cover"
           />
           <div class="flex min-w-0 flex-1 flex-col gap-2">
@@ -767,14 +767,6 @@
     <SettingsCard hash="course-type" title={$t('course.navItem.settings.type')}>
       {#snippet description()}
         {$t('course.navItem.settings.course_type_desc')}
-        <a
-          href="https://classroomio.com/help/create-and-deliver/course-types"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="ui:text-primary underline"
-        >
-          {$t('course.navItem.settings.course_type_learn_more')}
-        </a>
       {/snippet}
       <Field.Group>
         <Field.Field>

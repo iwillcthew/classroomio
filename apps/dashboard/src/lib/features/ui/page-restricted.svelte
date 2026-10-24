@@ -14,6 +14,6 @@
     layout="full-page"
     showLogo={true}
   >
-    <Button href="https://classroomio.com">{$t('common.restricted_page.home')}</Button>
+    <Button href="/">{$t('common.restricted_page.home')}</Button>
   </Empty>
 </div>

@@ -41,7 +41,7 @@
 </script>
 
 <svelte:head>
-  <title>Setup - MP Learning</title>
+  <title>{$t('page_titles.setup')} · MP Learning</title>
 </svelte:head>
 
 <Page.Root class="w-full md:max-w-4xl lg:mx-auto">
@@ -65,8 +65,7 @@
             </Item.Description>
             <div class="flex items-center gap-2">
               <Item.Description class="text-sm">
-                {completed} of {total}
-                {$t('setup.completed')}
+                {$t('setup.progress_count', { completed, total })}
               </Item.Description>
               <div class="flex gap-1">
                 {#each Array(total) as _, i (i)}

@@ -3,6 +3,7 @@ import { ContentType } from '@cio/utils/constants/content';
 import type { NonAutoGradableQuestionOffender } from '@cio/utils/validation/course';
 import { getOrderedNavigableContent } from './content';
 import type { Course, ExerciseConversionGroup, PublicConversionCountdown } from './types';
+import { t } from '$lib/utils/functions/translations';
 
 export type QuestionLike = {
   id?: string | number;
@@ -115,7 +116,7 @@ export function groupOffendersByExercise(
     if (!group) {
       group = {
         exerciseId: offender.exerciseId,
-        exerciseTitle: offender.exerciseTitle || 'Untitled Exercise',
+        exerciseTitle: offender.exerciseTitle || t.get('course.navItem.settings.public_conversion.untitled_exercise'),
         questions: []
       };
       groupedMap.set(offender.exerciseId, group);
@@ -123,7 +124,7 @@ export function groupOffendersByExercise(
 
     group.questions.push({
       questionId: offender.questionId,
-      questionTitle: offender.questionTitle || 'Untitled question',
+      questionTitle: offender.questionTitle || t.get('course.navItem.settings.public_conversion.untitled_question'),
       typeId: offender.typeId
     });
   }

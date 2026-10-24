@@ -47,7 +47,7 @@
     fill="#17140F"
     style="letter-spacing: -0.03em"
   >
-    classroomio
+    MP Learning
   </text>
   {#if label}
     <text

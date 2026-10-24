@@ -84,7 +84,7 @@ function getOutlineSections(course: Course): LandingPageSection[] {
     if (entry.kind === 'section') {
       return {
         id: entry.section.id,
-        title: entry.section.title ?? course.title ?? 'Lessons',
+        title: entry.section.title ?? course.title ?? t.get('analytics.lessons'),
         lessons: getLessonsFromItems(entry.section.items),
         exerciseCount: getExerciseCountFromItems(entry.section.items),
         items: entry.section.items.map(toLandingPageItem)
@@ -342,7 +342,7 @@ export function buildCourseLandingPageProps(
       items: includeReviews
         ? reviewsVisible.map((r, idx) => ({
             id: `review-${r.id ?? idx}`,
-            name: r.name ?? 'Anonymous',
+            name: r.name ?? t.get('ui_shell.course_landing.anonymous'),
             avatarUrl: r.avatar_url || undefined,
             rating: r.rating ?? 0,
             description: r.description ?? '',
@@ -375,11 +375,27 @@ export function buildCourseLandingPageProps(
       standaloneLessonLabel: t.get('course.navItem.lessons.add_content_options.lesson_title'),
       standaloneExerciseLabel: t.get('course.navItem.lessons.add_content_options.exercise_title'),
       infoRequirementsHeading: t.get('course.navItem.landing_page.requirement'),
+      infoRequirementsEyebrow: t.get('ui_shell.course_landing.before_you_start'),
+      infoDescriptionEyebrow: t.get('ui_shell.course_landing.about_this_course'),
+      infoGoalsEyebrow: t.get('ui_shell.course_landing.outcomes'),
+      infoCertificateEyebrow: t.get('ui_shell.course_landing.on_completion'),
       infoDescriptionHeading: t.get('course.navItem.landing_page.description'),
       infoGoalsHeading: t.get('course.navItem.landing_page.learn'),
       infoCertificateHeading: t.get('course.navItem.landing_page.certificate'),
       instructorEyebrow: t.get('course.navItem.landing_page.instructor'),
       instructorHeading: t.get('course.navItem.landing_page.instructor'),
+      instructorCoursesLabel: (count) => t.get('ui_shell.course_landing.instructor_courses', { count }),
+      reviewsAverageLabel: (count) => t.get('ui_shell.course_landing.reviews_average', { count }),
+      pricingRewardLabel: t.get('ui_shell.course_landing.bonus'),
+      chipsSkillsEyebrow: t.get('course.navItem.landing_page.editor.title.chips'),
+      chipsSkillsHeading: t.get('course.navItem.landing_page.editor.title.skills'),
+      chipsToolsEyebrow: t.get('ui_shell.course_landing.tools'),
+      chipsToolsHeading: t.get('course.navItem.landing_page.editor.title.tools'),
+      chipsShowAllLabel: t.get('course.navItem.landing_page.view_all'),
+      chipsShowLessLabel: t.get('course.navItem.landing_page.view_less'),
+      curriculumSummaryLabel: (lessons, modules) =>
+        t.get('ui_shell.course_landing.curriculum_summary', { lessons, modules }),
+      lessonDurationLabel: (minutes) => t.get('ui_shell.course_landing.lesson_duration', { minutes }),
       reviewsEyebrow: t.get('course.navItem.landing_page.reviews'),
       reviewsHeading: t.get('course.navItem.landing_page.reviews'),
       pricingEyebrow: t.get('course.navItem.landing_page.pricing_section.enroll'),

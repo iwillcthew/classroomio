@@ -5,7 +5,7 @@
 </script>
 
 <svelte:head>
-  <title>Explore - MP Learning</title>
+  <title>{$t('page_titles.explore')} · MP Learning</title>
 </svelte:head>
 
 <Page.Root class="w-full">

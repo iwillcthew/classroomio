@@ -1,6 +1,6 @@
 <script lang="ts">
   import EllipsisIcon from '@lucide/svelte/icons/ellipsis';
-  import { cn, type WithElementRef, type WithoutChildren } from '../../tools';
+  import { cn, uiLabels, type WithElementRef, type WithoutChildren } from '../../tools';
   import type { HTMLAttributes } from 'svelte/elements';
 
   let {
@@ -18,5 +18,5 @@
   {...restProps}
 >
   <EllipsisIcon class="ui:size-4" />
-  <span class="sr-only">More pages</span>
+  <span class="sr-only">{uiLabels.pagination_more_pages}</span>
 </span>

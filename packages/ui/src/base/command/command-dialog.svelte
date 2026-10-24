@@ -3,14 +3,14 @@
   import type { Snippet } from 'svelte';
   import Command from './command.svelte';
   import * as Dialog from '../dialog';
-  import type { WithoutChildrenOrChild } from '../../tools';
+  import { uiLabels, type WithoutChildrenOrChild } from '../../tools';
 
   let {
     open = $bindable(false),
     ref = $bindable(null),
     value = $bindable(''),
-    title = 'Command Palette',
-    description = 'Search for a command to run',
+    title = uiLabels.command_palette_title,
+    description = uiLabels.command_palette_description,
     portalProps,
     children,
     ...restProps

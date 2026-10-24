@@ -1,3 +1,4 @@
+import { t } from '$lib/utils/functions/translations';
 import { ssoApi } from '../api/sso.svelte';
 import type { SsoConfig } from '../utils/types';
 import { normalizeSsoConfig } from '../utils/sso';
@@ -42,7 +43,7 @@ class SsoStore {
       }
       this.isInitialized = true;
     } catch (err) {
-      this.error = err instanceof Error ? err.message : 'Failed to load SSO config';
+      this.error = err instanceof Error ? err.message : t.get('settings.auth.sso.messages.load_failed');
       console.error('Failed to load SSO config:', err);
     } finally {
       this.isLoading = false;

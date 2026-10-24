@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { getIntlLocale } from '$lib/utils/functions/intl-locale';
   import { DashboardPage } from '$features/lms/pages';
   import { getGreeting } from '$lib/utils/functions/date';
   import { t } from '$lib/utils/functions/translations';
@@ -6,13 +7,13 @@
   import { coursesApi } from '$features/course/api';
   import * as Page from '@cio/ui/base/page';
 
-  const todayLabel = new Intl.DateTimeFormat('en-US', {
+  const todayLabel = new Intl.DateTimeFormat(getIntlLocale(), {
     weekday: 'long',
     month: 'long',
     day: 'numeric'
   }).format(new Date());
 
-  const firstName = $derived($profile.fullname?.trim().split(/\s+/)[0] || $t('dashboard.learner'));
+  const firstName = $derived($profile.fullname?.trim().split(/\s+/).at(-1) || $t('dashboard.learner'));
 
   let totalCompleted = $derived(
     coursesApi.enrolledCourses.reduce((acc, course) => {
@@ -36,7 +37,7 @@
 </script>
 
 <svelte:head>
-  <title>Student Dashboard - MP Learning</title>
+  <title>{$t('lms_navigation.home')} · MP Learning</title>
 </svelte:head>
 
 <Page.Root class="mx-auto w-full max-w-4xl">
@@ -45,7 +46,7 @@
       <Page.Subtitle>{todayLabel}</Page.Subtitle>
       <Page.Title>
         {$t(getGreeting())},
-        <span class="ui:text-primary italic">{firstName}.</span>
+        <span class="ui:text-primary">{firstName}</span>
       </Page.Title>
       <Page.Subtitle>
         {#if totalLessons > 0}

@@ -192,7 +192,7 @@
 </script>
 
 <svelte:head>
-  <title>Home - MP Learning</title>
+  <title>{$t('page_titles.home')} · MP Learning</title>
 </svelte:head>
 
 {#if creatingState === 'creating'}
@@ -204,23 +204,23 @@
       </p>
     </div>
 
-    <div class="w-full max-w-lg rounded-2xl border p-5">
-      <p class="mb-5 text-sm text-neutral-300 italic">"{draftingPrompt}"</p>
+    <div class="ui:bg-card w-full max-w-lg rounded-2xl border p-5">
+      <p class="ui:text-muted-foreground mb-5 text-sm italic">"{draftingPrompt}"</p>
 
       <div class="flex flex-col gap-3">
         {#each steps as step (step.key)}
           {@const status = stepStatus(step.key)}
           <div class="flex items-center gap-3">
             {#if status === 'done'}
-              <CheckCircleIcon class="h-4 w-4 shrink-0 text-green-500" />
+              <CheckCircleIcon class="custom ui:text-success h-4 w-4 shrink-0" />
             {:else if status === 'active'}
-              <LoaderCircleIcon class="h-4 w-4 shrink-0 animate-spin text-white" />
+              <LoaderCircleIcon class="custom ui:text-primary h-4 w-4 shrink-0 animate-spin" />
             {:else}
-              <CircleIcon class="h-4 w-4 shrink-0 text-neutral-600" />
+              <CircleIcon class="custom ui:text-muted-foreground/50 h-4 w-4 shrink-0" />
             {/if}
             <span
               class="text-sm {status === 'done'
-                ? 'text-neutral-400 line-through'
+                ? 'ui:text-muted-foreground line-through'
                 : status === 'active'
                   ? 'ui:text-foreground'
                   : 'ui:text-muted-foreground'}"

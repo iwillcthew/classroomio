@@ -1,5 +1,5 @@
 <script lang="ts">
-  import pluralize from 'pluralize';
+  import { pluralizeLabel } from '$lib/utils/functions/pluralize-label';
   import * as Page from '@cio/ui/base/page';
   import * as Select from '@cio/ui/base/select';
   import * as Avatar from '@cio/ui/base/avatar';
@@ -194,7 +194,9 @@
                 {#if communityApi.question?.authorAvatarUrl}
                   <Avatar.Image
                     src={communityApi.question.authorAvatarUrl}
-                    alt={communityApi.question?.authorFullname ? communityApi.question.authorFullname : 'User'}
+                    alt={communityApi.question?.authorFullname
+                      ? communityApi.question.authorFullname
+                      : $t('cohorts.newsfeed.user_avatar_alt')}
                   />
                 {/if}
                 <Avatar.Fallback>
@@ -236,7 +238,7 @@
           {#if communityApi.isEditMode}
             <div class="my-2">
               <TextEditor
-                placeholder="Give an answer"
+                placeholder={$t('community.ask.give')}
                 content={communityApi.editContent.body}
                 onChange={(content) => (communityApi.editContent.body = content)}
               />
@@ -249,7 +251,7 @@
         </div>
 
         <div class="my-2">
-          {pluralize($t('community.answers'), communityApi.question?.comments.length ?? 0, true)}
+          {pluralizeLabel($t('community.answers'), communityApi.question?.comments.length ?? 0)}
         </div>
 
         {#if !!communityApi.question?.comments?.length}
@@ -285,7 +287,7 @@
 
         <div class="mt-4">
           <TextEditor
-            placeholder="Give an answer"
+            placeholder={$t('community.ask.give')}
             class="h-48!"
             content={communityApi.comment}
             onChange={(content) => (communityApi.comment = content)}

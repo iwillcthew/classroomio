@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { WithElementRef } from '../../tools';
+  import { uiLabels, type WithElementRef } from '../../tools';
   import type { HTMLAttributes } from 'svelte/elements';
 
   let {
@@ -10,6 +10,6 @@
   }: WithElementRef<HTMLAttributes<HTMLElement>> = $props();
 </script>
 
-<nav bind:this={ref} data-slot="breadcrumb" class={className} aria-label="breadcrumb" {...restProps}>
+<nav bind:this={ref} data-slot="breadcrumb" class={className} aria-label={uiLabels.breadcrumb} {...restProps}>
   {@render children?.()}
 </nav>

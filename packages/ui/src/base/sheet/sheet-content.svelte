@@ -25,7 +25,7 @@
   import { CloseIcon, HoverableItem } from '../../custom/moving-icons';
   import type { Snippet } from 'svelte';
   import SheetOverlay from './sheet-overlay.svelte';
-  import { cn, type WithoutChildrenOrChild } from '../../../src/tools';
+  import { cn, uiLabels, type WithoutChildrenOrChild } from '../../../src/tools';
 
   let {
     ref = $bindable(null),
@@ -58,7 +58,7 @@
           class="ui:ring-offset-background ui:focus-visible:ring-ring ui:rounded-xs ui:focus-visible:outline-hidden ui:absolute ui:right-4 ui:top-4 ui:opacity-70 ui:transition-opacity ui:hover:opacity-100 ui:focus-visible:ring-2 ui:focus-visible:ring-offset-2 ui:disabled:pointer-events-none"
         >
           <CloseIcon {isHovered} />
-          <span class="sr-only">Close</span>
+          <span class="sr-only">{uiLabels.close}</span>
         </SheetPrimitive.Close>
       {/snippet}
     </HoverableItem>

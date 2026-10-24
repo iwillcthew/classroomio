@@ -22,6 +22,7 @@ import { toPeopleRequestQuery } from '$features/course/utils/people-utils';
 
 import type { TAddCourseMembers } from '@cio/utils/validation/course/people';
 import { snackbar } from '$features/ui/snackbar/store';
+import { t } from '$lib/utils/functions/translations';
 
 /**
  * API class for course members operations
@@ -55,7 +56,7 @@ export class PeopleApi extends BaseApiWithErrors {
       },
       onError: (result) => {
         if (typeof result === 'string') {
-          snackbar.error('Failed to list course members');
+          snackbar.error('snackbar.course_api.members_list_failed');
         }
       }
     });
@@ -78,14 +79,14 @@ export class PeopleApi extends BaseApiWithErrors {
       onSuccess: (response) => {
         if (response.data) {
           const count = Array.isArray(response.data) ? response.data.length : 1;
-          snackbar.success(`${count} member${count > 1 ? 's' : ''} added successfully`);
+          snackbar.success(t.get('snackbar.course_api.members_added', { count }));
           this.success = true;
           this.errors = {};
         }
       },
       onError: (result) => {
         if (typeof result === 'string') {
-          snackbar.error('Failed to add course members');
+          snackbar.error('snackbar.course_api.members_add_failed');
         }
       }
     });
@@ -111,7 +112,7 @@ export class PeopleApi extends BaseApiWithErrors {
       },
       onError: (result) => {
         if (typeof result === 'string') {
-          snackbar.error('Failed to create student invite');
+          snackbar.error('snackbar.course_api.student_invite_failed');
           return;
         }
         if ('error' in result && 'field' in result && result.field) {
@@ -142,7 +143,7 @@ export class PeopleApi extends BaseApiWithErrors {
       },
       onError: (result) => {
         if (typeof result === 'string') {
-          snackbar.error('Failed to list invites');
+          snackbar.error('snackbar.course_api.invites_list_failed');
         }
       }
     });
@@ -168,7 +169,7 @@ export class PeopleApi extends BaseApiWithErrors {
       },
       onError: (result) => {
         if (typeof result === 'string') {
-          snackbar.error('Failed to revoke invite');
+          snackbar.error('snackbar.course_api.invite_revoke_failed');
         }
       }
     });
@@ -194,7 +195,7 @@ export class PeopleApi extends BaseApiWithErrors {
       },
       onError: (result) => {
         if (typeof result === 'string') {
-          snackbar.error('Failed to load invite audit');
+          snackbar.error('snackbar.course_api.invite_audit_failed');
         }
       }
     });
@@ -279,14 +280,14 @@ export class PeopleApi extends BaseApiWithErrors {
       logContext: 'updating course member',
       onSuccess: (response) => {
         if (response.data) {
-          snackbar.success('Member updated successfully');
+          snackbar.success('snackbar.course_api.member_updated');
           this.success = true;
           this.errors = {};
         }
       },
       onError: (result) => {
         if (typeof result === 'string') {
-          snackbar.error('Failed to update course member');
+          snackbar.error('snackbar.course_api.member_update_failed');
           return;
         }
         if ('error' in result && 'field' in result && result.field) {
@@ -315,14 +316,14 @@ export class PeopleApi extends BaseApiWithErrors {
       logContext: 'deleting course member',
       onSuccess: (response) => {
         if (response.data) {
-          snackbar.success('Member removed successfully');
+          snackbar.success('snackbar.course_api.member_removed');
           this.success = true;
           this.errors = {};
         }
       },
       onError: (result) => {
         if (typeof result === 'string') {
-          snackbar.error('Failed to delete course member');
+          snackbar.error('snackbar.course_api.member_remove_failed');
         }
       }
     });
@@ -349,7 +350,7 @@ export class PeopleApi extends BaseApiWithErrors {
       },
       onError: (result) => {
         if (typeof result === 'string') {
-          snackbar.error('Failed to fetch user course analytics');
+          snackbar.error('snackbar.course_api.user_analytics_failed');
         }
       }
     });

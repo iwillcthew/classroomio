@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { getIntlLocale } from '$lib/utils/functions/intl-locale';
   import { untrack } from 'svelte';
   import { Badge } from '@cio/ui/base/badge';
   import { Button } from '@cio/ui/base/button';
@@ -117,7 +118,7 @@
       return t.get('course.navItem.compliance.not_available');
     }
 
-    return new Intl.DateTimeFormat('en-US', {
+    return new Intl.DateTimeFormat(getIntlLocale(), {
       dateStyle: 'medium',
       timeStyle: 'short'
     }).format(date);

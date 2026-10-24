@@ -1,5 +1,6 @@
 <script lang="ts">
   import { browser } from '$app/environment';
+  import { t } from '$lib/utils/functions/translations';
   import { onMount, onDestroy } from 'svelte';
   import WidgetPreview from '$features/widget/components/widget-preview.svelte';
   import { isValidParentMessage, isAllowedOrigin } from '$features/widget/utils/preview-protocol';
@@ -50,7 +51,7 @@
           });
         });
       } catch (renderError) {
-        errorMessage = renderError instanceof Error ? renderError.message : 'Preview render failed';
+        errorMessage = renderError instanceof Error ? renderError.message : t.get('widgets.preview.render_failed');
         postToParent({
           type: 'WIDGET_PREVIEW_ERROR',
           requestId: message.requestId,

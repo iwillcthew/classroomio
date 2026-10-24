@@ -2,6 +2,7 @@
   import type { Snippet } from 'svelte';
   import { UserAvatar } from '../user-avatar';
   import { Badge } from '../../base/badge';
+  import { uiLabels } from '../../tools';
   import * as DropdownMenu from '../../base/dropdown-menu';
   import EllipsisVerticalIcon from '@lucide/svelte/icons/ellipsis-vertical';
   import PencilIcon from '@lucide/svelte/icons/pencil';
@@ -41,9 +42,9 @@
     onDelete,
     canReport = false,
     onReport,
-    editLabel = 'Edit',
-    deleteLabel = 'Delete',
-    reportLabel = 'Report',
+    editLabel = uiLabels.edit,
+    deleteLabel = uiLabels.delete,
+    reportLabel = uiLabels.report,
     class: className = '',
     actions
   }: Props = $props();
@@ -58,7 +59,7 @@
 
 <div class="ui:flex ui:w-full ui:items-center ui:justify-between {className}">
   <div class="ui:flex ui:items-center ui:gap-2">
-    <UserAvatar src={avatarUrl || undefined} alt={fullname || 'User Avatar'} class={avatarSize} />
+    <UserAvatar src={avatarUrl || undefined} alt={fullname || uiLabels.user_avatar_alt} class={avatarSize} />
     <div class="ui:flex ui:items-center ui:gap-2">
       {#if fullname}
         <span class="ui:text-sm ui:font-semibold ui:capitalize ui:text-foreground">{fullname}</span>

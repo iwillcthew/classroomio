@@ -524,7 +524,8 @@ class OrgApi extends BaseApiWithErrors {
           };
 
           if (apiError.field === 'siteName' || apiError.code === 'SITENAME_EXISTS') {
-            const message = typeof apiError.error === 'string' ? apiError.error : 'Site name already exists';
+            const message =
+              typeof apiError.error === 'string' ? apiError.error : t.get('validations.site_name.already_exists');
             this.errors = { ...this.errors, siteName: message };
             snackbar.error(message);
             return;

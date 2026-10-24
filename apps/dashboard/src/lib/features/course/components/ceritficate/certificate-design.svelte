@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { getIntlLocale } from '$lib/utils/functions/intl-locale';
   import { resolve } from '$app/paths';
   import { Button } from '@cio/ui/base/button';
   import { Badge } from '@cio/ui/base/badge';
@@ -22,11 +23,11 @@
 
   const previewData = $derived({
     recipientName: 'Eleanor Vance',
-    courseName: courseApi.course?.title ?? 'Course Title',
+    courseName: courseApi.course?.title ?? $t('course.navItem.settings.course_title'),
     courseDescription: design.descriptionOverride || courseApi.course?.description || '',
-    orgName: $currentOrg.name || 'Organization',
+    orgName: $currentOrg.name || $t('settings.tabs.organization_tab'),
     orgLogoUrl: $currentOrg.avatarUrl || undefined,
-    date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: '2-digit' }),
+    date: new Date().toLocaleDateString(getIntlLocale(), { year: 'numeric', month: 'long', day: '2-digit' }),
     certificateId: (design.idFormat ?? 'N° {seq}').replace('{seq}', '0247')
   });
 

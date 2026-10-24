@@ -135,6 +135,8 @@
               <FileDropZone.Trigger
                 label={$t('media_manager.form.thumbnail_drop_label')}
                 formatMaxSize={() => $t('media_manager.form.thumbnail_drop_size')}
+                formatMaxFiles={() => $t('media_manager.form.thumbnail_drop_size')}
+                formatMaxFilesAndSize={() => ''}
               />
             </FileDropZone.Root>
           </div>

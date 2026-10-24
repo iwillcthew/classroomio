@@ -5,7 +5,7 @@
 </script>
 
 <svelte:head>
-  <title>Integrations - MP Learning</title>
+  <title>{$t('page_titles.integrations')} · MP Learning</title>
 </svelte:head>
 
 <Page.Header>

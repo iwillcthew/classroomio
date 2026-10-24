@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import CircleContent from './circle-content.svelte';
+  import { t } from '$lib/utils/functions/translations';
 
   interface Props {
     startCount?: boolean;
@@ -42,4 +43,4 @@
   });
 </script>
 
-<CircleContent value={countDownNo} label="Second(s)" className="mr-3" />
+<CircleContent value={countDownNo} label={$t('components.quiz.second')} className="mr-3" />

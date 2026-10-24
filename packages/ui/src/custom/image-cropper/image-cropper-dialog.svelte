@@ -1,7 +1,7 @@
 <script lang="ts">
   import * as Dialog from '../../base/dialog';
   import Button from '../../base/button/button.svelte';
-  import { cn } from '../../tools';
+  import { cn, uiLabels } from '../../tools';
   import { useImageCropperDialog } from './image-cropper-context.svelte';
   import type { ImageCropperDialogProps } from './types';
   import XIcon from '@lucide/svelte/icons/x';
@@ -28,7 +28,7 @@
       onclick={() => dialogState.rootState.onCancel()}
     >
       <XIcon />
-      <span class="ui:sr-only">Close</span>
+      <span class="ui:sr-only">{uiLabels.close}</span>
     </Button>
     <div class="ui:flex ui:flex-col ui:gap-4">
       {@render children?.()}

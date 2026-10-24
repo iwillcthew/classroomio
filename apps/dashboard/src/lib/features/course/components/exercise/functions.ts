@@ -10,6 +10,7 @@ import type { Question } from '$features/course/types';
 import type { QuestionnaireMetaData } from './store';
 import type { TExerciseUpdate } from '@cio/utils/validation/exercise';
 import { toggleConfetti } from '$features/ui/confetti/store';
+import { t } from '$lib/utils/functions/translations';
 
 export const isAnswerCorrect = (options, answer) => {
   return options.some((option) => option.isCorrect && option.value === answer);
@@ -94,18 +95,20 @@ export function getPropsForQuestion(
     disabled: (isFinished && isCorrect) || isFinished,
     nextButtonProps: isOpenQuesiton
       ? {
-          label: 'Next',
+          label: t.get('course.navItem.lessons.exercises.all_exercises.next'),
           isActive: true
         }
       : isCorrect
         ? {
-            label: isLast ? 'Finish' : 'Next',
+            label: isLast
+              ? t.get('course.navItem.lessons.exercises.all_exercises.finish')
+              : t.get('course.navItem.lessons.exercises.all_exercises.next'),
             isActive: true,
             disableOptionSelect: true,
             isDisabled: isLast ? false : true // Disable Next button because auto next is enabled
           }
         : {
-            label: 'Check',
+            label: t.get('course.navItem.lessons.exercises.all_exercises.check'),
             isActive: false
           }
   };

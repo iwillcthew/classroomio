@@ -27,7 +27,7 @@
     <Label class="mb-2 block">{$t('content.toggle_label')}</Label>
     <Select.Root type="single" bind:value onValueChange={handleSelect}>
       <Select.Trigger class="w-full">
-        <p>{value ? LANGUAGES.find((lang) => lang.id === value)?.text : 'Pick a Language'}</p>
+        <p>{value ? LANGUAGES.find((lang) => lang.id === value)?.text : $t('settings.account.select_language')}</p>
       </Select.Trigger>
       <Select.Content>
         {#each LANGUAGES as language}

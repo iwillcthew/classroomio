@@ -55,7 +55,7 @@
     editableStorageKey = 'edra-editable',
     class: className = '',
     editorClass = '',
-    placeholder = 'Welcome to ClassroomIO',
+    placeholder = '',
     onChange,
     onReady,
     onEditorDestroy,

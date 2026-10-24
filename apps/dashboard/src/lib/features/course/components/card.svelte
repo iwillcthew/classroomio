@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { getIntlLocale } from '$lib/utils/functions/intl-locale';
   import { Badge } from '@cio/ui/base/badge';
   import type { Component, Snippet } from 'svelte';
   import { resolve } from '$app/paths';
@@ -13,7 +14,7 @@
   import { Button } from '@cio/ui/base/button';
   import { Progress } from '@cio/ui/base/progress';
 
-  import pluralize from 'pluralize';
+  import { pluralizeLabel } from '$lib/utils/functions/pluralize-label';
 
   import { Image } from '$features/ui';
   import { t } from '$lib/utils/functions/translations';
@@ -225,7 +226,7 @@
       return '';
     }
 
-    return new Intl.DateTimeFormat('en-US', {
+    return new Intl.DateTimeFormat(getIntlLocale(), {
       dateStyle: 'medium'
     }).format(date);
   }
@@ -241,7 +242,7 @@
   class="group relative"
 >
   {#snippet media()}
-    <Image src={bannerImage} alt="Course banner image" className="w-full h-full rounded-sm object-cover" />
+    <Image src={bannerImage} alt={$t('course.card.banner_alt')} className="w-full h-full rounded-sm object-cover" />
   {/snippet}
 
   {#snippet overlay()}
@@ -273,7 +274,7 @@
             </span>
             &
             <span>
-              {pluralize($t('courses.course_card.exercise'), totalExercises, true)}
+              {pluralizeLabel($t('courses.course_card.exercise'), totalExercises)}
             </span>
           </p>
         {/if}
@@ -353,11 +354,11 @@
             </span>
             &
             <span>
-              {pluralize($t('courses.course_card.exercise'), totalExercises, true)}
+              {pluralizeLabel($t('courses.course_card.exercise'), totalExercises)}
             </span>
           </p>
           <p class="pl-2 text-xs dark:text-white">
-            {pluralize($t('courses.course_card.students'), totalStudents, true)}
+            {pluralizeLabel($t('courses.course_card.students'), totalStudents)}
           </p>
         </div>
       {/if}

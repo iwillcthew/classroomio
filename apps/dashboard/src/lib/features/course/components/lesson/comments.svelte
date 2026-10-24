@@ -47,7 +47,9 @@
         avatar: apiComment.profile?.avatarUrl ?? 'AV',
         commentAt: new Date(apiComment.createdAt),
         groupmemberId: apiComment.groupmemberId,
-        name: isCurrentUser ? $t('course.navItem.lessons.comments.you') : apiComment.profile?.fullname || 'Unknown'
+        name: isCurrentUser
+          ? $t('course.navItem.lessons.comments.you')
+          : apiComment.profile?.fullname || $t('course.common_labels.unknown_user')
       };
     });
   });
@@ -98,7 +100,11 @@
   </div>
   <div>
     <div class="flex h-full items-start gap-3">
-      <UserAvatar src={$profile.avatarUrl} alt={$profile.fullname ?? 'User'} class="mt-2 size-6!" />
+      <UserAvatar
+        src={$profile.avatarUrl}
+        alt={$profile.fullname ?? $t('course.navItem.news_feed.user')}
+        class="mt-2 size-6!"
+      />
       <div class="h-full w-full">
         <TextareaField
           label={$t('course.navItem.lessons.comments.text_area_title')}
@@ -118,7 +124,11 @@
   <div class="my-5">
     {#each comments as commentItem (commentItem.id)}
       <div class="mt-2 flex items-start gap-3 pb-2">
-        <UserAvatar src={commentItem.avatar} alt={commentItem.name ?? 'User'} class="mt-2 size-6!" />
+        <UserAvatar
+          src={commentItem.avatar}
+          alt={commentItem.name ?? $t('course.navItem.news_feed.user')}
+          class="mt-2 size-6!"
+        />
 
         <div class="w-full rounded-md border px-3 py-2 dark:border-neutral-700">
           <div class="flex items-center justify-between gap-2">

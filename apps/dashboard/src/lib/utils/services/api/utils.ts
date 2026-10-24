@@ -1,9 +1,10 @@
+import { t } from '$lib/utils/functions/translations';
 import { ApiError } from './types';
 
 // Utility function for exponential backoff
 export const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-export const getErrMsg = (error: unknown, fallback = 'Something went wrong'): string => {
+export const getErrMsg = (error: unknown, fallback = t.get('snackbar.something')): string => {
   if (error instanceof ApiError) {
     return error.message;
   }

@@ -1,22 +1,22 @@
 export const CertificateReportData = [
   {
     id: 1,
-    title: 'Total students taking course',
+    title: 'course.certificate_reports.total_students',
     value: 100
   },
   {
     id: 2,
-    title: 'Number of certificates issued ',
+    title: 'course.certificate_reports.issued_count',
     value: 45
   },
   {
     id: 3,
-    title: 'Certificates left to be issued',
+    title: 'course.certificate_reports.left_to_issue',
     value: 55
   },
   {
     id: 4,
-    title: 'Personalised cetificates',
+    title: 'course.certificate_reports.personalized_count',
     value: 15
   }
 ];

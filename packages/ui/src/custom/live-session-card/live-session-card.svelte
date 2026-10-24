@@ -33,6 +33,7 @@
   import HourglassIcon from '@lucide/svelte/icons/hourglass';
   import ChevronDownIcon from '@lucide/svelte/icons/chevron-down';
   import PlayCircleIcon from '@lucide/svelte/icons/circle-play';
+  import { formatUiLabel, uiLabels } from '../../tools';
 
   interface Props {
     title: string;
@@ -127,14 +128,14 @@
     const ics = [
       'BEGIN:VCALENDAR',
       'VERSION:2.0',
-      'PRODID:-//ClassroomIO//Live Session//EN',
+      'PRODID:-//MP Learning//Live Session//EN',
       'BEGIN:VEVENT',
       `UID:session-${startMs}@classroomio`,
       `DTSTAMP:${toIcsUtc(now)}`,
       `DTSTART:${toIcsUtc(startMs)}`,
       `DTEND:${toIcsUtc(endMs)}`,
       `SUMMARY:${icsEscape(title)}`,
-      `DESCRIPTION:${icsEscape(`Join your live session: ${callUrl}`)}`,
+      `DESCRIPTION:${icsEscape(calendarDetails)}`,
       `URL:${icsEscape(callUrl)}`,
       'BEGIN:VALARM',
       'ACTION:DISPLAY',
@@ -154,7 +155,7 @@
     URL.revokeObjectURL(url);
   }
 
-  const calendarDetails = $derived(`Join your live session: ${callUrl}`);
+  const calendarDetails = $derived(formatUiLabel(uiLabels.live_session_calendar_details, { url: callUrl }));
 
   const googleCalendarUrl = $derived(
     'https://calendar.google.com/calendar/render?action=TEMPLATE' +

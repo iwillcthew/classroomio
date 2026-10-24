@@ -34,7 +34,7 @@
     );
     const rows = response?.data ?? [];
 
-    return buildAudienceExportDocument(rows, $currentOrg?.name ?? 'Organization', {
+    return buildAudienceExportDocument(rows, $currentOrg?.name ?? $t('settings.emails.variables.organization'), {
       name: $t('audience.name'),
       email: $t('audience.email'),
       memberStatus: $t('audience.filter.status'),
@@ -51,7 +51,7 @@
 </script>
 
 <svelte:head>
-  <title>Audience - MP Learning</title>
+  <title>{$t('page_titles.audience')} · MP Learning</title>
 </svelte:head>
 
 <Page.Root class="mx-auto w-full max-w-6xl">

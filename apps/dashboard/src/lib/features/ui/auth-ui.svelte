@@ -14,6 +14,10 @@
   import { ROUTE } from '$lib/utils/constants/routes';
   import { BRAND } from '$lib/utils/constants/brand';
   import { env } from '$env/dynamic/public';
+  import BookOpenIcon from '@lucide/svelte/icons/book-open';
+  import BadgeCheckIcon from '@lucide/svelte/icons/badge-check';
+  import ChartColumnIcon from '@lucide/svelte/icons/chart-column';
+  import LockIcon from '@lucide/svelte/icons/lock';
 
   interface Props {
     isLogin?: boolean;
@@ -72,40 +76,71 @@
 
   const authBackgroundUrl = $derived($currentOrg.customization.auth?.backgroundImage?.trim() ?? '');
   const googleEnabled = env.PUBLIC_GOOGLE_AUTH_ENABLED === 'true';
+  const headlineLines = $derived($t('mp_learning.headline').split('\n'));
+  const features = [
+    {
+      icon: BookOpenIcon,
+      titleKey: 'mp_learning.feature_paths',
+      descriptionKey: 'mp_learning.feature_paths_description'
+    },
+    {
+      icon: BadgeCheckIcon,
+      titleKey: 'mp_learning.feature_practice',
+      descriptionKey: 'mp_learning.feature_practice_description'
+    },
+    {
+      icon: ChartColumnIcon,
+      titleKey: 'mp_learning.feature_progress',
+      descriptionKey: 'mp_learning.feature_progress_description'
+    }
+  ];
 </script>
 
 <div class="mp-auth">
   <aside class="mp-auth-story">
+    <svg class="mp-chevrons" viewBox="0 0 600 800" aria-hidden="true">
+      <path d="M300 -40 L520 180 L300 400 L380 400 L600 180 L380 -40 Z" />
+      <path d="M120 420 L340 640 L120 860 L200 860 L420 640 L200 420 Z" />
+    </svg>
     <img src={BRAND.logo} alt={BRAND.name} class="mp-brand" />
     <div class="mp-story-copy">
-      <p class="mp-eyebrow">{$t('mp_learning.eyebrow')}</p>
-      <h1>{$t('mp_learning.headline')}</h1>
+      <p class="mp-eyebrow"><span></span>{$t('mp_learning.eyebrow')}</p>
+      <h1>
+        {#each headlineLines as line, index (index)}
+          <span class:mp-headline-accent={index > 0}>{line}</span>
+        {/each}
+      </h1>
       <p class="mp-description">{$t('mp_learning.description')}</p>
-      <div class="mp-learning-pillars">
-        <span>{$t('mp_learning.learn')}</span>
-        <span>{$t('mp_learning.practice')}</span>
-        <span>{$t('mp_learning.grow')}</span>
-      </div>
+      <ul class="mp-features">
+        {#each features as feature (feature.titleKey)}
+          {@const Icon = feature.icon}
+          <li>
+            <span class="mp-feature-icon"><Icon size={18} class="custom" /></span>
+            <span>
+              <strong>{$t(feature.titleKey)}</strong>
+              <small>{$t(feature.descriptionKey)}</small>
+            </span>
+          </li>
+        {/each}
+      </ul>
     </div>
-    <p class="mp-story-footer">{$t('mp_learning.internal')}</p>
+    <p class="mp-story-footer"><LockIcon size={14} class="custom" />{$t('mp_learning.internal')}</p>
   </aside>
   <main class="mp-auth-main" style:background-image={authBackgroundUrl ? `url("${authBackgroundUrl}")` : undefined}>
     <div class="mp-auth-form">
       <Card.Root class="w-full border-0 bg-transparent shadow-none">
         {#if !showOnlyContent || showLogo}
-          <Card.Header class="flex flex-col items-center gap-4">
+          <Card.Header class="flex flex-col items-start gap-2 pb-2">
             <a href={resolve(ROUTE.HOME, {})} class="mp-mobile-brand">
               <img src={BRAND.logo} alt={BRAND.name} />
             </a>
 
             {#if !showOnlyContent}
-              <a href="/">
-                <Card.Title class="text-2xl font-normal!">
-                  {isLogin ? $t('login.welcome') : $t('login.create_account')}
-                </Card.Title>
-              </a>
+              <Card.Title class="text-2xl font-bold tracking-tight md:text-3xl">
+                {isLogin ? $t('login.welcome') : $t('login.create_account')}
+              </Card.Title>
               {#if isLogin}
-                <Card.Description class="text-center">{$t('mp_learning.sign_in_description')}</Card.Description>
+                <Card.Description class="text-base">{$t('mp_learning.sign_in_description')}</Card.Description>
               {/if}
             {/if}
           </Card.Header>
@@ -161,60 +196,114 @@
 <style>
   .mp-auth {
     display: grid;
-    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     min-height: 100svh;
-    background: var(--background);
+    background: var(--card);
   }
   .mp-auth-story {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     gap: 3rem;
-    padding: clamp(2rem, 5vw, 5rem);
-    background: #edf6ff url('/brand/learning-background.png') center / cover;
-    color: #183c72;
+    padding: clamp(2rem, 5vw, 4.5rem);
+    background: linear-gradient(160deg, #24539f 0%, #1e4a9c 45%, #163a7d 100%);
+    color: #ffffff;
+  }
+  .mp-chevrons {
+    position: absolute;
+    inset: 0 0 0 auto;
+    z-index: -1;
+    height: 100%;
+    width: auto;
+    fill: rgb(255 255 255 / 7%);
   }
   .mp-brand {
-    width: min(100%, 330px);
+    width: min(100%, 260px);
     height: auto;
+    filter: brightness(0) invert(1);
   }
   .mp-eyebrow {
-    font-size: 0.75rem;
-    font-weight: 650;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.9rem;
+    border: 1px solid rgb(255 255 255 / 22%);
+    border-radius: 999px;
+    background: rgb(255 255 255 / 8%);
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+  .mp-eyebrow span {
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 999px;
+    background: #7cc8f0;
   }
   h1 {
-    margin: 1.5rem 0;
+    display: flex;
+    flex-direction: column;
+    margin: 1.5rem 0 1.25rem;
     max-width: 620px;
-    font-size: clamp(2.2rem, 4vw, 4.2rem);
+    font-size: clamp(2.2rem, 3.6vw, 3.6rem);
     line-height: 1.12;
-    font-weight: 650;
-    letter-spacing: -0.04em;
+    font-weight: 700;
+    letter-spacing: -0.03em;
     text-wrap: balance;
   }
+  .mp-headline-accent {
+    color: #a9d8f5;
+  }
   .mp-description {
-    max-width: 440px;
-    font-size: 1rem;
-    line-height: 1.8;
-    color: #496587;
+    max-width: 480px;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: rgb(255 255 255 / 80%);
   }
-  .mp-learning-pillars {
+  .mp-features {
+    display: grid;
+    gap: 0.75rem;
+    max-width: 520px;
+    margin-top: 2.25rem;
+  }
+  .mp-features li {
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.6rem;
-    margin-top: 2rem;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 0.85rem 1rem;
+    border: 1px solid rgb(255 255 255 / 14%);
+    border-radius: 0.75rem;
+    background: rgb(255 255 255 / 6%);
   }
-  .mp-learning-pillars span {
-    border: 1px solid #b9d7ef;
-    border-radius: 999px;
-    padding: 0.55rem 1rem;
+  .mp-features strong {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+  .mp-features small {
+    display: block;
+    margin-top: 0.15rem;
     font-size: 0.8rem;
-    background: #ffffff80;
+    color: rgb(255 255 255 / 70%);
+  }
+  .mp-feature-icon {
+    display: grid;
+    flex-shrink: 0;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 0.6rem;
+    background: rgb(255 255 255 / 14%);
+    color: #ffffff;
   }
   .mp-story-footer {
-    font-size: 0.75rem;
-    color: #496587;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: rgb(255 255 255 / 70%);
   }
   .mp-auth-main {
     display: flex;
@@ -225,12 +314,12 @@
   }
   .mp-auth-form {
     width: 100%;
-    max-width: 440px;
+    max-width: 420px;
   }
   .mp-mobile-brand {
     display: none;
   }
-  @media (max-width: 800px) {
+  @media (max-width: 900px) {
     .mp-auth {
       grid-template-columns: 1fr;
     }
@@ -239,11 +328,8 @@
     }
     .mp-mobile-brand {
       display: block;
-      width: 240px;
-      margin-bottom: 1.5rem;
-      padding: 0.75rem;
-      border-radius: 0.75rem;
-      background: white;
+      width: 220px;
+      margin-bottom: 1rem;
     }
     .mp-mobile-brand img {
       width: 100%;

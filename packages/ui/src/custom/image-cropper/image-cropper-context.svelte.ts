@@ -3,6 +3,7 @@ import type { CropArea, DispatchEvents } from 'svelte-easy-crop';
 import { Context } from 'runed';
 import type { ImageCropperRootStateProps } from './types';
 import { getCroppedImg } from './utils';
+import { uiLabels } from '../../tools';
 
 // https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/img#supported_image_formats
 export const VALID_IMAGE_TYPES = [
@@ -96,7 +97,7 @@ class ImageCropperRootState {
       this.onCancel();
     } catch (error) {
       console.error('Image crop callback failed:', error);
-      this.error = error instanceof Error ? error.message : 'Failed to use this image. Please try again.';
+      this.error = error instanceof Error ? error.message : uiLabels.cropper_use_failed;
       this.open = true;
     } finally {
       this.processing = false;
@@ -117,7 +118,7 @@ class ImageCropperRootState {
       await this.opts.onCropped.current(croppedUrl);
       this.onCancel();
     } catch (error) {
-      this.error = error instanceof Error ? error.message : 'Failed to crop this image. Please try again.';
+      this.error = error instanceof Error ? error.message : uiLabels.cropper_crop_failed;
     } finally {
       this.processing = false;
     }

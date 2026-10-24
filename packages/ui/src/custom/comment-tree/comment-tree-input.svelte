@@ -4,6 +4,7 @@
   import { Textarea } from '../../base/textarea';
   import SendHorizontalIcon from '@lucide/svelte/icons/send-horizontal';
   import XIcon from '@lucide/svelte/icons/x';
+  import { uiLabels } from '../../tools';
 
   interface Props {
     authorAvatarUrl?: string | null;
@@ -19,11 +20,11 @@
 
   let {
     authorAvatarUrl,
-    placeholder = 'Add a comment...',
+    placeholder = uiLabels.comment_placeholder,
     replyingToUser = null,
     replyingToSnippet = null,
     onCancelReply,
-    cancelLabel = 'Cancel',
+    cancelLabel = uiLabels.cancel,
     onSubmit,
     isSubmitting = false,
     class: className = ''
@@ -63,7 +64,10 @@
         class="ui:flex ui:items-center ui:justify-between ui:bg-muted/30 ui:px-2.5 ui:py-1 ui:text-xs ui:text-muted-foreground ui:border-b ui:border-border/60"
       >
         <div class="ui:flex ui:max-w-[85%] ui:flex-col ui:gap-0.5 ui:truncate">
-          <span>Replying to <strong class="ui:font-medium ui:text-foreground">@{replyingToUser}</strong></span>
+          <span
+            >{uiLabels.comment_replying_to}
+            <strong class="ui:font-medium ui:text-foreground">@{replyingToUser}</strong></span
+          >
           {#if replyingToSnippet}
             <span class="ui:truncate ui:italic ui:text-muted-foreground/80">"{replyingToSnippet}"</span>
           {/if}
@@ -98,7 +102,7 @@
         loading={isSubmitting}
         disabled={!value.trim() || isSubmitting}
         onclick={handleSend}
-        aria-label="Send"
+        aria-label={uiLabels.comment_send}
       >
         <SendHorizontalIcon size={14} />
       </Button>

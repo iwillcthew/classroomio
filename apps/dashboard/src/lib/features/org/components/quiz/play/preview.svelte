@@ -10,6 +10,7 @@
   import { themeImages } from '$lib/utils/constants/quiz';
   import { Button } from '@cio/ui/base/button';
   import { IconButton } from '@cio/ui/custom/icon-button';
+  import { t } from '$lib/utils/functions/translations';
 
   let { exitPreview = () => {} } = $props();
 
@@ -67,7 +68,7 @@
             {#if currentQuestion}
               <QuizQuestion {currentQuestion} isPreview={true} />
             {:else}
-              <h2>No question added</h2>
+              <h2>{$t('quiz.play.no_question')}</h2>
             {/if}
           </div>
         {/snippet}
@@ -75,7 +76,7 @@
         {#snippet footer()}
           <div class="flex flex-col justify-center">
             {#if currentQuestion}
-              <Button variant="ghost" onclick={exitPreview} class="w-fit">Exit Preview</Button>
+              <Button variant="ghost" onclick={exitPreview} class="w-fit">{$t('quiz.play.exit_preview')}</Button>
 
               <div class="flex items-center justify-center">
                 <IconButton onclick={handlePrev}>

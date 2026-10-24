@@ -697,7 +697,9 @@
           const questionKey = getExerciseQuestionContractKey(toExerciseQuestionModel(question));
           return {
             key: questionKey,
-            label: `Q${questionIndex + 1}`,
+            label: $t('course.navItem.lessons.exercises.all_exercises.section.question_short', {
+              number: questionIndex + 1
+            }),
             isAnswered: hasAnswerValue($questionnaireMetaData.answers[questionKey]),
             isCurrent:
               sectionIndex === $questionnaireMetaData.currentSectionIndex &&

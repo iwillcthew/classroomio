@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { getIntlLocale } from '$lib/utils/functions/intl-locale';
   import { CERTIFICATE_TEMPLATES, type CertificateTemplateId } from '@cio/certificates';
   import { Certificate } from '@cio/ui';
   import { IconButton } from '@cio/ui/custom/icon-button';
@@ -46,7 +47,7 @@
       $t('course.navItem.certificates.editor.sample_description'),
     orgName: $currentOrg.name || $t('course.navItem.certificates.editor.sample_org'),
     orgLogoUrl: $currentOrg.avatarUrl || undefined,
-    date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: '2-digit' }),
+    date: new Date().toLocaleDateString(getIntlLocale(), { year: 'numeric', month: 'long', day: '2-digit' }),
     certificateId: (store.draft.idFormat || 'N° {seq}').replace('{seq}', '0247')
   });
 

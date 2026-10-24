@@ -10,9 +10,9 @@
         destructive:
           'ui:bg-destructive ui:[a&]:hover:bg-destructive/90 ui:focus-visible:ring-destructive/20 ui:dark:focus-visible:ring-destructive/40 ui:dark:bg-destructive/70 ui:border-transparent ui:text-white',
         warning:
-          'ui:bg-amber-600 ui:text-white ui:[a&]:hover:bg-amber-600/90 ui:border-transparent ui:dark:bg-amber-500 ui:dark:text-amber-950',
+          'ui:bg-amber-50 ui:text-amber-700 ui:border-amber-200 ui:[a&]:hover:bg-amber-100 ui:dark:bg-amber-500/15 ui:dark:text-amber-300 ui:dark:border-amber-500/30',
         success:
-          'ui:bg-emerald-600 ui:text-white ui:[a&]:hover:bg-emerald-600/90 ui:border-transparent ui:dark:bg-emerald-500 ui:dark:text-emerald-950',
+          'ui:bg-emerald-50 ui:text-emerald-700 ui:border-emerald-200 ui:[a&]:hover:bg-emerald-100 ui:dark:bg-emerald-500/15 ui:dark:text-emerald-300 ui:dark:border-emerald-500/30',
         outline: 'ui:text-foreground ui:[a&]:hover:bg-accent ui:[a&]:hover:text-accent-foreground'
       }
     },

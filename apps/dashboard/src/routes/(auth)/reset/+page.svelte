@@ -26,7 +26,7 @@
   onMount(() => {
     if (token) return;
 
-    snackbar.error('Invalid Token');
+    snackbar.error('auth.reset.invalid_token');
 
     setTimeout(() => {
       goto(resolve('/login', {}));
@@ -37,7 +37,7 @@
 </script>
 
 <svelte:head>
-  <title>Reset Password - MP Learning</title>
+  <title>{$t('page_titles.reset_password')} · MP Learning</title>
 </svelte:head>
 
 <AuthUI
@@ -59,6 +59,10 @@
           id="password"
           bind:value={fields.password}
           placeholder="************"
+          showPasswordTooltip={$t('auth.password.show')}
+          hidePasswordTooltip={$t('auth.password.hide')}
+          showPasswordAriaLabel={$t('auth.password.show')}
+          hidePasswordAriaLabel={$t('auth.password.hide')}
           disabled={resetApi.isLoading}
           aria-invalid={resetApi.errors.password ? 'true' : undefined}
           autocomplete="new-password"
@@ -78,6 +82,10 @@
           id="confirmPassword"
           bind:value={fields.confirmPassword}
           placeholder="************"
+          showPasswordTooltip={$t('auth.password.show')}
+          hidePasswordTooltip={$t('auth.password.hide')}
+          showPasswordAriaLabel={$t('auth.password.show')}
+          hidePasswordAriaLabel={$t('auth.password.hide')}
           disabled={resetApi.isLoading}
           aria-invalid={confirmPasswordError || resetApi.errors.confirmPassword ? 'true' : undefined}
           autocomplete="new-password"
@@ -89,7 +97,7 @@
     </Field.Field>
 
     <Button type="submit" disabled={isSubmitDisabled || resetApi.isLoading} loading={resetApi.isLoading} class="w-full">
-      Reset Password
+      {$t('page_titles.reset_password')}
     </Button>
   </div>
 </AuthUI>

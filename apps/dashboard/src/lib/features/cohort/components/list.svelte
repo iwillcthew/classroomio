@@ -1,5 +1,5 @@
 <script lang="ts">
-  import pluralize from 'pluralize';
+  import { pluralizeLabel } from '$lib/utils/functions/pluralize-label';
   import { resolve } from '$app/paths';
   import { goto } from '$app/navigation';
   import * as ResourceListRow from '@cio/ui/custom/resource-list-row';
@@ -72,12 +72,12 @@
 
     <div class="flex shrink-0 flex-col items-start gap-1">
       <p class="ui:text-muted-foreground text-sm">
-        {pluralize(t.get('cohorts.card.courses'), courseCount, true)}
+        {pluralizeLabel(t.get('cohorts.card.courses'), courseCount)}
       </p>
 
       {#if !isLMS}
         <p class="ui:text-muted-foreground text-sm">
-          {pluralize(t.get('cohorts.card.students'), studentCount, true)}
+          {pluralizeLabel(t.get('cohorts.card.students'), studentCount)}
         </p>
       {/if}
     </div>

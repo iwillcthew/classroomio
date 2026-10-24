@@ -124,7 +124,7 @@
           variant="ghost"
           size="icon-xs"
           class="ui:text-muted-foreground ui:hover:text-foreground ui:hover:bg-accent ui:data-[state=open]:bg-accent ui:data-[state=open]:text-foreground -mr-1.5 size-7 rounded-lg transition-colors"
-          aria-label="Widget options"
+          aria-label={$t('widgets.card_options_aria')}
         >
           <EllipsisVerticalIcon class="size-4" />
         </Button>

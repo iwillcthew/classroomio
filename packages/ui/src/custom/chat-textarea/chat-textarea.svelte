@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { cn } from '../../tools';
+  import { cn, uiLabels } from '../../tools';
   import { Textarea } from '../../base/textarea';
   import { MentionPopover } from '../mention-popover';
   import type { MentionItem } from '../mention-popover/types';
@@ -37,7 +37,7 @@
     icon,
     typeLabel,
     actions,
-    emptyMessage = 'No results',
+    emptyMessage = uiLabels.no_results,
     placeholder = '',
     disabled = false,
     rows = 1,

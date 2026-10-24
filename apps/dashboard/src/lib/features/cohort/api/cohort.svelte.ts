@@ -151,7 +151,7 @@ class CohortApi extends BaseApiWithErrors {
       },
       onError: (result) => {
         const message = typeof result === 'string' ? result : result.error;
-        snackbar.error(message || 'Failed to update cohort');
+        snackbar.error(message || 'cohorts.errors.update_failed');
       },
       logContext: 'updateCohort'
     });
@@ -299,7 +299,7 @@ class CohortApi extends BaseApiWithErrors {
         const result = (await response.json()) as { success?: boolean; error?: string };
 
         if (!result.success) {
-          this.error = result.error ?? 'Failed to add course to cohort';
+          this.error = result.error ?? t.get('cohorts.errors.add_course_failed');
           return false;
         }
       }
@@ -317,7 +317,7 @@ class CohortApi extends BaseApiWithErrors {
       return true;
     } catch (error) {
       console.error('Error in addCoursesToCohort:', error);
-      this.error = error instanceof Error ? error.message : 'Failed to add courses to cohort';
+      this.error = error instanceof Error ? error.message : t.get('cohorts.errors.add_courses_failed');
       return false;
     } finally {
       this.isLoading = false;

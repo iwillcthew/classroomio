@@ -12,7 +12,7 @@
   import { isSelfEnrollmentAllowed } from '@cio/utils/functions';
   import getCurrencyFormatter from '$lib/utils/functions/getCurrencyFormatter';
   import type { RecommendedCourses } from '$features/course/types';
-  import pluralize from 'pluralize';
+  import { pluralizeLabel } from '$lib/utils/functions/pluralize-label';
 
   interface Props {
     course: RecommendedCourses[number];
@@ -59,7 +59,7 @@
         class="ui:bg-secondary ui:text-secondary-foreground ui:hover:bg-secondary/80 absolute top-3 right-3 inline-flex size-8 cursor-pointer items-center justify-center rounded-md transition-colors"
       >
         <XIcon class="size-4" />
-        <span class="sr-only">Close</span>
+        <span class="sr-only">{$t('whats_new.close')}</span>
       </Dialog.Close>
     </div>
 
@@ -77,7 +77,7 @@
           {$t('courses.course_card.lessons_number')}
         </span>
         <span>
-          {pluralize($t('courses.course_card.exercise'), course.exerciseCount ?? 0, true)}
+          {pluralizeLabel($t('courses.course_card.exercise'), course.exerciseCount ?? 0)}
         </span>
       </div>
 

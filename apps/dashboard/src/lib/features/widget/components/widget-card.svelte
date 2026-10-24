@@ -1,7 +1,7 @@
 <script lang="ts">
   import { resolve } from '$app/paths';
   import { invalidateAll } from '$app/navigation';
-  import pluralize from 'pluralize';
+  import { pluralizeLabel } from '$lib/utils/functions/pluralize-label';
   import type { WidgetListItem } from '../utils/types';
   import { Button } from '@cio/ui/base/button';
   import { Badge } from '@cio/ui/base/badge';
@@ -106,7 +106,7 @@
     <div class="ui:text-muted-foreground mt-3 flex items-center justify-between gap-3 text-xs">
       <span class="truncate">{$t(`widgets.selection.${widget.selectionMode}`)}</span>
       <span class="shrink-0">
-        {pluralize($t('tags_admin.table.course'), widget.courseCount ?? 0, true)}
+        {pluralizeLabel($t('tags_admin.table.course'), widget.courseCount ?? 0)}
       </span>
     </div>
 

@@ -44,13 +44,6 @@
     /** Localized labels for the in-page footer nav. */
     footerPrevLabel?: string;
     footerNextLabel?: string;
-    /** Course slug (used for the sidebar's powered-by attribution link). */
-    courseSlug?: string | null;
-    /** Localized strings for the sidebar's powered-by footer. */
-    poweredByLabel?: string;
-    poweredByBrand?: string;
-    /** Hide the powered-by footer entirely (e.g. enterprise white-label). */
-    showPoweredBy?: boolean;
     /** Main content. Typically a PublicLessonView or PublicExerciseView. */
     children: Snippet;
     /**
@@ -89,10 +82,6 @@
     signInLabel = 'Sign in',
     footerPrevLabel = 'Previous',
     footerNextLabel = 'Next',
-    courseSlug = null,
-    poweredByLabel = 'Powered by',
-    poweredByBrand = 'ClassroomIO',
-    showPoweredBy = true,
     children,
     topRight,
     headerActions,
@@ -209,17 +198,7 @@
       class="ui:sticky ui:top-12 ui:hidden ui:h-[calc(100dvh-3rem)] ui:w-72 ui:shrink-0 ui:overflow-y-auto ui:border-r ui:border-border ui:lg:block"
       aria-label="Course outline sidebar"
     >
-      <Sidebar
-        {sections}
-        {activeSlug}
-        {hrefFor}
-        onItemClick={hrefFor ? undefined : onItemClick}
-        {showPoweredBy}
-        {courseSlug}
-        orgSlug={org?.siteName ?? org?.name ?? null}
-        {poweredByLabel}
-        {poweredByBrand}
-      />
+      <Sidebar {sections} {activeSlug} {hrefFor} onItemClick={hrefFor ? undefined : onItemClick} />
     </aside>
 
     <main class="ui:flex ui:min-w-0 ui:flex-1 ui:flex-col ui:pb-24 ui:lg:pb-12">
@@ -257,11 +236,6 @@
     {sections}
     {activeSlug}
     {hrefFor}
-    {showPoweredBy}
-    {courseSlug}
-    orgSlug={org?.siteName ?? org?.name ?? null}
-    {poweredByLabel}
-    {poweredByBrand}
     collapseToSectionId={activeSectionId}
     onItemClick={(item) => {
       if (!hrefFor) {

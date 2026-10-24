@@ -4,11 +4,12 @@
   import { setMode, userPrefersMode } from '@cio/ui/base/dark-mode';
 
   import { markColorModeExplicit, type ColorModePreference } from '$lib/utils/functions/color-mode';
+  import { t } from '$lib/utils/functions/translations';
 
-  const themes: { mode: ColorModePreference; icon: typeof MonitorIcon }[] = [
-    { mode: 'light', icon: SunIcon },
-    { mode: 'dark', icon: MoonIcon },
-    { mode: 'system', icon: MonitorIcon }
+  const themes: { mode: ColorModePreference; icon: typeof MonitorIcon; labelKey: string }[] = [
+    { mode: 'light', icon: SunIcon, labelKey: 'landing.learner_menu.theme_light' },
+    { mode: 'dark', icon: MoonIcon, labelKey: 'landing.learner_menu.theme_dark' },
+    { mode: 'system', icon: MonitorIcon, labelKey: 'landing.learner_menu.theme_system' }
   ];
 
   const activeMode = $derived(userPrefersMode.current ?? 'light');
@@ -20,14 +21,15 @@
 </script>
 
 <div class="flex items-center justify-between gap-8">
-  <p>Theme</p>
+  <p>{$t('landing.learner_menu.theme')}</p>
 
   <div class="flex items-center gap-1 rounded-md backdrop-blur-sm">
     {#each themes as theme (theme.mode)}
       <Button
         size="icon-sm"
         variant={activeMode === theme.mode ? 'secondary' : 'ghost'}
-        title={theme.mode}
+        title={$t(theme.labelKey)}
+        aria-label={$t(theme.labelKey)}
         onclick={() => handleThemeChange(theme.mode)}
       >
         <theme.icon class="size-4" />

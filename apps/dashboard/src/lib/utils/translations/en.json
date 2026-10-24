@@ -239,7 +239,7 @@
     },
     "powered_by": {
       "label": "Powered by",
-      "brand": "ClassroomIO"
+      "brand": "MP Learning"
     },
     "exercise": {
       "submit": "Check my answers",
@@ -317,7 +317,7 @@
       "subtitle": "Which one recommended us?"
     },
     "use_cases": {
-      "label": "What do you want to use ClassroomIO for?",
+      "label": "What do you want to use MP Learning for?",
       "subtitle": "Choose all that apply. We'll shape your organization around it.",
       "customer_training": "Train my customers on my product",
       "customer_certification": "Certify customers or partners",
@@ -461,6 +461,12 @@
       "included": "Included",
       "untitled_lesson": "Untitled lesson",
       "format": "Format"
+    },
+    "not_found": {
+      "title": "Page not found",
+      "org_title": "Organization not found",
+      "description": "The page you are looking for does not exist or has been moved.",
+      "home": "Back to home"
     }
   },
   "compliance": {
@@ -680,7 +686,7 @@
       "dynamic_content_description": "Insert values or an optional link at the cursor. Keep the braces unchanged so the value can be added at send time.",
       "dynamic_link": "Insert dynamic link",
       "protected_content": "Protected email content",
-      "protected_content_description": "The required action button, destination, branding, and footer are managed by ClassroomIO and cannot be removed.",
+      "protected_content_description": "The required action button, destination, branding, and footer are managed by MP Learning and cannot be removed.",
       "reset": "Reset to translated default",
       "templates": {
         "studentCourseInvite": "Course invitation",
@@ -698,7 +704,7 @@
       }
     },
     "profile": {
-      "page_subtitle": "Your name, email, and how you appear wherever you work in ClassroomIO.",
+      "page_subtitle": "Your name, email, and how you appear wherever you work in MP Learning.",
       "profile_picture": {
         "heading": "Profile Picture",
         "upload_image": "Upload Image",
@@ -728,7 +734,7 @@
       "heading": "Notifications",
       "page_title": "Notifications",
       "page_subtitle": "Choose which email notifications you receive and, as an admin, which emails your organization sends.",
-      "personal_page_subtitle": "Choose which email notifications you receive from ClassroomIO.",
+      "personal_page_subtitle": "Choose which email notifications you receive from MP Learning.",
       "personal": {
         "heading": "Your email preferences",
         "description": "These apply to emails sent to you in this organization. Your organization may still disable certain emails for everyone.",
@@ -1043,7 +1049,7 @@
       "gallery": {
         "heading": "Popular themes",
         "description": "Made with core features you can easily customize — no coding needed.",
-        "by_classroomio": "by ClassroomIO",
+        "by_platform": "by MP Learning",
         "add": "Add",
         "upgrade": "Upgrade",
         "apply_theme": "Apply Theme",
@@ -1327,7 +1333,7 @@
       "page_subtitle": "Connect Telegram to get notified when important things happen.",
       "heading": "Telegram",
       "sub_heading": "Connect your account to telegram to get notified of any change within the application.",
-      "step_authenticate": "Step 1: Authenticate your account via the ClassroomIO bot.",
+      "step_authenticate": "Step 1: Authenticate your account via the MP Learning bot.",
       "open_bot_button": "Open Bot",
       "step_chatId": "Step 2: Enter the Chat ID given to you by the bot.",
       "connect_button": "Connect",
@@ -1335,7 +1341,7 @@
       "disconnect": "Disconnect"
     },
     "billing": {
-      "page_subtitle": "Your plan, billing portal, and how you pay for ClassroomIO.",
+      "page_subtitle": "Your plan, billing portal, and how you pay for MP Learning.",
       "sub_title": "Billing details",
       "manage": "Manage your billing",
       "active": "You don't have any active billing",
@@ -1406,7 +1412,7 @@
     }
   },
   "media_manager": {
-    "page_title": "Media Manager - ClassroomIO",
+    "page_title": "Media Manager - MP Learning",
     "heading": "Media Manager",
     "page_subtitle": "Keep files, videos, and links for your courses in one library.",
     "empty": "No assets found",
@@ -1555,7 +1561,7 @@
     }
   },
   "tags_admin": {
-    "page_title": "Tags - ClassroomIO",
+    "page_title": "Tags - MP Learning",
     "heading": "Tags",
     "page_subtitle": "Organize courses with labels so filters and lists stay easy to scan.",
     "create": "Create",
@@ -1608,7 +1614,7 @@
     }
   },
   "public_courses": {
-    "page_title": "Courses - ClassroomIO",
+    "page_title": "Courses - MP Learning",
     "heading": "Courses",
     "subtitle": "Browse all published courses",
     "clear_filters": "Clear Filters",
@@ -1694,7 +1700,7 @@
         "eyebrow_today": "Early Adopter rate · Ends today",
         "title": "Priced low on purpose. Not for long.",
         "title_closing": "Priced low on purpose. Closing soon.",
-        "body": "We keep ClassroomIO affordable because we build it with our customers, not for them. Lock in today’s rate before {date}. After that, the Early Adopter plan closes and new pricing applies.",
+        "body": "We keep MP Learning affordable because we build it with our customers, not for them. Lock in today’s rate before {date}. After that, the Early Adopter plan closes and new pricing applies.",
         "link": "Read why we do it"
       }
     }
@@ -1900,7 +1906,7 @@
       "border_radius": "Border radius",
       "font_family": "Font family",
       "font_scale": "Font size scale",
-      "show_powered_by": "Show Classroomio branding",
+      "show_powered_by": "Show MP Learning branding",
       "custom_css": "Custom CSS",
       "custom_css_locked": "Upgrade to enable custom CSS.",
       "custom_css_hint": "Max 5,000 characters.",
@@ -1999,14 +2005,14 @@
     "goto": "Go to",
     "courses": "Courses",
     "home": "Home",
-    "classroomio_home": "ClassroomIO Home",
+    "mp_home": "MP Learning Home",
     "dashboard": "Dashboard",
     "discussion": "Discussion",
     "people": "People",
     "goto_lms": "Go to LMS",
     "goto_dashboard": "Dashboard",
     "join_academy": "Join Academy",
-    "goto_home": "Go to ClassroomIO Home",
+    "goto_home": "Go to MP Learning Home",
     "login": "Login",
     "signup": "Sign Up",
     "redirecting": "Redirecting",
@@ -2060,7 +2066,7 @@
         "save": "Save",
         "your_domain": "Your Domain",
         "custom_domain_error": "You can't add a top level domain as custom domain. Instead, use a subdomain like 'courses.[yourwebsite].com' or 'www.[yourwebsite].com'.",
-        "custom_domain_not_classroomio": "Domain cannot contain 'classroomio'",
+        "custom_domain_reserved": "Domain cannot contain 'mp-learning'",
         "custom_domain_success": "Custom domain added successfully",
         "dns_description": "Set the following record on your DNS provider to continue:",
         "dns_type": "Type",
@@ -2207,7 +2213,8 @@
     "login_activity_title": "Student Login Activity",
     "login_activity_description": "Most active days of the week (last 90 days)",
     "login_activity_no_data": "No login activity yet",
-    "login_activity_logins": "logins"
+    "login_activity_logins": "logins",
+    "org_overview_description": "Here is how training is going across your organization."
   },
   "ai": {
     "help_me": "Help me write",
@@ -2320,7 +2327,7 @@
   "course": {
     "creator": {
       "heading": "What course do you want to create?",
-      "placeholder": "Ask ClassroomIO to create a course for you...",
+      "placeholder": "Ask MP Learning to create a course for you...",
       "drafting": {
         "heading": "Drafting your course idea",
         "subtext": "We're turning your prompt into a course title and workspace.",
@@ -3901,7 +3908,7 @@
           "audit_actor": "Actor",
           "audit_ip": "IP",
           "scan_qr": "Scan QR",
-          "classroomio_brand": "ClassroomIO.com",
+          "platform_brand": "MP Learning",
           "snackbar_invite_link_copied": "Invite link copied",
           "snackbar_invite_link_regenerated": "A new invite link has been generated",
           "snackbar_failed_generate_link": "Failed to generate invite link",
@@ -4914,8 +4921,8 @@
       "new_badge": "New"
     },
     "webhooks": {
-      "page_subtitle": "Send real-time ClassroomIO events to Slack, your CRM, or your own backend.",
-      "description": "ClassroomIO sends a signed HTTP POST to your URL whenever a selected event happens. Failed deliveries are retried automatically.",
+      "page_subtitle": "Send real-time MP Learning events to Slack, your CRM, or your own backend.",
+      "description": "MP Learning sends a signed HTTP POST to your URL whenever a selected event happens. Failed deliveries are retried automatically.",
       "permissions_description": "Only organization admins can create, edit, or delete webhooks.",
       "create": "New webhook",
       "empty_title": "No webhooks yet",
@@ -4956,7 +4963,7 @@
       "form": {
         "create_title": "New webhook",
         "edit_title": "Edit webhook",
-        "description": "Choose where ClassroomIO sends events and which events to send.",
+        "description": "Choose where MP Learning sends events and which events to send.",
         "sections": {
           "endpoint": "Endpoint",
           "events": "Events"
@@ -4967,7 +4974,7 @@
         "payload_url_help": "Must be a public HTTPS URL that returns a 2xx response within 10 seconds.",
         "secret": "Signing secret",
         "secret_placeholder": "Leave blank to generate one",
-        "secret_help": "Used to sign every request so you can verify it came from ClassroomIO.",
+        "secret_help": "Used to sign every request so you can verify it came from MP Learning.",
         "secret_edit_placeholder": "Leave blank to keep the current secret",
         "secret_edit_help": "Enter a new value to replace the secret. The current one is never shown.",
         "verify_ssl": "Verify SSL certificate",
@@ -5072,7 +5079,7 @@
       }
     },
     "mcp": {
-      "page_subtitle": "Connect AI tools to ClassroomIO with org-scoped keys you can rotate anytime.",
+      "page_subtitle": "Connect AI tools to MP Learning with org-scoped keys you can rotate anytime.",
       "usage": {
         "title": "Usage and limits",
         "description": "MCP is available on every plan. Usage is controlled by key limits and rate limits.",
@@ -5084,14 +5091,14 @@
       },
       "keys": {
         "title": "MCP keys",
-        "description": "These keys authenticate the current organization when an MCP client calls ClassroomIO through `@classroomio/mcp`.",
+        "description": "These keys authenticate the current organization when an MCP client calls MP Learning through `@classroomio/mcp`.",
         "generate": "Generate MCP key",
         "reveal_title": "Your new MCP key",
         "modal": {
           "title": "Create MCP key",
           "description": "Choose a name for this MCP key before it is generated.",
           "name_label": "Key name",
-          "name_placeholder": "ClassroomIO OpenCode",
+          "name_placeholder": "MP Learning OpenCode",
           "cancel": "Cancel",
           "save": "Create key"
         }
@@ -5100,21 +5107,21 @@
         "title": "Client setup",
         "description": "Use one org-scoped key per integration. If a key is rotated or revoked, the client stops working until the new secret is configured.",
         "claude_code_description": "Registers `@classroomio/mcp` with Claude Code using the generated org-scoped key.",
-        "codex_description": "Adds the ClassroomIO MCP server to Codex with the same org-scoped key.",
+        "codex_description": "Adds the MP Learning MCP server to Codex with the same org-scoped key.",
         "cursor_description": "Paste this into `~/.cursor/mcp.json` or your workspace MCP config.",
         "opencode_description": "Add this to `opencode.json` in your project root or `~/.config/opencode/opencode.json`."
       },
       "view_docs": "View Docs"
     },
     "api": {
-      "subtitle": "Manage API keys to integrate with the ClassroomIO public API.",
+      "subtitle": "Manage API keys to integrate with the MP Learning public API.",
       "keys": {
         "title": "API keys",
-        "description": "These keys authenticate the current organization when calling the ClassroomIO public API.",
+        "description": "These keys authenticate the current organization when calling the MP Learning public API.",
         "generate": "Generate API key",
         "reveal_title": "Your new API key",
         "empty_title": "No API keys yet",
-        "empty_description": "Create the first org-scoped API key to use the ClassroomIO public API.",
+        "empty_description": "Create the first org-scoped API key to use the MP Learning public API.",
         "modal": {
           "title": "Create API key",
           "description": "Choose a name for this API key before it is generated.",
@@ -5131,7 +5138,7 @@
       "view_docs": "View Docs"
     },
     "zapier": {
-      "page_subtitle": "Automate ClassroomIO with thousands of apps through Zapier. Coming soon."
+      "page_subtitle": "Automate MP Learning with thousands of apps through Zapier. Coming soon."
     }
   },
   "lms_navigation": {
@@ -5537,7 +5544,7 @@
   },
   "invite": {
     "organization": {
-      "page_title": "Join {orgName} on ClassroomIO",
+      "page_title": "Join {orgName} on MP Learning",
       "invitation_student": "You've been invited into {orgName} as a student.",
       "invitation_teacher": "You've been invited into {orgName} as a teacher.",
       "invitation_admin": "You've been invited into {orgName} as an admin.",
@@ -5565,7 +5572,7 @@
       "loading": "Loading invite..."
     },
     "link": {
-      "page_title": "Join {orgName} on ClassroomIO",
+      "page_title": "Join {orgName} on MP Learning",
       "invitation_student": "You've been invited to join {orgName} as a student.",
       "invitation_teacher": "You've been invited to join {orgName} as a teacher.",
       "invitation_admin": "You've been invited to join {orgName} as an admin.",
@@ -6164,7 +6171,7 @@
     "generate_failed": "Could not create the invite link",
     "toggle_failed": "Could not update the invite link",
     "join": {
-      "page_title": "Join {resourceName} on ClassroomIO",
+      "page_title": "Join {resourceName} on MP Learning",
       "invitation": "You've been invited to join {resourceName} at {orgName}.",
       "course_button": "Join course",
       "cohort_button": "Join cohort",
@@ -6257,14 +6264,14 @@
     "gallery": {
       "back": "All courses",
       "title": "Template gallery",
-      "subtitle": "Start a course from one of your templates or one built by ClassroomIO.",
+      "subtitle": "Start a course from one of your templates or one built by MP Learning.",
       "search": "Find template",
       "scope_all": "All templates",
       "scope_org": "My templates",
-      "scope_global": "ClassroomIO",
+      "scope_global": "MP Learning",
       "empty_org": "You haven’t made any templates yet. Save any course as a template from its ⋯ menu.",
       "no_match": "No templates match “{query}”.",
-      "empty_global": "No ClassroomIO templates yet."
+      "empty_global": "No MP Learning templates yet."
     },
     "preview": {
       "course_name": "Course name",
@@ -6319,7 +6326,7 @@
     },
     "empty": {
       "title": "No courses yet",
-      "description": "Pick a template to see what a great ClassroomIO course looks like, or start from a blank course.",
+      "description": "Pick a template to see what a great MP Learning course looks like, or start from a blank course.",
       "browse": "Browse templates"
     },
     "editor": {
@@ -6440,12 +6447,45 @@
     "eyebrow": "Employee learning portal",
     "headline": "Learn today.\nTransform tomorrow.",
     "description": "A shared space to build skills, put knowledge into practice, and grow together at MP Transformation.",
-    "learn": "Learn",
-    "practice": "Practice",
-    "grow": "Grow",
     "internal": "For MP Transformation employees",
     "sign_in_description": "Sign in with your approved work account to continue learning.",
     "invitation_hint": "Have an invitation?",
-    "activate": "Activate account"
+    "activate": "Activate account",
+    "feature_paths": "Structured learning paths",
+    "feature_paths_description": "Courses matched to your role and team",
+    "feature_practice": "Exercises & internal certificates",
+    "feature_practice_description": "Practise, get feedback and earn recognition",
+    "feature_progress": "Track progress anytime",
+    "feature_progress_description": "Pick up where you left off on any device"
+  },
+  "page_titles": {
+    "integrations": "Integrations",
+    "ask_community": "Ask the community",
+    "question": "Question",
+    "community": "Community",
+    "my_learning": "My learning",
+    "explore": "Explore",
+    "exercises": "Exercises",
+    "certificates": "Certificates",
+    "billing": "Billing",
+    "ai_credits": "AI credits",
+    "teams": "Teams",
+    "custom_domain": "Custom domain",
+    "ai_tutor_settings": "AI tutor settings",
+    "audience": "Audience",
+    "email_verification_error": "Email verification error",
+    "setup": "Setup",
+    "reset_password": "Reset password",
+    "settings": "Settings",
+    "organization_settings": "Organization settings",
+    "customize_lms": "Customize LMS",
+    "courses": "Courses",
+    "home": "Home",
+    "cohort": "Cohort",
+    "course": "Course",
+    "quiz": "Quiz",
+    "join_platform": "Join MP Learning",
+    "join_course": "Join {title} on MP Learning",
+    "forgot_password": "Forgot password"
   }
 }

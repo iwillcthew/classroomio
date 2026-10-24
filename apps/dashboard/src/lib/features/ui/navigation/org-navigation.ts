@@ -183,7 +183,7 @@ export const baseNavConfig: NavItemConfig[] = [
     nestedRoutes: [
       {
         path: 'ask',
-        titleKey: 'Ask Question' // Could be translated
+        titleKey: 'community.ask.ask_the'
       }
     ]
   },

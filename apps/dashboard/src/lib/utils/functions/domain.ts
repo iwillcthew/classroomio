@@ -1,3 +1,4 @@
+import { t } from '$lib/utils/functions/translations';
 import type { DomainRequestData } from '$features/org/utils/types';
 import { orgApi } from '$features/org/api/org.svelte';
 
@@ -25,6 +26,6 @@ export async function sendDomainRequest(
 
   return {
     success: false,
-    message: typeof orgApi.error === 'string' ? orgApi.error : 'Failed to process domain request'
+    message: typeof orgApi.error === 'string' ? orgApi.error : t.get('components.settings.domains.request_failed')
   };
 }

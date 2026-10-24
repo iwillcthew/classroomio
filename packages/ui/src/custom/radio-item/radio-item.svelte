@@ -1,7 +1,7 @@
 <script lang="ts">
   import * as RadioGroup from '../../base/radio-group';
   import { InputField } from '../input-field';
-  import { cn } from '../../tools';
+  import { cn, uiLabels } from '../../tools';
 
   interface Props {
     label?: string | null;
@@ -38,7 +38,13 @@
   <RadioGroup.Item {value} disabled={disabled || isEditable} />
   {#if isEditable}
     <div class="ui:w-2/4">
-      <InputField bind:value={label} placeholder="Your option" className="ui:ml-1" type="text" onChange={onchange} />
+      <InputField
+        bind:value={label}
+        placeholder={uiLabels.your_option}
+        className="ui:ml-1"
+        type="text"
+        onChange={onchange}
+      />
     </div>
   {:else}
     <span class="ui:ml-2 ui:dark:text-white">{label}</span>

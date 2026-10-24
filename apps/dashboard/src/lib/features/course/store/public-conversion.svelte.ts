@@ -1,4 +1,5 @@
 import { SvelteSet } from 'svelte/reactivity';
+import { t } from '$lib/utils/functions/translations';
 import type { NonAutoGradableQuestionOffender } from '@cio/utils/validation/course';
 import type {
   Course,
@@ -135,9 +136,10 @@ class PublicConversionStore {
       const typeId = Number(q.questionTypeId ?? q.questionType?.id ?? 1);
       return {
         exerciseId,
-        exerciseTitle: exerciseTitle || 'Untitled Exercise',
+        exerciseTitle: exerciseTitle || t.get('course.navItem.settings.public_conversion.untitled_exercise'),
         questionId: q.id ?? `${exerciseId}-${index}`,
-        questionTitle: q.title || `Question ${index + 1}`,
+        questionTitle:
+          q.title || t.get('course.navItem.settings.public_conversion.question_fallback', { number: index + 1 }),
         typeId
       };
     });

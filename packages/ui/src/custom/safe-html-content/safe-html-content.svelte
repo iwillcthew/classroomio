@@ -1,5 +1,6 @@
 <script lang="ts">
   import { splitHtmlAndSvg, type ContentSegment } from '../../tools/sanitize';
+  import { uiLabels } from '../../tools';
   import '../editor/extensions/callout/callout.css';
 
   interface Props {
@@ -33,7 +34,7 @@
       <iframe
         sandbox=""
         srcdoc={svgSrcdoc(segment.content)}
-        title="Embedded diagram"
+        title={uiLabels.embedded_diagram}
         style="border:none;overflow:hidden;width:{dims.width};height:{dims.height}"
       ></iframe>
     {/if}

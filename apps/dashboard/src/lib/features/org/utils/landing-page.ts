@@ -36,19 +36,21 @@ export const landingPageThemes = [
   'quartz'
 ] as const satisfies OrgLandingPageTheme[];
 
-export const defaultLandingPageHero: OrgLandingPageHero = {
-  heading: 'Become a Certified AI Engineer',
-  subheading: 'Master the skills, earn your certification, and prove your expertise with hands-on training programs.',
-  primaryAction: {
-    label: 'Start Learning',
-    href: '/lms'
-  },
-  secondaryAction: {
-    label: 'Browse',
-    href: '/courses'
-  },
-  image: '/images/learn-on-cio.jpg'
-};
+export function getDefaultLandingPageHero(): OrgLandingPageHero {
+  return {
+    heading: t.get('settings.landing_page.defaults.hero_heading'),
+    subheading: t.get('settings.landing_page.defaults.hero_subheading'),
+    primaryAction: {
+      label: t.get('settings.landing_page.defaults.hero_primary_label'),
+      href: '/lms'
+    },
+    secondaryAction: {
+      label: t.get('settings.landing_page.defaults.hero_secondary_label'),
+      href: '/courses'
+    },
+    image: '/images/learn-online.jpg'
+  };
+}
 
 function newFooterColumnId(): string {
   if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
@@ -75,26 +77,21 @@ export function createDefaultFooterConfig(): OrgLandingPageFooterConfig {
     bottom: {
       text: '',
       links: [
-        { id: newFooterLinkId(), label: 'Terms', href: '#' },
-        { id: newFooterLinkId(), label: 'Privacy', href: '#' },
-        { id: newFooterLinkId(), label: 'Contact', href: '#' }
+        { id: newFooterLinkId(), label: t.get('settings.landing_page.defaults.footer_terms'), href: '#' },
+        { id: newFooterLinkId(), label: t.get('settings.landing_page.defaults.footer_privacy'), href: '#' },
+        { id: newFooterLinkId(), label: t.get('settings.landing_page.defaults.footer_contact'), href: '#' }
       ]
     }
   };
 }
 
-export const defaultLandingPageSettings: OrgLandingPageJson = {
-  theme: 'quartz',
-  hero: defaultLandingPageHero,
-  navItems: [
-    { label: 'Courses', href: '/courses' }
-    // { label: 'Contact', href: '#contact' }
-  ],
-  footer: createDefaultFooterConfig()
-};
-
 export function createDefaultLandingPageSettings(): OrgLandingPageJson {
-  return structuredClone(defaultLandingPageSettings);
+  return {
+    theme: 'quartz',
+    hero: getDefaultLandingPageHero(),
+    navItems: [{ label: t.get('navigation.courses'), href: '/courses' }],
+    footer: createDefaultFooterConfig()
+  };
 }
 
 type LegacyLandingPageJson = {
@@ -423,7 +420,7 @@ function normalizeEmbedCode(embed: {
 
   const height = typeof embed.height === 'number' && Number.isFinite(embed.height) ? embed.height : 560;
   const allowFullscreen = embed.allowFullscreen !== false;
-  const title = normalizeText(embed.title, 'Section title');
+  const title = normalizeText(embed.title, t.get('settings.landing_page.editor.embed.title'));
   const sandbox =
     typeof embed.sandbox === 'string' && embed.sandbox.trim().length > 0 ? ` sandbox="${embed.sandbox.trim()}"` : '';
 
@@ -443,7 +440,7 @@ function normalizeCallout(callout: NonNullable<LegacyLandingPageJson['callout']>
     heading,
     description: normalizeText(callout.description, ''),
     action: {
-      label: normalizeText(callout.action?.label, 'Get Started'),
+      label: normalizeText(callout.action?.label, t.get('settings.landing_page.editor.callout.action_label_default')),
       href: normalizeHref(callout.action?.href, '#')
     }
   };
@@ -529,17 +526,19 @@ function normalizeHeroStats(raw: unknown): OrgLandingPageHero['stats'] {
 }
 
 function normalizeHero(hero: NonNullable<LegacyLandingPageJson['hero']>): OrgLandingPageHero {
+  const defaultHero = getDefaultLandingPageHero();
+
   return {
-    heading: normalizeText(hero.heading, defaultLandingPageHero.heading),
-    subheading: normalizeText(hero.subheading, defaultLandingPageHero.subheading),
+    heading: normalizeText(hero.heading, defaultHero.heading),
+    subheading: normalizeText(hero.subheading, defaultHero.subheading),
     primaryAction: {
-      label: normalizeText(hero.primaryAction?.label, defaultLandingPageHero.primaryAction.label),
-      href: normalizeHref(hero.primaryAction?.href, defaultLandingPageHero.primaryAction.href)
+      label: normalizeText(hero.primaryAction?.label, defaultHero.primaryAction.label),
+      href: normalizeHref(hero.primaryAction?.href, defaultHero.primaryAction.href)
     },
     secondaryAction: hero.secondaryAction
       ? {
-          label: normalizeText(hero.secondaryAction.label, defaultLandingPageHero.secondaryAction?.label ?? ''),
-          href: normalizeHref(hero.secondaryAction.href, defaultLandingPageHero.secondaryAction?.href ?? '#')
+          label: normalizeText(hero.secondaryAction.label, defaultHero.secondaryAction?.label ?? ''),
+          href: normalizeHref(hero.secondaryAction.href, defaultHero.secondaryAction?.href ?? '#')
         }
       : undefined,
     image: normalizeText(hero.image, ''),
@@ -579,7 +578,7 @@ export function normalizeLandingPageSettings(value: unknown): OrgLandingPageJson
       embed: landingPage.embed
         ? {
             enabled: landingPage.embed.enabled !== false,
-            title: normalizeText(landingPage.embed.title, 'Section title'),
+            title: normalizeText(landingPage.embed.title, t.get('settings.landing_page.editor.embed.title')),
             description: normalizeText(landingPage.embed.description, ''),
             code: normalizeEmbedCode(landingPage.embed),
             secondaryAction: landingPage.embed.secondaryAction
@@ -604,15 +603,15 @@ export function normalizeLandingPageSettings(value: unknown): OrgLandingPageJson
           ? {
               label: normalizeText(
                 landingPage.hero.secondaryAction.label,
-                defaultLandingPageHero.secondaryAction?.label ?? ''
+                defaultSettings.hero.secondaryAction?.label ?? ''
               ),
               href: normalizeHref(
                 landingPage.hero.secondaryAction.href,
-                defaultLandingPageHero.secondaryAction?.href ?? '#'
+                defaultSettings.hero.secondaryAction?.href ?? '#'
               )
             }
-          : defaultLandingPageHero.secondaryAction,
-        image: normalizeText(landingPage.hero.image, defaultLandingPageHero.image ?? '')
+          : defaultSettings.hero.secondaryAction,
+        image: normalizeText(landingPage.hero.image, defaultSettings.hero.image ?? '')
       },
       navItems: landingPage.navItems?.length
         ? landingPage.navItems
@@ -626,7 +625,7 @@ export function normalizeLandingPageSettings(value: unknown): OrgLandingPageJson
       embed: landingPage.embed
         ? {
             enabled: landingPage.embed.enabled !== false,
-            title: normalizeText(landingPage.embed.title, 'Section title'),
+            title: normalizeText(landingPage.embed.title, t.get('settings.landing_page.editor.embed.title')),
             description: normalizeText(landingPage.embed.description, ''),
             code: normalizeEmbedCode(landingPage.embed)
           }
@@ -636,9 +635,9 @@ export function normalizeLandingPageSettings(value: unknown): OrgLandingPageJson
     };
   }
 
-  const fallbackHeading = normalizeText(landingPage.header?.title, defaultLandingPageHero.heading);
+  const fallbackHeading = normalizeText(landingPage.header?.title, defaultSettings.hero.heading);
   const fallbackHighlight = normalizeText(landingPage.header?.titleHighlight, '');
-  const fallbackSubheading = normalizeText(landingPage.header?.subtitle, defaultLandingPageHero.subheading);
+  const fallbackSubheading = normalizeText(landingPage.header?.subtitle, defaultSettings.hero.subheading);
 
   return {
     ...defaultSettings,
@@ -646,11 +645,11 @@ export function normalizeLandingPageSettings(value: unknown): OrgLandingPageJson
       heading: fallbackHighlight ? `${fallbackHeading} ${fallbackHighlight}` : fallbackHeading,
       subheading: fallbackSubheading,
       primaryAction: {
-        label: normalizeText(landingPage.header?.action?.label, defaultLandingPageHero.primaryAction.label),
-        href: normalizeHref(landingPage.header?.action?.link, defaultLandingPageHero.primaryAction.href)
+        label: normalizeText(landingPage.header?.action?.label, defaultSettings.hero.primaryAction.label),
+        href: normalizeHref(landingPage.header?.action?.link, defaultSettings.hero.primaryAction.href)
       },
-      secondaryAction: defaultLandingPageHero.secondaryAction,
-      image: defaultLandingPageHero.image
+      secondaryAction: defaultSettings.hero.secondaryAction,
+      image: defaultSettings.hero.image
     },
     navItems: landingPage.customLinks?.links?.length
       ? landingPage.customLinks.links
@@ -664,7 +663,7 @@ export function normalizeLandingPageSettings(value: unknown): OrgLandingPageJson
     embed: landingPage.embed
       ? {
           enabled: landingPage.embed.enabled !== false,
-          title: normalizeText(landingPage.embed.title, 'Section title'),
+          title: normalizeText(landingPage.embed.title, t.get('settings.landing_page.editor.embed.title')),
           description: normalizeText(landingPage.embed.description, ''),
           code: normalizeEmbedCode(landingPage.embed),
           secondaryAction: landingPage.embed.secondaryAction

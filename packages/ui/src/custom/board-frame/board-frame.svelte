@@ -10,7 +10,7 @@
     children?: Snippet;
   }
 
-  let { src, alt = '', url = 'app.classroomio.com', class: className = '', children }: Props = $props();
+  let { src, alt = '', url = 'learning.mptransformation.vn', class: className = '', children }: Props = $props();
 </script>
 
 <div class={cn('board-frame', className)}>

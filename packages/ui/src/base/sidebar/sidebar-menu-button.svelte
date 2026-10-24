@@ -2,7 +2,7 @@
   import { tv, type VariantProps } from 'tailwind-variants';
 
   export const sidebarMenuButtonVariants = tv({
-    base: 'ui:peer/menu-button ui:cursor-pointer ui:outline-hidden ui:text-sidebar-foreground/80 ui:ring-sidebar-ring ui:hover:bg-sidebar-accent ui:hover:text-sidebar-accent-foreground ui:active:bg-sidebar-accent ui:active:text-sidebar-accent-foreground ui:group-has-data-[sidebar=menu-action]/menu-item:pr-8 ui:data-[active=true]:bg-primary/10 ui:data-[active=true]:text-primary ui:dark:data-[active=true]:bg-primary/20 ui:data-[active=true]:[&>svg]:text-primary ui:data-[state=open]:hover:bg-sidebar-accent ui:data-[state=open]:hover:text-sidebar-accent-foreground ui:group-data-[collapsible=icon]:size-8! ui:group-data-[collapsible=icon]:p-2! ui:flex ui:w-full ui:items-center ui:gap-2 ui:overflow-hidden ui:rounded-md ui:p-2 ui:text-left ui:text-sm ui:transition-[width,height,padding] ui:focus-visible:ring-2 ui:disabled:pointer-events-none ui:disabled:opacity-50 ui:aria-disabled:pointer-events-none ui:aria-disabled:opacity-50 ui:[&>span:last-child]:truncate ui:[&>svg]:size-4 ui:[&>svg]:shrink-0',
+    base: 'ui:peer/menu-button ui:relative ui:cursor-pointer ui:outline-hidden ui:font-medium ui:text-sidebar-foreground ui:ring-sidebar-ring ui:hover:bg-sidebar-accent ui:hover:text-sidebar-accent-foreground ui:active:bg-sidebar-accent ui:active:text-sidebar-accent-foreground ui:group-has-data-[sidebar=menu-action]/menu-item:pr-8 ui:data-[active=true]:bg-primary/10 ui:data-[active=true]:font-semibold ui:data-[active=true]:text-primary ui:dark:data-[active=true]:bg-primary/20 ui:data-[active=true]:before:absolute ui:data-[active=true]:before:inset-y-1.5 ui:data-[active=true]:before:left-0 ui:data-[active=true]:before:w-[3px] ui:data-[active=true]:before:rounded-full ui:data-[active=true]:before:bg-primary ui:group-data-[collapsible=icon]:data-[active=true]:before:hidden ui:data-[active=true]:[&>svg]:text-primary ui:data-[state=open]:hover:bg-sidebar-accent ui:data-[state=open]:hover:text-sidebar-accent-foreground ui:group-data-[collapsible=icon]:size-8! ui:group-data-[collapsible=icon]:p-2! ui:flex ui:w-full ui:items-center ui:gap-2 ui:overflow-hidden ui:rounded-lg ui:px-2.5 ui:py-2 ui:text-left ui:text-sm ui:transition-[width,height,padding] ui:focus-visible:ring-2 ui:disabled:pointer-events-none ui:disabled:opacity-50 ui:aria-disabled:pointer-events-none ui:aria-disabled:opacity-50 ui:[&>span:last-child]:truncate ui:[&>svg]:size-4 ui:[&>svg]:shrink-0',
     variants: {
       variant: {
         default: 'ui:hover:bg-sidebar-accent ui:hover:text-sidebar-accent-foreground',
@@ -10,7 +10,7 @@
           'ui:bg-background ui:hover:bg-sidebar-accent ui:hover:text-sidebar-accent-foreground ui:shadow-[0_0_0_1px_var(--sidebar-border)] ui:hover:shadow-[0_0_0_1px_var(--sidebar-accent)]'
       },
       size: {
-        default: 'ui:h-8 ui:text-sm',
+        default: 'ui:h-9 ui:text-sm',
         sm: 'ui:h-7 ui:text-xs',
         lg: 'ui:group-data-[collapsible=icon]:p-0! ui:h-12 ui:text-sm'
       }

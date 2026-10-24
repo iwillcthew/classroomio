@@ -12,7 +12,7 @@ export const earlyAdopterReadyEmail = defineEmail({
   render: (fields) => {
     const content = `
       <p>Hi there,</p>
-      <p>We received your payment. Thank you for backing ClassroomIO early.</p>
+      <p>Your MP Learning workspace is ready.</p>
       <p>Your Early Adopter plan is ready and your rate is locked in. Use the button below to create your account and connect the plan to your academy.</p>
       <div>
         <a class="button" href="${fields.claimUrl}">Set up my academy</a>

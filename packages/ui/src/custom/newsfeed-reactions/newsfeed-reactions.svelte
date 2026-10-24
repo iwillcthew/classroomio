@@ -1,7 +1,7 @@
 <script lang="ts">
   import * as Popover from '../../base/popover';
   import { Button } from '../../base/button';
-  import { cn } from '../../tools';
+  import { cn, uiLabels } from '../../tools';
   import SmileIcon from '@lucide/svelte/icons/smile';
   import {
     NEWSFEED_REACTION_OPTIONS,
@@ -52,7 +52,7 @@
           size="icon-sm"
           class="ui:rounded-xl ui:shadow-none"
           {disabled}
-          aria-label="Open reactions"
+          aria-label={uiLabels.reactions_open}
         >
           <SmileIcon class="ui:size-4" />
         </Button>
@@ -68,7 +68,7 @@
             size="icon-xs"
             class="ui:rounded-full"
             {disabled}
-            aria-label={reactionOption.label}
+            aria-label={uiLabels[`reaction_${reactionOption.type}` as const]}
             onclick={() => handleReactionToggle(reactionOption.type)}
           >
             <span>{reactionOption.emoji}</span>
@@ -89,7 +89,7 @@
             size="sm"
             class="ui:h-7 ui:rounded-full ui:px-2.5"
             {disabled}
-            aria-label={reactionOption.label}
+            aria-label={uiLabels[`reaction_${reactionOption.type}` as const]}
             onclick={() => handleReactionToggle(reactionOption.type)}
           >
             <span aria-hidden="true" class="ui:text-sm ui:leading-none">{reactionOption.emoji}</span>

@@ -30,7 +30,7 @@
 
   const containerClass = $derived(
     cn(
-      'flex w-full flex-col items-center justify-evenly gap-2 rounded-xl border p-3 md:flex-row md:px-5 md:py-3',
+      'ui:bg-card ui:text-card-foreground flex w-full items-start justify-between gap-4 rounded-xl border p-5',
       className,
       classes.container
     )
@@ -38,27 +38,22 @@
 </script>
 
 {#snippet content()}
-  <div class="bg-primary-200 w-fit rounded-full p-4 text-black">
-    <activity.icon />
-  </div>
-
-  <div>
-    <p class={cn('text-center text-sm font-medium text-gray-600 md:text-left dark:text-gray-200', classes.title)}>
+  <div class="min-w-0 space-y-1">
+    <p class={cn('ui:text-muted-foreground text-sm font-medium', classes.title)}>
       {activity.title}
     </p>
-    <p class={cn('text-center text-2xl md:text-left', classes.percentage)}>
-      {activity.percentage}
-      {#if !activity.hidePercentage}
-        %
-      {/if}
+    <p class={cn('text-3xl font-semibold tracking-tight tabular-nums', classes.percentage)}>
+      {activity.percentage}{#if !activity.hidePercentage}%{/if}
     </p>
     {#if activity.description}
-      <p
-        class={cn('text-center text-xs text-gray-500 md:text-left md:text-sm dark:text-gray-300', classes.description)}
-      >
+      <p class={cn('ui:text-muted-foreground text-xs leading-relaxed', classes.description)}>
         {activity.description}
       </p>
     {/if}
+  </div>
+
+  <div class={cn('ui:bg-primary/10 ui:text-primary grid size-11 shrink-0 place-items-center rounded-xl', classes.icon)}>
+    <activity.icon class="custom size-5" />
   </div>
 {/snippet}
 
@@ -69,7 +64,7 @@
   >
     {@render content()}
     <ArrowUpRightIcon
-      class="ui:text-muted-foreground absolute top-3 right-3 h-4 w-4 opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100"
+      class="ui:text-muted-foreground absolute right-3 bottom-3 h-4 w-4 opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100"
       aria-hidden="true"
     />
   </a>

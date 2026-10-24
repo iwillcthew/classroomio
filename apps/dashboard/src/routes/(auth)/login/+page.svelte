@@ -192,6 +192,10 @@
             bind:value={fields.password}
             data-testid="auth-login-password"
             placeholder="************"
+            showPasswordTooltip={$t('auth.password.show')}
+            hidePasswordTooltip={$t('auth.password.hide')}
+            showPasswordAriaLabel={$t('auth.password.show')}
+            hidePasswordAriaLabel={$t('auth.password.hide')}
             disabled={loading}
             aria-invalid={errors.password ? 'true' : undefined}
             autocomplete="current-password"

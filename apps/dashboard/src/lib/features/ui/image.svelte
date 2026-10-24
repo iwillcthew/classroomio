@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Skeleton } from '@cio/ui/base/skeleton';
+  import { t } from '$lib/utils/functions/translations';
 
   let { src, className, alt }: { src: string | undefined; className?: string; alt?: string } = $props();
 
@@ -20,6 +21,6 @@
   <img {src} {alt} class={className} />
 {:catch}
   <div class="flex h-[200px] w-full items-center justify-center rounded bg-gray-100 dark:bg-neutral-800">
-    <p class="text-sm text-red-600">Failed to load</p>
+    <p class="text-sm text-red-600">{$t('ui_shell.image.failed_to_load')}</p>
   </div>
 {/await}

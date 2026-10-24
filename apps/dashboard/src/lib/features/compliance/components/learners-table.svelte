@@ -66,7 +66,11 @@
             <Table.Row>
               <Table.Cell>
                 <div class="flex items-center gap-2">
-                  <UserAvatar src={row.avatarUrl} alt={row.fullname ?? row.email ?? 'Learner'} class="h-7 w-7" />
+                  <UserAvatar
+                    src={row.avatarUrl}
+                    alt={row.fullname ?? row.email ?? $t('cohorts.newsfeed.user_avatar_alt')}
+                    class="h-7 w-7"
+                  />
                   <div class="min-w-0">
                     <p class="ui:text-foreground truncate text-sm font-medium">{row.fullname ?? '—'}</p>
                     <p class="ui:text-muted-foreground truncate text-xs">{row.email ?? ''}</p>

@@ -1,7 +1,7 @@
 <script lang="ts">
   import * as InputGroup from '../../base/input-group';
   import { UseClipboard } from '../../hooks/use-clipboard.svelte';
-  import { cn } from '../../tools';
+  import { cn, uiLabels } from '../../tools';
   import CheckIcon from '@lucide/svelte/icons/check';
   import CopyIcon from '@lucide/svelte/icons/copy';
 
@@ -18,8 +18,8 @@
   let {
     value,
     buttonRef = $bindable(null),
-    copyLabel = 'Copy',
-    copiedLabel = 'Copied',
+    copyLabel = uiLabels.copy,
+    copiedLabel = uiLabels.copied,
     class: className,
     testId,
     onCopy

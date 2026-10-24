@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { getIntlLocale } from '$lib/utils/functions/intl-locale';
   import { goto } from '$app/navigation';
   import { Badge } from '@cio/ui/base/badge';
   import { Button } from '@cio/ui/base/button';
@@ -46,7 +47,7 @@
       return '';
     }
 
-    return new Intl.DateTimeFormat('en-US', {
+    return new Intl.DateTimeFormat(getIntlLocale(), {
       dateStyle: 'medium'
     }).format(date);
   }
@@ -65,8 +66,8 @@
           <div class="p-5">
             <span class="flex flex-col items-start gap-3 pb-5 lg:flex-row">
               <img
-                src={course.bannerImage || '/images/classroomio-course-img-template.jpg'}
-                alt="course"
+                src={course.bannerImage || '/images/course-img-template.jpg'}
+                alt={course.title}
                 class="hidden lg:block lg:h-[60px] lg:w-[60px]"
               />
               <div class="w-full">

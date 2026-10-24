@@ -1,5 +1,5 @@
 <script lang="ts">
-  import pluralize from 'pluralize';
+  import { pluralizeLabel } from '$lib/utils/functions/pluralize-label';
   import * as Item from '@cio/ui/base/item';
   import { Separator } from '@cio/ui/base/separator';
   import { t } from '$lib/utils/functions/translations';
@@ -29,13 +29,13 @@
         <div class="flex w-full justify-between">
           <div class="w-[60%]">
             <p class="pl-2 text-xs dark:text-white">
-              {pluralize($t('cohorts.card.courses'), courseCount, true)}
+              {pluralizeLabel($t('cohorts.card.courses'), courseCount)}
             </p>
           </div>
 
           <div class="flex flex-col justify-between">
             <p class="pl-2 text-xs dark:text-white">
-              {pluralize($t('cohorts.card.students'), studentCount, true)}
+              {pluralizeLabel($t('cohorts.card.students'), studentCount)}
             </p>
           </div>
         </div>

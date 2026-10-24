@@ -8,6 +8,7 @@
   import { Checkbox } from '@cio/ui/base/checkbox';
 
   import { CertificateReportData, students } from './mockData';
+  import { t } from '$lib/utils/functions/translations';
 
   let searchValue = $state('');
   let selectAll = $state(false);
@@ -44,7 +45,7 @@
 <section class="-mr-4 mb-10 -ml-4 flex flex-wrap items-start gap-2">
   {#each CertificateReportData as data (data.id)}
     <div class="mb-5 flex h-[165px] w-[246px] flex-col justify-center rounded border border-gray-200 px-2">
-      <p class="text-xs font-normal">{data.title}</p>
+      <p class="text-xs font-normal">{$t(data.title)}</p>
       <bold class="text-2xl font-medium">{data.value}</bold>
     </div>
   {/each}
@@ -52,10 +53,15 @@
 
 <section>
   <div class="flex flex-row items-center justify-between gap-4">
-    <p class="w-full text-base font-semibold">Certificate issued</p>
+    <p class="w-full text-base font-semibold">{$t('course.certificate_reports.certificates_issued')}</p>
     <div class="relative w-full max-w-sm">
       <SearchIcon class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
-      <Input type="search" placeholder="Search students" bind:value={searchValue} class="pl-10" />
+      <Input
+        type="search"
+        placeholder={$t('course.navItem.submissions.filter.search_students')}
+        bind:value={searchValue}
+        class="pl-10"
+      />
     </div>
   </div>
 </section>
@@ -68,8 +74,8 @@
           <Table.Head class="w-[50px]">
             <Checkbox checked={selectAll} onCheckedChange={toggleSelectAll} />
           </Table.Head>
-          <Table.Head>Name of student</Table.Head>
-          <Table.Head>Date issued</Table.Head>
+          <Table.Head>{$t('course.certificate_reports.student_name')}</Table.Head>
+          <Table.Head>{$t('course.certificate_reports.date_issued')}</Table.Head>
         </Table.Row>
       </Table.Header>
       <Table.Body>
@@ -83,7 +89,9 @@
               <div class="flex items-center gap-4">
                 <span class="text-sm">{student.issued}</span>
                 {#if student.peronalized}
-                  <Badge variant="secondary" class="bg-primary-100 ui:text-primary">personalized</Badge>
+                  <Badge variant="secondary" class="bg-primary-100 ui:text-primary"
+                    >{$t('course.certificate_reports.personalized')}</Badge
+                  >
                 {/if}
               </div>
             </Table.Cell>

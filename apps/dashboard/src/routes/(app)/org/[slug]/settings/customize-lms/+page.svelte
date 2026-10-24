@@ -22,7 +22,7 @@
 </script>
 
 <svelte:head>
-  <title>Customize LMS - MP Learning</title>
+  <title>{$t('page_titles.customize_lms')} · MP Learning</title>
 </svelte:head>
 
 <CustomizeLmsPage bind:this={customizeLmsComponent} bind:hasUnsavedChanges />

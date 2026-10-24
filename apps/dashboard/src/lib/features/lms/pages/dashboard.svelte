@@ -27,6 +27,7 @@
   import ExternalLinkIcon from '@lucide/svelte/icons/external-link';
   import CopyIcon from '@lucide/svelte/icons/copy';
   import VideoIcon from '@lucide/svelte/icons/video';
+  import ArrowRightIcon from '@lucide/svelte/icons/arrow-right';
   import { copyPublicCoursePageUrl, openCoursePreview } from '$features/course/utils/course-preview';
   import {
     getStudentCourseComplianceDate,
@@ -202,17 +203,27 @@
   {/if}
 
   <BlurFade delay={0.05} once>
-    <section class="ui:border-primary/20 ui:bg-primary/10 rounded border p-4 md:p-6">
-      <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div class="max-w-xl space-y-2">
-          <p class="ui:text-primary text-xs font-semibold tracking-[0.18em] uppercase">
+    <section class="ui:bg-card ui:text-card-foreground flex flex-col overflow-hidden rounded-xl border md:flex-row">
+      <div class="ui:bg-primary/10 relative min-h-40 md:w-2/5">
+        {#if currentCourse?.bannerImage}
+          <img src={currentCourse.bannerImage} alt="" class="absolute inset-0 size-full object-cover" />
+        {:else}
+          <div class="ui:text-primary absolute inset-0 grid place-items-center">
+            <BookOpenIcon class="custom size-10 opacity-70" />
+          </div>
+        {/if}
+      </div>
+
+      <div class="flex flex-1 flex-col justify-between gap-5 p-5 md:p-6">
+        <div class="space-y-2">
+          <p class="ui:text-primary text-xs font-semibold tracking-[0.12em] uppercase">
             {#if shouldShowCertificateHero}
               {$t('dashboard.get_your_certificate')}
             {:else}
               {$t('dashboard.pick_up_where_you_left_off')}
             {/if}
           </p>
-          <h2 class="text-xl font-semibold tracking-tight">
+          <h2 class="text-xl font-semibold tracking-tight md:text-2xl">
             {#if currentCourse}
               {#if shouldShowCertificateHero}
                 {currentCourse.title}
@@ -225,7 +236,23 @@
           </h2>
         </div>
 
-        <div class="flex shrink-0 flex-wrap items-center gap-2">
+        {#if currentCourse && !shouldShowCertificateHero}
+          {@const currentProgress = getStudentCourseProgressPercent(currentCourse)}
+          <div class="space-y-2">
+            <div class="ui:text-muted-foreground flex items-center justify-between text-xs">
+              <span>
+                {$t('dashboard.items_done', {
+                  completed: getCourseCompletedItems(currentCourse),
+                  total: getCourseTotalItems(currentCourse)
+                })}
+              </span>
+              <span class="font-medium tabular-nums">{currentProgress}%</span>
+            </div>
+            <Progress value={currentProgress} max={100} class="h-2" />
+          </div>
+        {/if}
+
+        <div class="flex flex-wrap items-center justify-end gap-2">
           {#if currentCourse && showPublishedPublicCourseLinks(currentCourse)}
             <IconButton
               variant="outline"
@@ -245,7 +272,6 @@
             </IconButton>
           {/if}
           <Button
-            variant="outline"
             class="shrink-0"
             onclick={() =>
               currentCourse
@@ -263,14 +289,15 @@
             {:else}
               {$t('dashboard.view_courses')}
             {/if}
+            <ArrowRightIcon class="size-4" />
           </Button>
         </div>
       </div>
     </section>
   </BlurFade>
 
-  <section class="mb-10 flex flex-wrap items-start">
-    <div class="grid w-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+  <section class="flex flex-wrap items-start">
+    <div class="grid w-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
       <BlurFade delay={0.1} once>
         <ActivityCard
           activity={{
@@ -314,10 +341,10 @@
   <div class="grid items-stretch gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(280px,0.72fr)]">
     <section class="flex h-full flex-col space-y-4">
       <div class="flex items-center justify-between">
-        <h2 class="ui:text-muted-foreground text-sm font-semibold tracking-[0.14em] uppercase">
+        <h2 class="text-lg font-semibold tracking-tight">
           {$t('dashboard.currently_learning')}
         </h2>
-        <Button variant="outline" size="sm" onclick={() => goto('/lms/mylearning')}>
+        <Button variant="ghost" size="sm" class="ui:text-primary" onclick={() => goto('/lms/mylearning')}>
           {$t('dashboard.view_more')}
         </Button>
       </div>
@@ -332,12 +359,14 @@
             {@const courseProgress = getStudentCourseProgressPercent(course)}
             {@const totalItems = getCourseTotalItems(course)}
             {@const completedItems = getCourseCompletedItems(course)}
-            <article class="ui:bg-card ui:text-card-foreground rounded border p-4">
+            <article class="ui:bg-card ui:text-card-foreground rounded-xl border p-5">
               <div
                 class="flex flex-col gap-4 md:flex-row md:items-center lg:flex-col lg:items-stretch xl:flex-row xl:items-center"
               >
                 <div class="flex min-w-0 flex-1 items-start gap-4">
-                  <div class="ui:bg-primary/10 flex size-12 shrink-0 items-center justify-center rounded">
+                  <div
+                    class="ui:bg-primary/10 flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-lg"
+                  >
                     {#if course.bannerImage}
                       <img src={course.bannerImage} alt="" class="size-full rounded object-cover" />
                     {:else}
@@ -413,7 +442,7 @@
             </article>
           {/each}
         {:else}
-          <div class="ui:bg-card rounded border p-4">
+          <div class="ui:bg-card rounded-xl border p-4">
             <Empty title={$t('dashboard.no_courses')} description={$t('dashboard.start_course')} icon={BookOpenIcon} />
           </div>
         {/if}
@@ -421,19 +450,21 @@
     </section>
 
     <section class="flex h-full flex-col space-y-4">
-      <h2 class="ui:text-muted-foreground text-sm font-semibold tracking-[0.14em] uppercase">
+      <h2 class="text-lg font-semibold tracking-tight">
         {$t('dashboard.compliance')}
       </h2>
 
       {#if coursesApi.isLoading}
-        <div class="ui:text-muted-foreground flex flex-1 items-center justify-center rounded border py-16">
+        <div class="ui:text-muted-foreground flex flex-1 items-center justify-center rounded-xl border py-16">
           <Spinner class="size-6" />
         </div>
       {:else}
-        <article class="ui:bg-card ui:text-card-foreground flex flex-1 rounded border p-4">
+        <article class="ui:bg-card ui:text-card-foreground flex flex-1 rounded-xl border p-5">
           <div class="flex items-center justify-between gap-4 lg:flex-col lg:items-start xl:flex-row xl:items-center">
             <div class="flex min-w-0 items-center gap-4">
-              <div class="ui:bg-primary/10 flex size-12 shrink-0 items-center justify-center rounded">
+              <div
+                class="ui:bg-primary/10 flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-lg"
+              >
                 <ClipboardCheckIcon class="ui:text-primary size-5" />
               </div>
               <div class="min-w-0">
@@ -467,10 +498,10 @@
   {#if coursesApi.isLoading || coursesApi.recommendedCourses.length > 0}
     <section class="space-y-4">
       <div class="flex items-center justify-between">
-        <h2 class="ui:text-muted-foreground text-sm font-semibold tracking-[0.14em] uppercase">
+        <h2 class="text-lg font-semibold tracking-tight">
           {$t('dashboard.explore_more_courses')}
         </h2>
-        <Button variant="outline" size="sm" onclick={() => goto('/lms/explore')}>
+        <Button variant="ghost" size="sm" class="ui:text-primary" onclick={() => goto('/lms/explore')}>
           {$t('dashboard.view_more')}
         </Button>
       </div>

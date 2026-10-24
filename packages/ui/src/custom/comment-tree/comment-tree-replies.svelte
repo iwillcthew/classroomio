@@ -3,6 +3,7 @@
   import { Button } from '../../base/button';
   import ChevronDownIcon from '@lucide/svelte/icons/chevron-down';
   import ChevronUpIcon from '@lucide/svelte/icons/chevron-up';
+  import { formatUiLabel, uiLabels } from '../../tools';
 
   interface Props {
     replyCount?: number;
@@ -17,7 +18,7 @@
   let {
     replyCount = 0,
     showLabel,
-    hideLabel = 'Hide replies',
+    hideLabel = uiLabels.comment_hide_replies,
     isExpanded = $bindable(false),
     onToggleExpand,
     class: className = '',
@@ -25,7 +26,12 @@
   }: Props = $props();
 
   const label = $derived(
-    isExpanded ? hideLabel : (showLabel ?? `View ${replyCount} ${replyCount === 1 ? 'reply' : 'replies'}`)
+    isExpanded
+      ? hideLabel
+      : (showLabel ??
+          formatUiLabel(replyCount === 1 ? uiLabels.comment_view_replies_one : uiLabels.comment_view_replies_other, {
+            count: replyCount
+          }))
   );
 
   function handleToggle() {

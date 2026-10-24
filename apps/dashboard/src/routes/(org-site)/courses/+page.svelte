@@ -8,7 +8,6 @@
   import { t } from '$lib/utils/functions/translations';
   import { user, profile } from '$lib/utils/store/user';
 
-  import { PoweredBy } from '$features/ui';
   import { appInitApi } from '$features/app/init.svelte';
   import { resolveOrgLandingAuthAction } from '$features/org/utils/org-landing-auth-action';
   import { resolveOrgLandingLearnerAccount } from '$features/org/utils/org-landing-learner-account';
@@ -415,8 +414,6 @@
     {/key}
   </div>
 {/snippet}
-
-<PoweredBy />
 
 <LandingThemeScope theme={landingSettings.theme} class="font-sans">
   <main>

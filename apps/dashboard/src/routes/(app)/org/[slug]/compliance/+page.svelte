@@ -43,7 +43,7 @@
   const exportDocument = $derived(
     buildComplianceExportDocument(
       (complianceApi.overview?.learners ?? []).filter((row) => activeFilter === 'all' || row.status === activeFilter),
-      $currentOrg?.name ?? 'Organization',
+      $currentOrg?.name ?? $t('settings.emails.variables.organization'),
       {
         name: $t('compliance.learners.learner'),
         email: $t('audience.email'),

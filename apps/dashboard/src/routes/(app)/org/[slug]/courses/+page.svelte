@@ -226,7 +226,7 @@
 </script>
 
 <svelte:head>
-  <title>Courses - MP Learning</title>
+  <title>{$t('page_titles.courses')} · MP Learning</title>
 </svelte:head>
 
 <Page.Root class="w-full gap-0">

@@ -71,7 +71,7 @@
                 <div class="flex items-center gap-2">
                   <UserAvatar
                     src={student.profile?.avatarUrl}
-                    alt={student.profile?.fullname ?? 'Student'}
+                    alt={student.profile?.fullname ?? $t('dashboard.learner')}
                     class="size-6! shrink-0"
                   />
                   <div class="min-w-0 flex-1">

@@ -87,19 +87,19 @@
       return t.get('course.navItem.landing_page.pricing_section.not_accepting');
     }
     if (data.course?.status !== 'ACTIVE' || !data.course?.isPublished) {
-      return 'This course is currently unavailable for enrollment.';
+      return t.get('course.navItem.landing_page.enroll_page.course_unavailable');
     }
     if (data.invite && inviteStatus === 'EXPIRED') {
-      return 'This invite link has expired.';
+      return t.get('invite.organization.messages.expired');
     }
     if (data.invite && inviteStatus === 'USED_UP') {
-      return 'This invite link has reached its usage limit.';
+      return t.get('course.navItem.landing_page.enroll_page.invite_used_up');
     }
     if (data.invite && inviteStatus === 'REVOKED') {
-      return 'This invite link has been revoked.';
+      return t.get('invite.organization.messages.revoked');
     }
     if (data.invite && inviteStatus !== 'ACTIVE') {
-      return 'This invite link is not valid.';
+      return t.get('invite.organization.messages.invalid');
     }
     return '';
   }
@@ -229,7 +229,7 @@
 </script>
 
 <svelte:head>
-  <title>Join {data.course?.title ?? 'Course'} on MP Learning</title>
+  <title>{$t('page_titles.join_course', { title: data.course?.title ?? $t('page_titles.course') })}</title>
   <meta name="robots" content="noindex, nofollow" />
 </svelte:head>
 

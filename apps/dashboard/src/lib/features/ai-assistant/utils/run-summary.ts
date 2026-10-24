@@ -1,3 +1,4 @@
+import { t } from '$lib/utils/functions/translations';
 import type {
   AgentRunDetail,
   AgentRunStep,
@@ -129,6 +130,8 @@ function aggregateToolCalls(
   resolveExerciseTitle: ExerciseTitleLookup
 ): RunChangedItem[] {
   const byKey = new Map<string, RunChangedItem>();
+  const lessonFallbackTitle = t.get('ai_assistant.mention_lesson');
+  const exerciseFallbackTitle = t.get('ai_assistant.mention_exercise');
 
   function upsert(
     targetType: 'lesson' | 'exercise',
@@ -142,10 +145,11 @@ function aggregateToolCalls(
 
     if (!item) {
       const title =
-        titleFromStep ?? (targetType === 'exercise' ? (resolveExerciseTitle(targetId) ?? 'Exercise') : 'Lesson');
+        titleFromStep ??
+        (targetType === 'exercise' ? (resolveExerciseTitle(targetId) ?? exerciseFallbackTitle) : lessonFallbackTitle);
       item = { targetType, targetId, title, actions: [] };
       byKey.set(key, item);
-    } else if (titleFromStep && (item.title === 'Lesson' || item.title === 'Exercise')) {
+    } else if (titleFromStep && (item.title === lessonFallbackTitle || item.title === exerciseFallbackTitle)) {
       item.title = titleFromStep;
     }
 

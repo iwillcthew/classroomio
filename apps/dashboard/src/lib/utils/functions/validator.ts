@@ -220,7 +220,7 @@ export const validateEmailInString = (emailsStr) => {
   if (!emailsStr) {
     return {
       hasError: true,
-      error: 'Enter an email',
+      error: t.get('validations.email.required'),
       emails: []
     };
   }

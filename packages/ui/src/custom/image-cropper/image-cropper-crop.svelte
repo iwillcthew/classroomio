@@ -2,6 +2,7 @@
   import Button, { type ButtonElementProps } from '../../base/button/button.svelte';
   import { useImageCropperCrop } from './image-cropper-context.svelte';
   import CropIcon from '@lucide/svelte/icons/crop';
+  import { uiLabels } from '../../tools';
 
   let { ref = $bindable(null), variant = 'default', size = 'sm', onclick, ...rest }: ButtonElementProps = $props();
 
@@ -25,5 +26,5 @@
   }}
 >
   <CropIcon />
-  <span>Crop</span>
+  <span>{uiLabels.cropper_crop}</span>
 </Button>

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { cn, type WithElementRef } from '../../tools';
+  import { cn, uiLabels, type WithElementRef } from '../../tools';
   import type { HTMLAttributes } from 'svelte/elements';
   import { useSidebar } from './context.svelte';
 
@@ -19,7 +19,7 @@
   bind:this={ref}
   data-sidebar="rail"
   data-slot="sidebar-rail"
-  aria-label="Toggle Sidebar"
+  aria-label={uiLabels.toggle_sidebar}
   tabIndex={-1}
   onclick={(event) => {
     if (onclick) {
@@ -30,7 +30,7 @@
     sidebar.toggle();
   }}
   {onpointerdown}
-  title="Toggle Sidebar"
+  title={uiLabels.toggle_sidebar}
   class={cn(
     'ui:hover:after:bg-sidebar-border ui:absolute ui:inset-y-0 ui:z-20 ui:hidden ui:w-4 ui:-translate-x-1/2 ui:transition-all ui:ease-linear ui:after:absolute ui:after:inset-y-0 ui:after:left-[calc(1/2*100%-1px)] ui:after:w-[2px] ui:sm:flex ui:group-data-[side=left]:-right-4 ui:group-data-[side=right]:left-0',
     'ui:in-data-[side=left]:cursor-w-resize ui:in-data-[side=right]:cursor-e-resize',

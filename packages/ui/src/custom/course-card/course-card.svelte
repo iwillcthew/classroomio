@@ -54,7 +54,11 @@
   const resolvedBannerImage = $derived(bannerImage?.trim() ? bannerImage : DEFAULT_COURSE_BANNER_IMAGE);
 </script>
 
-<Item.Root variant="outline" class="ui:mx-auto ui:w-full ui:max-w-[320px] ui:p-3!" {onclick}>
+<Item.Root
+  variant="outline"
+  class="ui:bg-card ui:mx-auto ui:w-full ui:max-w-[340px] ui:overflow-hidden ui:rounded-xl! ui:p-0! ui:transition-[box-shadow,border-color] ui:hover:border-primary/40 ui:hover:shadow-md"
+  {onclick}
+>
   {#snippet child({ props })}
     <div class={cn('ui:group ui:relative ui:block ui:w-full', className)}>
       {@render overlay?.()}
@@ -62,22 +66,22 @@
       {#if href}
         <a {href} {...props} class={cn('ui:block', props.class as string)}>
           <Item.Header>
-            <Item.Media variant="image" class="ui:relative ui:h-50! ui:w-full!">
+            <Item.Media variant="image" class="ui:relative ui:aspect-video ui:h-auto! ui:w-full! ui:rounded-none!">
               {#if media}
                 {@render media()}
               {:else}
                 <img
                   src={resolvedBannerImage}
                   alt={bannerAlt}
-                  class="ui:w-full ui:h-full ui:rounded-sm ui:object-cover"
+                  class="ui:w-full ui:h-full ui:object-cover ui:transition-transform ui:duration-300 ui:group-hover:scale-[1.02]"
                 />
               {/if}
 
               {#if typeBadge}
                 {@const Icon = typeBadge.icon}
                 <Badge
-                  class="ui:absolute ui:bottom-2 ui:left-2 ui:z-10 ui:flex ui:items-center ui:rounded-md! ui:capitalize"
-                  variant="secondary"
+                  class="ui:bg-card/95 ui:text-foreground ui:absolute ui:top-3 ui:left-3 ui:z-10 ui:flex ui:items-center ui:shadow-sm ui:backdrop-blur"
+                  variant="outline"
                 >
                   <Icon class={typeBadge.iconClass} />
                   {typeBadge.label}
@@ -88,10 +92,10 @@
                 {@const VIcon = visibilityBadge.icon}
                 <Badge
                   class={cn(
-                    'ui:absolute ui:bottom-2 ui:z-10 ui:flex ui:items-center ui:rounded-md! ui:gap-1 ui:capitalize',
-                    typeBadge ? 'ui:right-2 ui:left-auto' : 'ui:left-2'
+                    'ui:bg-card/95 ui:text-foreground ui:absolute ui:top-3 ui:z-10 ui:flex ui:items-center ui:gap-1 ui:shadow-sm ui:backdrop-blur',
+                    typeBadge ? 'ui:right-3 ui:left-auto' : 'ui:left-3'
                   )}
-                  variant="secondary"
+                  variant="outline"
                 >
                   <VIcon class={visibilityBadge.iconClass} />
                   {visibilityBadge.label}
@@ -100,12 +104,14 @@
             </Item.Media>
           </Item.Header>
 
-          <Item.Content class="ui:min-w-0">
-            <Item.Title class="ui:flex ui:min-h-14 ui:items-center ui:text-base! ui:wrap-anywhere">
+          <Item.Content class="ui:min-w-0 ui:gap-1.5 ui:p-4">
+            <Item.Title
+              class="ui:flex ui:min-h-12 ui:items-start ui:text-base! ui:font-semibold ui:leading-snug ui:wrap-anywhere"
+            >
               <span class="ui:line-clamp-2">{title}</span>
             </Item.Title>
 
-            <Item.Description class="ui:min-h-15.75 ui:wrap-break-word">
+            <Item.Description class="ui:min-h-10 ui:line-clamp-2 ui:wrap-break-word">
               {description}
             </Item.Description>
 
@@ -122,22 +128,22 @@
       {:else}
         <div {...props} class={cn('ui:block', props.class as string)}>
           <Item.Header>
-            <Item.Media variant="image" class="ui:relative ui:h-50! ui:w-full!">
+            <Item.Media variant="image" class="ui:relative ui:aspect-video ui:h-auto! ui:w-full! ui:rounded-none!">
               {#if media}
                 {@render media()}
               {:else}
                 <img
                   src={resolvedBannerImage}
                   alt={bannerAlt}
-                  class="ui:w-full ui:h-full ui:rounded-sm ui:object-cover"
+                  class="ui:w-full ui:h-full ui:object-cover ui:transition-transform ui:duration-300 ui:group-hover:scale-[1.02]"
                 />
               {/if}
 
               {#if typeBadge}
                 {@const Icon = typeBadge.icon}
                 <Badge
-                  class="ui:absolute ui:bottom-2 ui:left-2 ui:z-10 ui:flex ui:items-center ui:rounded-md! ui:capitalize"
-                  variant="secondary"
+                  class="ui:bg-card/95 ui:text-foreground ui:absolute ui:top-3 ui:left-3 ui:z-10 ui:flex ui:items-center ui:shadow-sm ui:backdrop-blur"
+                  variant="outline"
                 >
                   <Icon class={typeBadge.iconClass} />
                   {typeBadge.label}
@@ -148,10 +154,10 @@
                 {@const VIcon = visibilityBadge.icon}
                 <Badge
                   class={cn(
-                    'ui:absolute ui:bottom-2 ui:z-10 ui:flex ui:items-center ui:rounded-md! ui:gap-1 ui:capitalize',
-                    typeBadge ? 'ui:right-2 ui:left-auto' : 'ui:left-2'
+                    'ui:bg-card/95 ui:text-foreground ui:absolute ui:top-3 ui:z-10 ui:flex ui:items-center ui:gap-1 ui:shadow-sm ui:backdrop-blur',
+                    typeBadge ? 'ui:right-3 ui:left-auto' : 'ui:left-3'
                   )}
-                  variant="secondary"
+                  variant="outline"
                 >
                   <VIcon class={visibilityBadge.iconClass} />
                   {visibilityBadge.label}
@@ -160,12 +166,14 @@
             </Item.Media>
           </Item.Header>
 
-          <Item.Content class="ui:min-w-0">
-            <Item.Title class="ui:flex ui:min-h-14 ui:items-center ui:text-base! ui:wrap-anywhere">
+          <Item.Content class="ui:min-w-0 ui:gap-1.5 ui:p-4">
+            <Item.Title
+              class="ui:flex ui:min-h-12 ui:items-start ui:text-base! ui:font-semibold ui:leading-snug ui:wrap-anywhere"
+            >
               <span class="ui:line-clamp-2">{title}</span>
             </Item.Title>
 
-            <Item.Description class="ui:min-h-15.75 ui:wrap-break-word">
+            <Item.Description class="ui:min-h-10 ui:line-clamp-2 ui:wrap-break-word">
               {description}
             </Item.Description>
 

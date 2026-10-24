@@ -9,7 +9,6 @@
   import CourseSidebarLogo from './course-sidebar-logo.svelte';
   import Navigation from './course-sidebar-navigation.svelte';
   import SidebarSkeleton from '$features/ui/sidebar/sidebar-skeleton.svelte';
-  import PoweredBy from '$features/ui/powered-by.svelte';
   import { courseApi } from '$features/course/api';
   import { getCourseProgress } from '$features/course/utils/content';
   import { useSidebar } from '@cio/ui/base/sidebar';
@@ -46,7 +45,6 @@
   let shouldIgnoreRailClick = $state(false);
   let stopSidebarResize: (() => void) | null = null;
 
-  const attributionCourseSlug = $derived(courseApi.course?.slug ?? null);
   const courseProgress = $derived(getCourseProgress(courseApi.course));
   const showStudentFooterNav = $derived(
     $isStudentExperience && isCourseReady && sidebar.open && !sidebar.isMobile && courseProgress.total > 0
@@ -148,17 +146,11 @@
 
     <Sidebar.Rail onclick={handleRailClick} onpointerdown={handleRailPointerDown} />
 
-    <Sidebar.Footer>
-      {#if showStudentFooterNav}
+    {#if showStudentFooterNav}
+      <Sidebar.Footer>
         <CourseSidebarFooterNav courseId={id} path={currentPath} class="ui:border-sidebar-border border-t" />
-      {/if}
-      <PoweredBy
-        variant="sidebar"
-        sidebarUtmSource="lms-course-sidebar"
-        courseSlug={attributionCourseSlug}
-        showOnlyLogo={!sidebar.open || sidebar.isMobile}
-      />
-    </Sidebar.Footer>
+      </Sidebar.Footer>
+    {/if}
   </Sidebar.Root>
 {/if}
 

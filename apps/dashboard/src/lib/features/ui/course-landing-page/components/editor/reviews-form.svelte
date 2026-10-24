@@ -91,7 +91,10 @@
           <div class="flex w-full items-center justify-between">
             <Avatar.Root class="mt-1 h-10 w-10">
               {#if review.avatar_url}
-                <Avatar.Image src={review.avatar_url} alt={review.name ? review.name : 'Reviewer'} />
+                <Avatar.Image
+                  src={review.avatar_url}
+                  alt={review.name ? review.name : $t('ui_shell.course_landing.reviewer')}
+                />
               {/if}
               <Avatar.Fallback>
                 <UserIcon class="ui:text-muted-foreground size-5" />

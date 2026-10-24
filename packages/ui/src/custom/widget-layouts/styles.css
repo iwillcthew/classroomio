@@ -147,23 +147,6 @@
   border-radius: var(--cio-radius-lg);
 }
 
-.cio-branding {
-  display: block;
-  margin-top: 16px;
-  text-align: right;
-  font-size: 11px;
-  color: var(--cio-color-text-tertiary);
-  opacity: 0.8;
-  text-decoration: none;
-}
-.cio-branding:hover {
-  opacity: 1;
-  text-decoration: underline;
-}
-.cio-branding:visited {
-  color: var(--cio-color-text-tertiary);
-}
-
 /* ---------------------------------------------------------------- */
 /* 1. Card grid */
 /* ---------------------------------------------------------------- */

@@ -207,7 +207,7 @@
 </script>
 
 <svelte:head>
-  <title>{courseApi.course?.title || 'MP Learning Course'}</title>
+  <title>{courseApi.course?.title || $t('page_titles.course')} · MP Learning</title>
 </svelte:head>
 
 {#if isCourseReady}

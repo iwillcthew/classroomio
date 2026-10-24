@@ -256,7 +256,7 @@
         x="0"
         y="2.5"
         text-anchor="middle"
-        style="font-size: 5.6px;">powered by ClassroomIO</text
+        style="font-size: 5.6px;">MP Learning</text
       ></g
     ></g
   ><g

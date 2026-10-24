@@ -16,11 +16,6 @@
     progress?: Snippet;
     /** When set, collapses all sections except this one when the sheet opens. */
     collapseToSectionId?: string | null;
-    showPoweredBy?: boolean;
-    courseSlug?: string | null;
-    orgSlug?: string | null;
-    poweredByLabel?: string;
-    poweredByBrand?: string;
   }
 
   let {
@@ -32,12 +27,7 @@
     hrefFor,
     title = 'Course outline',
     progress,
-    collapseToSectionId = null,
-    showPoweredBy = true,
-    courseSlug = null,
-    orgSlug = null,
-    poweredByLabel = 'Powered by',
-    poweredByBrand = 'ClassroomIO'
+    collapseToSectionId = null
   }: Props = $props();
 
   let scrollContainer = $state<HTMLDivElement | null>(null);
@@ -99,11 +89,6 @@
           collapsibleSections={Boolean(collapseToSectionId)}
           {collapseToSectionId}
           {collapseResetKey}
-          {showPoweredBy}
-          {courseSlug}
-          {orgSlug}
-          {poweredByLabel}
-          {poweredByBrand}
         />
       </div>
     </Drawer.Content>

@@ -54,7 +54,7 @@
     const blob = await response.blob();
     const maxFileSizeInBytes = maxFileSizeInMb * 1024 * 1024;
     if (blob.size > maxFileSizeInBytes) {
-      errorMessage = `${$t('settings.profile.profile_picture.validation_error')} File size exceeds ${maxFileSizeInMb}MB limit`;
+      errorMessage = `${$t('settings.profile.profile_picture.validation_error')} ${maxFileSizeInMb}MB`;
       src = '';
       avatar = undefined;
 
@@ -67,7 +67,7 @@
 
     const validation = validateImageUpload(file);
     if (!validation.isValid) {
-      snackbar.error(validation.error || 'Invalid file type');
+      snackbar.error(validation.error || 'ui_shell.upload_image.invalid_file_type');
       errorMessage = $t('snackbar.landing_page_settings.error.try_again');
 
       src = '';
@@ -94,7 +94,7 @@
 
     // Check if error is due to file size
     if (file.size > maxFileSizeInBytes) {
-      errorMessage = `${$t('settings.profile.profile_picture.validation_error')} File size exceeds ${maxFileSizeInMb}MB limit`;
+      errorMessage = `${$t('settings.profile.profile_picture.validation_error')} ${maxFileSizeInMb}MB`;
       return;
     }
 

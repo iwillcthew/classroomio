@@ -5,7 +5,7 @@
 </script>
 
 <svelte:head>
-  <title>Billing - MP Learning</title>
+  <title>{$t('page_titles.billing')} · MP Learning</title>
 </svelte:head>
 
 <Page.Header>

@@ -6,6 +6,7 @@
   import * as Dialog from '@cio/ui/base/dialog';
   import { InputField } from '@cio/ui/custom/input-field';
   import { Button } from '@cio/ui/base/button';
+  import { t } from '$lib/utils/functions/translations';
 
   interface Props {
     open?: boolean;
@@ -73,24 +74,24 @@
 <Dialog.Root {open} onOpenChange={handleOpenChange}>
   <Dialog.Content class="w-96">
     <Dialog.Header>
-      <Dialog.Title>Process course payment</Dialog.Title>
+      <Dialog.Title>{$t('ui_shell.payment_modal.title')}</Dialog.Title>
     </Dialog.Header>
     {#if step === STEPS.STEP_1}
       <form onsubmit={preventDefault(onSubmit)}>
         <InputField
-          label="Your Fullname"
+          label={$t('login.fields.full_name')}
           bind:value={fields.fullname}
           autoFocus={true}
-          placeholder="John Doe"
+          placeholder={$t('ui_shell.payment_modal.fullname_placeholder')}
           className="mb-4"
           isRequired={true}
           autoComplete={false}
           errorMessage={errors.fullname}
         />
         <InputField
-          label="Your Email"
+          label={$t('course.navItem.landing_page.email')}
           bind:value={fields.email}
-          placeholder="johndoe@email.com"
+          placeholder={$t('ui_shell.payment_modal.email_placeholder')}
           className="mb-4"
           isRequired={true}
           autoComplete={false}
@@ -99,15 +100,15 @@
 
         <div class="mt-5 flex flex-row-reverse items-center">
           <Button type="submit">
-            {paymentLink ? 'Next' : 'Finish'}
+            {paymentLink ? $t('app.next') : $t('course.navItem.people.invite_modal.finish')}
           </Button>
         </div>
       </form>
     {:else if step === STEPS.STEP_2}
-      <p>You will now be taken to a payment page, once you've paid send a proof of payment to the course admin</p>
+      <p>{$t('ui_shell.payment_modal.redirect_notice')}</p>
       <div class="mt-5 flex flex-row-reverse items-center">
         <a href={paymentLink} target="_blank" onclick={onClickPaymentLink} class="text-sm font-semibold"
-          >Go to payment</a
+          >{$t('ui_shell.payment_modal.go_to_payment')}</a
         >
       </div>
     {/if}

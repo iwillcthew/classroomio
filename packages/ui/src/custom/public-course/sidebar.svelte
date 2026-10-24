@@ -5,7 +5,6 @@
   import * as Collapsible from '../../base/collapsible';
   import * as Tooltip from '../../base/tooltip';
   import { cn } from '../../tools';
-  import PoweredBy from './powered-by.svelte';
   import SidebarRow from './sidebar-row.svelte';
   import type { PublicCourseSidebarItem, PublicCourseSidebarSection } from './types';
 
@@ -21,11 +20,6 @@
     collapseToSectionId?: string | null;
     /** Increment to force collapse reset even when `collapseToSectionId` is unchanged. */
     collapseResetKey?: number;
-    showPoweredBy?: boolean;
-    courseSlug?: string | null;
-    orgSlug?: string | null;
-    poweredByLabel?: string;
-    poweredByBrand?: string;
     class?: string;
   }
 
@@ -37,11 +31,6 @@
     collapsibleSections = false,
     collapseToSectionId = null,
     collapseResetKey = 0,
-    showPoweredBy = true,
-    courseSlug = null,
-    orgSlug = null,
-    poweredByLabel = 'Powered by',
-    poweredByBrand = 'ClassroomIO',
     class: className
   }: Props = $props();
 
@@ -161,8 +150,4 @@
       {/each}
     </Tooltip.Provider>
   </nav>
-
-  {#if showPoweredBy}
-    <PoweredBy {courseSlug} {orgSlug} label={poweredByLabel} brand={poweredByBrand} />
-  {/if}
 </div>

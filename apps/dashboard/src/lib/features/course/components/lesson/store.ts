@@ -7,6 +7,7 @@ import { lessonApi } from '$features/course/api';
 import { lessonValidation } from '$lib/utils/functions/validator';
 import { profile } from '$lib/utils/store/user';
 import { snackbar } from '$features/ui/snackbar/store';
+import { t } from '$lib/utils/functions/translations';
 
 export const lessonVideoUpload = writable({
   error: null as string | null,
@@ -114,7 +115,7 @@ export function cancelDocumentUpload() {
     ...store,
     isCancelled: true,
     isUploading: false,
-    error: 'Upload cancelled by user'
+    error: t.get('course.navItem.lessons.materials.tabs.document.upload_cancelled')
   }));
 }
 

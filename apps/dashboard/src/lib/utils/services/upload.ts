@@ -1,3 +1,4 @@
+import { t } from '$lib/utils/functions/translations';
 import { classroomio } from './api';
 
 /**
@@ -16,7 +17,7 @@ export async function uploadImage(file: File): Promise<string> {
 
     const data = await response.json();
     if (!data.success || !data.url) {
-      const errorMessage = 'error' in data ? data.error : 'Failed to upload image';
+      const errorMessage = 'error' in data ? data.error : t.get('snackbar.landing_page_settings.error.upload_failed');
       throw new Error(errorMessage);
     }
 

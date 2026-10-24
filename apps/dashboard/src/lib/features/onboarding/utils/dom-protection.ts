@@ -1,3 +1,4 @@
+import { t } from '$lib/utils/functions/translations';
 import type { Readable } from 'svelte/store';
 import { browser } from '$app/environment';
 
@@ -63,7 +64,7 @@ export function setupDOMProtection(isEmailVerified: Readable<boolean> | (() => b
       el.style.pointerEvents = 'none';
       el.style.opacity = '0.5';
       el.style.cursor = 'not-allowed';
-      el.setAttribute('title', 'Email verification required');
+      el.setAttribute('title', t.get('verify_email_modal.required_title'));
 
       // Add click prevention
       el.addEventListener('click', preventInteraction, true);
@@ -108,7 +109,7 @@ export function setupDOMProtection(isEmailVerified: Readable<boolean> | (() => b
       // Show warning
       if (event.target) {
         const target = event.target as HTMLElement;
-        target.setAttribute('title', 'Please verify your email to use this feature');
+        target.setAttribute('title', t.get('verify_email_modal.verify_to_use'));
       }
 
       // Optional: Show alert

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { t } from '$lib/utils/functions/translations';
   import { CommunityQuestionPage } from '$features/community/pages';
   import { resolve } from '$app/paths';
   import { page } from '$app/state';
@@ -9,7 +10,7 @@
 </script>
 
 <svelte:head>
-  <title>Question - MP Learning</title>
+  <title>{$t('page_titles.question')} · MP Learning</title>
 </svelte:head>
 
 <CommunityQuestionPage slug={data.slug} question={data.question} backHref={resolve(communityPath, {})} />

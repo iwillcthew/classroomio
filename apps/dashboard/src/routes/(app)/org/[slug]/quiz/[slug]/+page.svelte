@@ -61,6 +61,15 @@
   } = $state({});
   let isFocused = $state(false);
 
+  const timeLimitLabels: Record<string, string> = {
+    '10 seconds': '10s',
+    '20 seconds': '20s',
+    '30 seconds': '30s',
+    '1 minute': '1m',
+    '2 minute': '2m',
+    '3 minute': '3m'
+  };
+
   function activeClass(q, cq) {
     if (q.id === cq.id) {
       return 'bg-gray-200 dark:bg-black';
@@ -113,7 +122,7 @@
             }))
         : cloneDeep(booleanOptions).map((o) => ({
             id: Number(o.id),
-            label: o.label,
+            label: t.get(o.labelKey),
             isCorrect: o.isCorrect
           }));
 
@@ -237,7 +246,7 @@
 </script>
 
 <svelte:head>
-  <title>Quiz</title>
+  <title>{$t('page_titles.quiz')} · MP Learning</title>
 </svelte:head>
 
 <DeleteModal onDelete={deleteQuestion} />
@@ -251,10 +260,11 @@
   <aside class="root h-full w-1/5 bg-gray-100 p-4 dark:bg-neutral-800">
     <div class="flex h-full flex-col">
       <a class="text-md flex items-center text-gray-500 dark:text-white" href={`${$currentOrgPath}/quiz`}>
-        <ArrowLeftIcon size={16} /> Back to Quizzes
+        <ArrowLeftIcon size={16} />
+        {$t('quiz.editor.back')}
       </a>
 
-      <h3 class="my-3">Quiz</h3>
+      <h3 class="my-3">{$t('page_titles.quiz')}</h3>
 
       <div class="mb-3">
         {#each $quizStore.questions as question, i}
@@ -274,7 +284,7 @@
               }
             }}
           >
-            Question {i + 1}
+            {$t('quiz.editor.question_number', { number: i + 1 })}
 
             {#if qHasError(question.id, errors)}
               <CircleAlertIcon size={16} class="filled" />
@@ -284,7 +294,7 @@
       </div>
 
       <div class="flex w-full justify-end">
-        <Button onclick={addQuestion}>Add Question</Button>
+        <Button onclick={addQuestion}>{$t('quiz.editor.add_question')}</Button>
       </div>
     </div>
   </aside>
@@ -302,7 +312,7 @@
 
         {#if isBoolean(currentError.hasOneAnswer) && !currentError.hasOneAnswer}
           <div class="mb-5">
-            <p class="text-red-500">Please select at least one correct answer</p>
+            <p class="text-red-500">{$t('quiz.editor.select_correct_answer')}</p>
           </div>
         {/if}
 
@@ -327,9 +337,9 @@
   <!-- Quiz Settings -->
   <aside class="settings h-full w-1/5 bg-gray-100 p-4 dark:bg-neutral-800">
     <div class="py-5">
-      <h5>Quiz settings</h5>
-      <Button onclick={saveQuiz} class="my-3">Save Changes</Button>
-      <Button variant="outline" onclick={previewQuiz} class="my-3">Preview Quiz</Button>
+      <h5>{$t('quiz.editor.settings')}</h5>
+      <Button onclick={saveQuiz} class="my-3">{$t('common.save_changes')}</Button>
+      <Button variant="outline" onclick={previewQuiz} class="my-3">{$t('quiz.editor.preview')}</Button>
       <Button
         variant="ghost"
         onclick={() => {
@@ -339,7 +349,7 @@
         }}
         class="my-3"
       >
-        Delete question
+        {$t('components.quiz.question_delete')}
       </Button>
       />
     </div>
@@ -348,7 +358,7 @@
       <div class="my-3">
         <!-- Question type -->
         <div class="mb-3">
-          <Label class="mb-2">Question type</Label>
+          <Label class="mb-2">{$t('quiz.editor.question_type')}</Label>
           <Select.Root
             type="single"
             bind:value={type}
@@ -359,21 +369,23 @@
             }}
           >
             <Select.Trigger class="w-full">
-              <p>{type === 'multichoice' ? 'Multi-choice answers' : 'True or False'}</p>
+              <p>{type === 'multichoice' ? $t('quiz.editor.type_multichoice') : $t('quiz.editor.type_boolean')}</p>
             </Select.Trigger>
             <Select.Content>
-              <Select.Item value="multichoice">Multi-choice answers</Select.Item>
-              <Select.Item value="boolean">True or False</Select.Item>
+              <Select.Item value="multichoice">{$t('quiz.editor.type_multichoice')}</Select.Item>
+              <Select.Item value="boolean">{$t('quiz.editor.type_boolean')}</Select.Item>
             </Select.Content>
           </Select.Root>
         </div>
 
         <!--  -->
         <div class="mb-3">
-          <Label class="mb-2">Time limit</Label>
+          <Label class="mb-2">{$t('quiz.editor.time_limit')}</Label>
           <Select.Root type="single" bind:value={$quizStore.timelimit}>
             <Select.Trigger class="w-full">
-              <p>{$quizStore.timelimit || 'Select time limit'}</p>
+              <p>
+                {timeLimitLabels[$quizStore.timelimit] || $quizStore.timelimit || $t('quiz.editor.select_time_limit')}
+              </p>
             </Select.Trigger>
             <Select.Content>
               <Select.Item value="10 seconds">10s</Select.Item>
@@ -389,7 +401,7 @@
 
       <!-- Theme settings -->
       <div class="my-3">
-        <p class="mb-2">Choose a theme</p>
+        <p class="mb-2">{$t('quiz.editor.choose_theme')}</p>
 
         {#each allThemes as _theme}
           <div
@@ -411,7 +423,7 @@
                 }
               }}
             >
-              <p class="mb-3 ml-3 text-white">{_theme.label}</p>
+              <p class="mb-3 ml-3 text-white">{$t(_theme.labelKey)}</p>
             </div>
           </div>
         {/each}

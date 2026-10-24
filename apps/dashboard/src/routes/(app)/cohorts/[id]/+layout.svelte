@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { t } from '$lib/utils/functions/translations';
   import { page } from '$app/state';
   import * as Sidebar from '@cio/ui/base/sidebar';
   import { Empty } from '@cio/ui/custom/empty';
@@ -32,7 +33,7 @@
 </script>
 
 <svelte:head>
-  <title>{cohortApi.cohort?.name || 'Cohort'} - MP Learning</title>
+  <title>{cohortApi.cohort?.name || $t('page_titles.cohort')} · MP Learning</title>
 </svelte:head>
 
 <Sidebar.Provider data-sveltekit-preload-data="off">
@@ -46,8 +47,8 @@
     {#if !isCohortReady}
       <div class="mx-auto flex h-[calc(100vh-56px)] w-full items-center justify-center">
         <Empty
-          title="Loading cohort..."
-          description="Please wait while we load your cohort data."
+          title={$t('cohorts.loading.title')}
+          description={$t('cohorts.loading.description')}
           icon={Spinner}
           iconClass="h-8 w-8"
           variant="page"

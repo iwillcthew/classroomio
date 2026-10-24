@@ -83,7 +83,7 @@
 
   async function downloadDocument(doc: LessonDocument) {
     if (!doc.key) {
-      snackbar.error('Document not loaded correctly');
+      snackbar.error('course.navItem.lessons.materials.tabs.document.not_loaded');
       return;
     }
 
@@ -138,7 +138,7 @@
       viewingPDF = document;
       pdfViewerOpen = true;
       isLoading = true;
-      error = 'Loading PDF viewer...';
+      error = 'course.navItem.lessons.materials.tabs.document.loading_viewer';
 
       await checkPDFJS();
     }
@@ -150,7 +150,7 @@
 
     try {
       if (!document.key) {
-        snackbar.error('Document not loaded correctly');
+        snackbar.error('course.navItem.lessons.materials.tabs.document.not_loaded');
         return;
       }
 
@@ -360,18 +360,30 @@
         <!-- Navigation Controls -->
         {#if !isLoading && !error}
           <div class="flex items-center space-x-1">
-            <IconButton onclick={prevPage} disabled={pageNum <= 1} tooltip="Previous page (←)">
+            <IconButton
+              onclick={prevPage}
+              disabled={pageNum <= 1}
+              tooltip={$t('course.navItem.lessons.materials.tabs.document.previous_page')}
+            >
               <ChevronLeftIcon size={16} />
             </IconButton>
 
-            <IconButton onclick={nextPage} disabled={pageNum >= pageCount} tooltip="Next page (→)">
+            <IconButton
+              onclick={nextPage}
+              disabled={pageNum >= pageCount}
+              tooltip={$t('course.navItem.lessons.materials.tabs.document.next_page')}
+            >
               <ChevronRightIcon size={16} />
             </IconButton>
           </div>
 
           <!-- Zoom Controls -->
           <div class="flex items-center space-x-1">
-            <IconButton onclick={zoomOut} disabled={scale <= 0.5} tooltip="Zoom out (-)">
+            <IconButton
+              onclick={zoomOut}
+              disabled={scale <= 0.5}
+              tooltip={$t('course.navItem.lessons.materials.tabs.document.zoom_out')}
+            >
               <ZoomOutIcon size={16} />
             </IconButton>
 
@@ -379,13 +391,17 @@
               {Math.round(scale * 100)}%
             </span>
 
-            <IconButton onclick={zoomIn} disabled={scale >= 3.0} tooltip="Zoom in (+)">
+            <IconButton
+              onclick={zoomIn}
+              disabled={scale >= 3.0}
+              tooltip={$t('course.navItem.lessons.materials.tabs.document.zoom_in')}
+            >
               <ZoomInIcon size={16} />
             </IconButton>
           </div>
         {/if}
 
-        <CloseButton onClick={closePDFViewer} tooltip="Close (Esc)" />
+        <CloseButton onClick={closePDFViewer} tooltip={$t('course.navItem.lessons.materials.tabs.document.close')} />
       </div>
     </div>
 

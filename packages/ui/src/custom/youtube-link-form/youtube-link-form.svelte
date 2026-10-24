@@ -2,7 +2,7 @@
   import { Button } from '../../base/button';
   import { Input } from '../../base/input';
   import { Label } from '../../base/label';
-  import { cn } from '../../tools';
+  import { cn, uiLabels } from '../../tools';
   import { extractUniqueLinks, toCanonicalYoutubeUrl } from '@cio/utils';
 
   interface Props {
@@ -58,7 +58,7 @@
       rawInput = '';
       onInputChange('');
     } catch (error) {
-      validationError = typeof error === 'string' ? error : (error as Error)?.message || 'Failed to add video';
+      validationError = typeof error === 'string' ? error : (error as Error)?.message || uiLabels.video_add_failed;
     } finally {
       isSubmitting = false;
     }

@@ -1,6 +1,6 @@
 <script lang="ts">
   import * as Sheet from '../sheet';
-  import { cn, type WithElementRef } from '../../../src/tools';
+  import { cn, uiLabels, type WithElementRef } from '../../../src/tools';
   import type { HTMLAttributes } from 'svelte/elements';
   import { SIDEBAR_WIDTH_MOBILE } from './constants';
   import { useSidebar } from './context.svelte';
@@ -50,8 +50,8 @@
       {side}
     >
       <Sheet.Header class="sr-only">
-        <Sheet.Title>Sidebar</Sheet.Title>
-        <Sheet.Description>Displays the mobile sidebar.</Sheet.Description>
+        <Sheet.Title>{uiLabels.sidebar_title}</Sheet.Title>
+        <Sheet.Description>{uiLabels.sidebar_description}</Sheet.Description>
       </Sheet.Header>
       <div class="ui:flex ui:h-full ui:w-full ui:flex-col">
         {@render children?.()}

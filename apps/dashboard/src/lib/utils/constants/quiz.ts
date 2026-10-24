@@ -61,23 +61,23 @@ export const allOptions = [
 export const booleanOptions = [
   {
     id: 'triangle',
-    label: 'True',
+    labelKey: 'quiz.option_true',
     image: 'https://pgrest.classroomio.com/storage/v1/object/public/avatars/quizes/triangle.svg'
   },
   {
     id: 'square',
-    label: 'False',
+    labelKey: 'quiz.option_false',
     image: 'https://pgrest.classroomio.com/storage/v1/object/public/avatars/quizes/square.svg'
   }
 ];
 export const allThemes = [
   {
     id: 'standard',
-    label: 'Standard'
+    labelKey: 'quiz.theme_standard'
   },
   {
     id: 'mainland',
-    label: 'Mainland Bridge'
+    labelKey: 'quiz.theme_mainland'
   }
 ];
 

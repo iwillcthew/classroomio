@@ -5,7 +5,7 @@
 </script>
 
 <svelte:head>
-  <title>AI Credits - MP Learning</title>
+  <title>{$t('page_titles.ai_credits')} · MP Learning</title>
 </svelte:head>
 
 <Page.Header>

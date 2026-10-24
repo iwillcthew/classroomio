@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { cn } from '../../tools';
+  import { cn, uiLabels } from '../../tools';
   import type { MentionItem } from './types';
   import type { Snippet } from 'svelte';
 
@@ -23,7 +23,7 @@
     onSelect,
     icon,
     typeLabel,
-    emptyMessage = 'No results',
+    emptyMessage = uiLabels.no_results,
     class: className
   }: Props = $props();
 

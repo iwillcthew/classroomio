@@ -239,7 +239,7 @@
     },
     "powered_by": {
       "label": "Powered by",
-      "brand": "ClassroomIO"
+      "brand": "MP Learning"
     },
     "exercise": {
       "submit": "Yanıtlarımı kontrol et",
@@ -352,7 +352,7 @@
       "no_training": "Henüz eğitimimiz yok"
     },
     "use_cases": {
-      "label": "ClassroomIO'yu ne için kullanmak istiyorsunuz?",
+      "label": "MP Learning'yu ne için kullanmak istiyorsunuz?",
       "customer_training": "Müşterilerimi ürünüm hakkında eğitin",
       "customer_certification": "Müşterileri veya iş ortaklarını sertifikalandırın",
       "partner_training": "İş ortaklarını veya satıcıları eğitin",
@@ -471,6 +471,12 @@
         "title": "Akademiniz açılıyor…",
         "caption": "Kurslarınız, öğrencileriniz ve ayarlarınız hazırlanıyor."
       }
+    },
+    "not_found": {
+      "title": "Page not found",
+      "org_title": "Organization not found",
+      "description": "The page you are looking for does not exist or has been moved.",
+      "home": "Back to home"
     }
   },
   "compliance": {
@@ -643,7 +649,7 @@
       "heading": "Bildirimler",
       "page_title": "Bildirimler",
       "page_subtitle": "Hangi e-posta bildirimlerini alacağınızı seçin ve yönetici olarak kuruluşunuzun gönderdiği e-postaları seçin.",
-      "personal_page_subtitle": "ClassroomIO'dan hangi e-posta bildirimlerini alacağınızı seçin.",
+      "personal_page_subtitle": "MP Learning'dan hangi e-posta bildirimlerini alacağınızı seçin.",
       "personal": {
         "heading": "E-posta tercihleriniz",
         "description": "Bunlar, bu kuruluşta size gönderilen e-postalar için geçerlidir. Kuruluşunuz yine de belirli e-postaları herkes için devre dışı bırakabilir.",
@@ -958,7 +964,7 @@
       "gallery": {
         "heading": "Popüler temalar",
         "description": "Kolayca özelleştirebileceğiniz temel özelliklerle üretilmiştir; kodlamaya gerek yoktur.",
-        "by_classroomio": "ClassroomIO",
+        "by_platform": "MP Learning",
         "add": "Add",
         "upgrade": "Yükseltme",
         "apply_theme": "Temayı Uygula",
@@ -1242,7 +1248,7 @@
       "page_subtitle": "Önemli şeyler olduğunda bildirim almak için Telegram'a bağlanın olur.",
       "heading": "Telegram",
       "sub_heading": "Uygulama içindeki herhangi bir değişiklikten haberdar olmak için hesabınızı telegrama bağlayın.",
-      "step_authenticate": "1. Adım: ClassroomIO bot aracılığıyla hesabınızı doğrulayın.",
+      "step_authenticate": "1. Adım: MP Learning bot aracılığıyla hesabınızı doğrulayın.",
       "open_bot_button": "Open Bot",
       "step_chatId": "2. Adım: Size verilen Sohbet Kimliğini girin. bot.",
       "connect_button": "Connect",
@@ -1325,7 +1331,7 @@
       "dynamic_content_description": "İmlecin üzerine değerler veya isteğe bağlı bir bağlantı ekleyin. Değerin gönderme sırasında eklenebilmesi için parantezleri değiştirmeden bırakın.",
       "dynamic_link": "Dinamik bağlantı ekle",
       "protected_content": "Korumalı e-posta içeriği",
-      "protected_content_description": "Gerekli eylem düğmesi, hedef, markalama ve alt bilgi ClassroomIO tarafından yönetilir ve kaldırılamaz.",
+      "protected_content_description": "Gerekli eylem düğmesi, hedef, markalama ve alt bilgi MP Learning tarafından yönetilir ve kaldırılamaz.",
       "reset": "Çevrilen varsayılana sıfırla",
       "templates": {
         "studentCourseInvite": "Kurs daveti",
@@ -1565,7 +1571,7 @@
     }
   },
   "tags_admin": {
-    "page_title": "Tags - ClassroomIO",
+    "page_title": "Tags - MP Learning",
     "heading": "Tags",
     "page_subtitle": "Filtrelerin ve listelerin taranmasının kolay olması için dersleri etiketlerle düzenleyin.",
     "create": "Create",
@@ -1704,7 +1710,7 @@
         "eyebrow_today": "Early Adopter fiyatı · Bugün bitiyor",
         "title": "Bilerek düşük fiyat. Uzun sürmeyecek.",
         "title_closing": "Bilerek düşük fiyat. Yakında kapanıyor.",
-        "body": "ClassroomIO’yu uygun fiyatlı tutuyoruz çünkü onu yalnızca müşterilerimiz için değil, müşterilerimizle birlikte geliştiriyoruz. Bugünkü fiyatı {date} tarihinden önce sabitleyin. Ardından Early Adopter planı kapanır ve yeni fiyatlar geçerli olur.",
+        "body": "MP Learning’yu uygun fiyatlı tutuyoruz çünkü onu yalnızca müşterilerimiz için değil, müşterilerimizle birlikte geliştiriyoruz. Bugünkü fiyatı {date} tarihinden önce sabitleyin. Ardından Early Adopter planı kapanır ve yeni fiyatlar geçerli olur.",
         "link": "Bunu neden yaptığımızı okuyun"
       }
     }
@@ -1713,6 +1719,20 @@
     "heading": "Widget'lar",
     "subtitle": "Harici web siteleri için markalı kurs koleksiyonları yayınlayın.",
     "empty_state": "Henüz widget yok. Yerleştirilebilir bir ders bloğu oluşturmak için bir tane oluşturun.",
+    "filters": {
+      "filter": "Filtre",
+      "popover_title": "Filtreler",
+      "clear_all": "Tümünü temizle",
+      "search_placeholder": "Ada göre ara",
+      "status": "Durum",
+      "layout_type": "Düzen türü",
+      "selection_mode": "Seçim modu",
+      "no_results_title": "Filtrelerinize uyan widget yok",
+      "no_results_description": "Farklı bir arama terimi deneyin veya her şeyi tekrar görmek için filtreleri temizleyin.",
+      "no_results_page_title": "Bu sayfada sonuç yok",
+      "no_results_page_description": "Bu filtrelerle bulunan widget sayısı bu sayfa için yeterli değil.",
+      "back_to_first_page": "İlk sayfaya dön"
+    },
     "empty": {
       "heading": "Henüz widget yok",
       "description": "Harici web siteleri için yerleştirilebilir bir ders bloğu oluşturmak için bir widget oluşturun."
@@ -1910,7 +1930,7 @@
       "border_radius": "Kenarlık yarıçapı",
       "font_family": "Yazı tipi ailesi",
       "font_scale": "Yazı tipi boyutu ölçeği",
-      "show_powered_by": "Göster Classroomio markalama",
+      "show_powered_by": "Göster MP Learning markalama",
       "custom_css": "Özel CSS",
       "custom_css_locked": "Özel CSS'yi etkinleştirmek için yükseltme.",
       "custom_css_hint": "Maksimum 5.000 karakter.",
@@ -1995,7 +2015,7 @@
     "goto": "Şuraya gidin",
     "courses": "Kurslar",
     "home": "Ana Sayfa",
-    "classroomio_home": "ClassroomIO Ana Sayfa",
+    "mp_home": "MP Learning Ana Sayfa",
     "dashboard": "Dashboard",
     "discussion": "Tartışma",
     "people": "Kişiler",
@@ -2056,7 +2076,7 @@
         "save": "Save",
         "your_domain": "Alan Adınız",
         "custom_domain_error": "Üst düzey bir alan adını özel alan adı olarak ekleyemezsiniz. Bunun yerine, 'courses.[websiteniz].com' veya 'www.[websiteniz].com' gibi bir alt alan adı kullanın.",
-        "custom_domain_not_classroomio": "Domain, 'classroomio' içeremez",
+        "custom_domain_reserved": "Domain, 'mp-learning' içeremez",
         "custom_domain_success": "Özel alan adı başarıyla eklendi",
         "dns_description": "Devam etmek için DNS sağlayıcınızda aşağıdaki kaydı ayarlayın:",
         "dns_type": "Type",
@@ -2203,7 +2223,8 @@
     "login_activity_title": "Öğrenci Giriş Etkinliği",
     "login_activity_description": "Haftanın en aktif günleri (son 90 gün)",
     "login_activity_no_data": "Henüz giriş etkinliği yok",
-    "login_activity_logins": "girişler"
+    "login_activity_logins": "girişler",
+    "org_overview_description": "Here is how training is going across your organization."
   },
   "ai": {
     "help_me": "Yazmama yardım et",
@@ -2316,7 +2337,7 @@
   "course": {
     "creator": {
       "heading": "Hangi kursu oluşturmak istiyorsunuz?",
-      "placeholder": "ClassroomIO'dan sizin için bir kurs oluşturmasını isteyin...",
+      "placeholder": "MP Learning'dan sizin için bir kurs oluşturmasını isteyin...",
       "drafting": {
         "heading": "Kurs fikrinizin taslağını oluşturma",
         "subtext": "İsteminizi ders başlığına ve çalışma alanına dönüştürüyoruz.",
@@ -3897,7 +3918,7 @@
           "audit_actor": "Actor",
           "audit_ip": "IP",
           "scan_qr": "Scan QR",
-          "classroomio_brand": "ClassroomIO.com",
+          "platform_brand": "MP Learning",
           "snackbar_invite_link_copied": "Davet bağlantısı kopyalandı",
           "snackbar_invite_link_regenerated": "Yeni bir davet bağlantısı oluşturuldu",
           "snackbar_failed_generate_link": "Davet bağlantısı oluşturulamadı",
@@ -4945,7 +4966,7 @@
       }
     },
     "mcp": {
-      "page_subtitle": "Döndürebileceğiniz kuruluş kapsamlı anahtarlarla AI araçlarını ClassroomIO'ya bağlayın istediğiniz zaman.",
+      "page_subtitle": "Döndürebileceğiniz kuruluş kapsamlı anahtarlarla AI araçlarını MP Learning'ya bağlayın istediğiniz zaman.",
       "usage": {
         "title": "Kullanım ve sınırlar",
         "description": "MCP her planda mevcuttur. Kullanım, anahtar limitleri ve hız limitleri tarafından kontrol edilir.",
@@ -4957,13 +4978,13 @@
       },
       "keys": {
         "title": "MCP anahtarları",
-        "description": "Bu anahtarlar, bir MCP istemcisi `@classroomio/mcp` aracılığıyla ClassroomIO'yu aradığında mevcut organizasyonun kimliğini doğrular.",
+        "description": "Bu anahtarlar, bir MCP istemcisi `@classroomio/mcp` aracılığıyla MP Learning'yu aradığında mevcut organizasyonun kimliğini doğrular.",
         "generate": "MCP anahtarını oluştur",
         "modal": {
           "title": "MCP anahtarı oluştur",
           "description": "Oluşturulmadan önce bu MCP anahtarı için bir ad seçin.",
           "name_label": "Anahtar adı",
-          "name_placeholder": "ClassroomIO OpenCode",
+          "name_placeholder": "MP Learning OpenCode",
           "cancel": "İptal",
           "save": "Anahtar oluştur"
         },
@@ -4973,20 +4994,20 @@
         "title": "İstemci kurulumu",
         "description": "Entegrasyon başına bir kuruluş kapsamlı anahtar kullanın. Bir anahtar döndürülür veya iptal edilirse, istemci yeni gizli dizi yapılandırılana kadar çalışmayı durdurur.",
         "claude_code_description": "Oluşturulan kuruluş kapsamlı anahtarı kullanarak `@classroomio/mcp'yi Claude Koduyla kaydeder.",
-        "codex_description": "ClassroomIO MCP sunucusunu aynı kuruluş kapsamlı anahtarla Codex'e ekler.",
+        "codex_description": "MP Learning MCP sunucusunu aynı kuruluş kapsamlı anahtarla Codex'e ekler.",
         "cursor_description": "Bunu şuraya yapıştırın: `~/.cursor/mcp.json` veya çalışma alanınız MCP config.",
         "opencode_description": "Bunu proje kökünüzdeki `opencode.json'a veya `~/.config/opencode/opencode.json`a ekleyin."
       },
       "view_docs": "Dokümanları Görüntüle"
     },
     "api": {
-      "subtitle": "ClassroomIO genel API'si ile entegre olmak için API anahtarlarını yönetin.",
+      "subtitle": "MP Learning genel API'si ile entegre olmak için API anahtarlarını yönetin.",
       "keys": {
         "title": "API anahtarları",
-        "description": "Bu anahtarlar, ClassroomIO genel API'si çağrılırken mevcut kuruluşun kimliğini doğrular.",
+        "description": "Bu anahtarlar, MP Learning genel API'si çağrılırken mevcut kuruluşun kimliğini doğrular.",
         "generate": "API anahtarı oluştur",
         "empty_title": "Henüz API anahtarı yok",
-        "empty_description": "ClassroomIO genel API'sini kullanmak için ilk kuruluş kapsamlı API anahtarını oluşturun.",
+        "empty_description": "MP Learning genel API'sini kullanmak için ilk kuruluş kapsamlı API anahtarını oluşturun.",
         "modal": {
           "title": "API anahtarı oluşturun",
           "description": "Oluşturulmadan önce bu API anahtarı için bir ad seçin.",
@@ -5004,11 +5025,11 @@
       "view_docs": "Belgeleri Görüntüleyin"
     },
     "zapier": {
-      "page_subtitle": "ClassroomIO'yu Zapier aracılığıyla binlerce uygulamayla otomatikleştirin. Çok yakında."
+      "page_subtitle": "MP Learning'yu Zapier aracılığıyla binlerce uygulamayla otomatikleştirin. Çok yakında."
     },
     "webhooks": {
-      "page_subtitle": "ClassroomIO olaylarını gerçek zamanlı olarak Slack'e, CRM'inize veya kendi arka ucunuza gönderin.",
-      "description": "Seçili bir olay gerçekleştiğinde ClassroomIO, URL'nize imzalı bir HTTP POST isteği gönderir. Başarısız teslimatlar otomatik olarak yeniden denenir.",
+      "page_subtitle": "MP Learning olaylarını gerçek zamanlı olarak Slack'e, CRM'inize veya kendi arka ucunuza gönderin.",
+      "description": "Seçili bir olay gerçekleştiğinde MP Learning, URL'nize imzalı bir HTTP POST isteği gönderir. Başarısız teslimatlar otomatik olarak yeniden denenir.",
       "permissions_description": "Webhook'ları yalnızca kuruluş yöneticileri oluşturabilir, düzenleyebilir veya silebilir.",
       "create": "Yeni webhook",
       "empty_title": "Henüz webhook yok",
@@ -5049,7 +5070,7 @@
       "form": {
         "create_title": "Yeni webhook",
         "edit_title": "Webhook'u düzenle",
-        "description": "ClassroomIO'nun olayları nereye göndereceğini ve hangi olayları göndereceğini seçin.",
+        "description": "MP Learning'nun olayları nereye göndereceğini ve hangi olayları göndereceğini seçin.",
         "sections": {
           "endpoint": "Uç nokta",
           "events": "Olaylar"
@@ -5060,7 +5081,7 @@
         "payload_url_help": "10 saniye içinde 2xx yanıtı döndüren herkese açık bir HTTPS URL'si olmalıdır.",
         "secret": "İmza sırrı",
         "secret_placeholder": "Oluşturmak için boş bırakın",
-        "secret_help": "Her isteği imzalamak için kullanılır; böylece isteğin ClassroomIO'dan geldiğini doğrulayabilirsiniz.",
+        "secret_help": "Her isteği imzalamak için kullanılır; böylece isteğin MP Learning'dan geldiğini doğrulayabilirsiniz.",
         "secret_edit_placeholder": "Mevcut sırrı korumak için boş bırakın",
         "secret_edit_help": "Sırrı değiştirmek için yeni bir değer girin. Mevcut sır asla gösterilmez.",
         "verify_ssl": "SSL sertifikasını doğrula",
@@ -6253,14 +6274,14 @@
     "gallery": {
       "back": "Tüm kurslar",
       "title": "Şablon galerisi",
-      "subtitle": "Şablonlarınızın birinden bir kurs başlatın veya ClassroomIO.",
+      "subtitle": "Şablonlarınızın birinden bir kurs başlatın veya MP Learning.",
       "search": "Şablon bul",
       "scope_all": "Tüm şablonlar",
       "scope_org": "Şablonlarım",
-      "scope_global": "ClassroomIO",
+      "scope_global": "MP Learning",
       "empty_org": "Henüz herhangi bir şablon oluşturmadınız. ⋯ menüsünden herhangi bir kursu şablon olarak kaydedin.",
       "no_match": "“{query}” ile eşleşen şablon yok.",
-      "empty_global": "Henüz ClassroomIO şablonu yok."
+      "empty_global": "Henüz MP Learning şablonu yok."
     },
     "preview": {
       "course_name": "Ders adı",
@@ -6315,7 +6336,7 @@
     },
     "empty": {
       "title": "Henüz kurs yok",
-      "description": "Harika bir ClassroomIO kursunun neye benzediğini görmek için bir şablon seçin veya boş bir kurstan başlayın.",
+      "description": "Harika bir MP Learning kursunun neye benzediğini görmek için bir şablon seçin veya boş bir kurstan başlayın.",
       "browse": "Göz at şablonlar"
     },
     "editor": {
@@ -6436,12 +6457,45 @@
     "eyebrow": "Çalışan eğitim portalı",
     "headline": "Bugün öğren. Yarını dönüştür.",
     "description": "MP Transformation ile becerilerini geliştir ve bilgilerini uygula.",
-    "learn": "Öğren",
-    "practice": "Uygula",
-    "grow": "Geliş",
     "internal": "MP Transformation çalışanları için",
     "sign_in_description": "Onaylı iş hesabınızla giriş yapın.",
     "invitation_hint": "Davet aldınız mı?",
-    "activate": "Hesabı etkinleştir"
+    "activate": "Hesabı etkinleştir",
+    "feature_paths": "Structured learning paths",
+    "feature_paths_description": "Courses matched to your role and team",
+    "feature_practice": "Exercises & internal certificates",
+    "feature_practice_description": "Practise, get feedback and earn recognition",
+    "feature_progress": "Track progress anytime",
+    "feature_progress_description": "Pick up where you left off on any device"
+  },
+  "page_titles": {
+    "integrations": "Integrations",
+    "ask_community": "Ask the community",
+    "question": "Question",
+    "community": "Community",
+    "my_learning": "My learning",
+    "explore": "Explore",
+    "exercises": "Exercises",
+    "certificates": "Certificates",
+    "billing": "Billing",
+    "ai_credits": "AI credits",
+    "teams": "Teams",
+    "custom_domain": "Custom domain",
+    "ai_tutor_settings": "AI tutor settings",
+    "audience": "Audience",
+    "email_verification_error": "Email verification error",
+    "setup": "Setup",
+    "reset_password": "Reset password",
+    "settings": "Settings",
+    "organization_settings": "Organization settings",
+    "customize_lms": "Customize LMS",
+    "courses": "Courses",
+    "home": "Home",
+    "cohort": "Cohort",
+    "course": "Course",
+    "quiz": "Quiz",
+    "join_platform": "Join MP Learning",
+    "join_course": "Join {title} on MP Learning",
+    "forgot_password": "Forgot password"
   }
 }

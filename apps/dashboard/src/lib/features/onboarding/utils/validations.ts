@@ -1,3 +1,4 @@
+import { t } from '$lib/utils/functions/translations';
 import type { OnboardingField, OnboardingStep } from './types';
 import { ZOnboardingCreateOrg, ZOnboardingUpdateMetadata } from '@cio/utils/validation/onboarding';
 
@@ -7,7 +8,7 @@ import { mapZodErrorsToTranslations } from '$lib/utils/validation';
 
 export function validateOrgSetup(field: OnboardingField) {
   if (blockedSubdomain.includes(field.siteName || '')) {
-    return { siteName: 'Sitename already exists.' };
+    return { siteName: t.get('validations.site_name.already_exists') };
   }
 
   const result = ZOnboardingCreateOrg.safeParse(field);

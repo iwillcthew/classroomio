@@ -1,3 +1,4 @@
+import { getIntlLocale } from '$lib/utils/functions/intl-locale';
 export type RawSparklinePoint = {
   date: string;
   views: number;
@@ -122,7 +123,7 @@ export function bucketSparkline(
 
 export function formatChartTooltipDate(date: Date, point?: BucketedChartPoint): string {
   if (!point || point.isSingleDay) {
-    return date.toLocaleDateString('en-US', {
+    return date.toLocaleDateString(getIntlLocale(), {
       weekday: 'short',
       year: 'numeric',
       month: 'short',
@@ -130,7 +131,7 @@ export function formatChartTooltipDate(date: Date, point?: BucketedChartPoint): 
     });
   }
 
-  const startFormatted = point.date.toLocaleDateString('en-US', {
+  const startFormatted = point.date.toLocaleDateString(getIntlLocale(), {
     month: 'short',
     day: 'numeric'
   });
@@ -142,8 +143,8 @@ export function formatChartTooltipDate(date: Date, point?: BucketedChartPoint): 
   // "2026 (day: 7)" on some ICU builds, so compose the year manually for
   // same-month ranges.
   const endFormatted = isSameMonth
-    ? `${point.endDate.toLocaleDateString('en-US', { day: 'numeric' })}, ${point.endDate.getFullYear()}`
-    : point.endDate.toLocaleDateString('en-US', {
+    ? `${point.endDate.toLocaleDateString(getIntlLocale(), { day: 'numeric' })}, ${point.endDate.getFullYear()}`
+    : point.endDate.toLocaleDateString(getIntlLocale(), {
         month: 'short',
         day: 'numeric',
         year: 'numeric'

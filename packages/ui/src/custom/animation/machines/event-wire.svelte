@@ -37,7 +37,7 @@
     ></rect><circle class="kf" cx="76" cy="65" r="3.4"></circle><line class="ko" x1="59" y1="57" x2="72" y2="57"
     ></line></g
   ><g transform="matrix(0.8660 0.5000 0.0000 1.0000 -83.1 14.0)"
-    ><text class="tx" x="10" y="20" style="font-size: 7.5px;">ClassroomIO</text></g
+    ><text class="tx" x="10" y="20" style="font-size: 7.5px;">MP Learning</text></g
   ><g opacity="0"
     ><animateMotion
       path="M26.0 80.0 L90.1 117.0 L17.3 159.0 L86.6 199.0"

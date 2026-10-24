@@ -48,7 +48,7 @@
           <Field.Label>{$t('add_org.name')}</Field.Label>
           <Input
             bind:value={orgName}
-            placeholder="e.g Pepsi Co"
+            placeholder={$t('add_org.name_placeholder')}
             autofocus
             oninput={() => {
               orgApi.clearError('name');

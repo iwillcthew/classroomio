@@ -110,7 +110,10 @@
             </Table.Cell>
             <Table.Cell class="min-w-[140px] px-4 py-3">
               <span class="ui:text-foreground text-sm font-medium">
-                {student.exercisesSubmitted} out of {student.totalExercises}
+                {$t('course.analytics_empty.exercises_submitted', {
+                  submitted: student.exercisesSubmitted,
+                  total: student.totalExercises
+                })}
               </span>
             </Table.Cell>
             <Table.Cell class="min-w-[120px] px-4 py-3">

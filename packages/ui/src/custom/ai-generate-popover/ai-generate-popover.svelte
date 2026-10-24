@@ -5,7 +5,7 @@
   import * as Select from '../../base/select';
   import { Button } from '../../base/button';
   import { Textarea } from '../../base/textarea';
-  import { cn } from '../../tools';
+  import { cn, formatUiLabel, uiLabels } from '../../tools';
 
   type Tone = 'professional' | 'casual' | 'expert' | 'friendly';
 
@@ -45,12 +45,12 @@
     }
   }
 
-  const toneOptions: { value: Tone; label: string }[] = [
-    { value: 'professional', label: 'Professional' },
-    { value: 'casual', label: 'Casual' },
-    { value: 'expert', label: 'Expert' },
-    { value: 'friendly', label: 'Friendly' }
-  ];
+  const toneOptions: { value: Tone; label: string }[] = $derived([
+    { value: 'professional', label: uiLabels.ai_tone_professional },
+    { value: 'casual', label: uiLabels.ai_tone_casual },
+    { value: 'expert', label: uiLabels.ai_tone_expert },
+    { value: 'friendly', label: uiLabels.ai_tone_friendly }
+  ]);
 
   async function handleGenerate() {
     if (!prompt.trim() || loading) return;
@@ -73,7 +73,7 @@
       variant="ghost"
       size="icon"
       class={cn('ui:size-6 ui:text-muted-foreground ui:hover:text-primary', className)}
-      aria-label="Generate content with AI"
+      aria-label={uiLabels.ai_generate_aria}
     >
       <SparklesIcon class="ui:size-3.5" />
     </Button>
@@ -81,15 +81,15 @@
 
   <Popover.Content {align} sideOffset={8} class="ui:w-96 ui:p-4 ui:space-y-3" style="z-index: 251">
     <div class="ui:flex ui:items-center ui:gap-2">
-      <p class="ui:text-sm ui:font-semibold">Generate Content</p>
+      <p class="ui:text-sm ui:font-semibold">{uiLabels.ai_generate_title}</p>
       <InfoIcon class="ui:size-4 ui:text-muted-foreground" />
     </div>
 
     <div class="ui:space-y-1.5">
-      <p class="ui:text-sm ui:text-muted-foreground">Describe what this text is about</p>
+      <p class="ui:text-sm ui:text-muted-foreground">{uiLabels.ai_generate_description}</p>
       <Textarea
         bind:value={prompt}
-        placeholder="e.g. a headline about the benefits of learning online"
+        placeholder={uiLabels.ai_generate_placeholder}
         rows={3}
         onkeydown={(e) => {
           if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) handleGenerate();
@@ -100,7 +100,7 @@
     <div class="ui:flex ui:items-center ui:justify-between ui:gap-2">
       <Select.Root type="single" value={tone} onValueChange={handleToneChange}>
         <Select.Trigger size="sm" class="ui:w-auto">
-          Tone: {toneOptions.find((t) => t.value === tone)?.label}
+          {formatUiLabel(uiLabels.ai_generate_tone, { tone: toneOptions.find((t) => t.value === tone)?.label ?? '' })}
         </Select.Trigger>
         <Select.Content style="z-index: 251">
           {#each toneOptions as option (option.value)}
@@ -110,7 +110,7 @@
       </Select.Root>
 
       <Button type="button" variant="secondary" size="sm" disabled={!prompt.trim() || loading} onclick={handleGenerate}>
-        {loading ? 'Generating…' : 'Generate'}
+        {loading ? uiLabels.ai_generating : uiLabels.ai_generate}
       </Button>
     </div>
   </Popover.Content>

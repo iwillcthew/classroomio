@@ -42,13 +42,16 @@
   });
 
   function handleSupport() {
-    window.open('mailto:help@classroomio.com?subject=Email Verification Issue&body=Error Type: ' + type, '_blank');
+    window.open(
+      `mailto:?subject=${encodeURIComponent($t('auth.verify_email_error.support_subject'))}&body=${encodeURIComponent($t('auth.verify_email_error.support_body', { type }))}`,
+      '_blank'
+    );
   }
 </script>
 
 <svelte:head>
-  <title>Email Verification Error - MP Learning</title>
-  <meta name="description" content="There was an issue verifying your email address." />
+  <title>{$t('page_titles.email_verification_error')} · MP Learning</title>
+  <meta name="description" content={$t('auth.verify_email_error.meta_description')} />
 </svelte:head>
 
 <Empty

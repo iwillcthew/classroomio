@@ -100,7 +100,7 @@
               name="webhook-payload-url"
               testId="webhook-form-url"
               label={$t(`${T}.form.payload_url`)}
-              placeholder="https://example.com/webhooks/classroomio"
+              placeholder="https://example.com/webhooks"
               helperMessage={$t(`${T}.form.payload_url_help`)}
               bind:value={fields.payloadUrl}
               errorMessage={webhookApi.errors.payloadUrl}

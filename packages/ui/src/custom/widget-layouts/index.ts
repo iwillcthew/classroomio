@@ -11,10 +11,8 @@ export { default as CategoryShelfLayout } from './category-shelf.svelte';
 
 export {
   buildCssVarsFromDesign,
-  buildPoweredByMarketingUrl,
   formatLessonsLine,
   getCourseExcerpt,
-  getOrgDomainForUtm,
   getCourseTypeMeta,
   getStarSegments
 } from './utils';

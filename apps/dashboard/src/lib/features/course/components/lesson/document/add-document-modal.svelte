@@ -292,7 +292,8 @@
             <FileDropZone.Trigger
               label={$t('course.navItem.lessons.materials.tabs.document.drag_drop')}
               formatMaxFiles={(_count) => $t('course.navItem.lessons.materials.tabs.document.upload_description')}
-              formatMaxFilesAndSize={(size) => `(up to ${size})`}
+              formatMaxFilesAndSize={(size) =>
+                $t('course.navItem.lessons.materials.tabs.document.up_to_size', { size })}
               formatMaxSize={(size) =>
                 $t('course.navItem.lessons.materials.tabs.document.upload_description') + ` (${size})`}
             />

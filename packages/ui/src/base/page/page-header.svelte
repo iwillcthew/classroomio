@@ -17,7 +17,7 @@
   bind:this={ref}
   data-slot="page-header"
   class={cn(
-    'ui:flex ui:my-4 ui:py-2 ui:flex-col',
+    'ui:flex ui:mt-6 ui:mb-4 ui:py-2 ui:flex-col',
     isSticky && 'ui:sticky ui:top-11 ui:z-10 ui:bg-background',
     className
   )}

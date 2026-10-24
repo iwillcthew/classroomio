@@ -58,7 +58,10 @@
       error = '';
       if (addedCount > 0) onAdded();
     } catch (err) {
-      error = typeof err === 'string' ? err : (err as Error)?.message || 'Failed to add video';
+      error =
+        typeof err === 'string'
+          ? err
+          : (err as Error)?.message || $t('course.navItem.lessons.materials.tabs.video.add_video.add_video_failed');
     } finally {
       isSubmitting = false;
     }

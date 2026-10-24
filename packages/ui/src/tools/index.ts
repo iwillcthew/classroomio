@@ -1,6 +1,15 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
+export {
+  defaultUiLabels,
+  uiLabels,
+  setUiLabels,
+  formatUiLabel,
+  type UiLabels,
+  type UiLabelKey
+} from './ui-labels.svelte';
+
 /**
  * Merges and resolves conflicting Tailwind CSS classes while preserving `@cio/ui` theme prefixes (`ui:`).
  * Normalizes prefixed tokens before passing them to `tailwind-merge` and restores original prefixes on output.

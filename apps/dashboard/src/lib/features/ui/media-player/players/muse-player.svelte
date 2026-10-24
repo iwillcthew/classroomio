@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { MediaPlayerOptions } from '../types';
+  import { t } from '$lib/utils/functions/translations';
 
   interface Props {
     svid?: string;
@@ -8,11 +9,7 @@
 
   let { svid }: Props = $props();
 
-  const embedUrl = $derived(
-    svid
-      ? `https://muse.ai/embed/${svid}?logo=https://app.classroomio.com/logo-512.png&subtitles=auto&cover_play_position=center`
-      : ''
-  );
+  const embedUrl = $derived(svid ? `https://muse.ai/embed/${svid}?subtitles=auto&cover_play_position=center` : '');
 </script>
 
 {#if embedUrl}
@@ -22,7 +19,7 @@
       style="width:100%;height:100%;position:absolute;left:0;top:0"
       frameborder="0"
       allowfullscreen
-      title="Muse AI Video Embed"
+      title={$t('ui_shell.media_player.muse_title')}
     ></iframe>
   </div>
 {/if}

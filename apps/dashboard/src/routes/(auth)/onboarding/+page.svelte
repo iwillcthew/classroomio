@@ -225,7 +225,7 @@
                   bind:value={fields.fullname}
                   name="fullname"
                   type="text"
-                  placeholder="e.g Joke Silva"
+                  placeholder={$t('onboarding.fullname_placeholder')}
                   disabled={isOrganizationCreated}
                   oninput={() => onboardingApi.clearError('fullname')}
                 />

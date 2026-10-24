@@ -48,7 +48,7 @@
         <DropdownMenu.Trigger>
           <Button variant="ghost" size="icon" class="h-8 w-8" {disabled}>
             <EllipsisVerticalIcon class="h-5 w-5" />
-            <span class="sr-only">Open menu</span>
+            <span class="sr-only">{$t('course.common_labels.open_menu')}</span>
           </Button>
         </DropdownMenu.Trigger>
         <DropdownMenu.Content align="end">

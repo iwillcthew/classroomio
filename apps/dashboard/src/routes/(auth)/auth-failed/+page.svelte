@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { t } from '$lib/utils/functions/translations';
   import { page } from '$app/state';
   import { AuthUI } from '$features/ui';
   import { Button } from '@cio/ui/base/button';
@@ -14,7 +15,7 @@
 </script>
 
 <svelte:head>
-  <title>Reset Password - MP Learning</title>
+  <title>{$t('page_titles.reset_password')} · MP Learning</title>
 </svelte:head>
 
 <AuthUI isLogin={false} showOnlyContent={true}>
@@ -22,24 +23,23 @@
     <Avatar.Root>
       <Avatar.Image
         src={$currentOrg.avatarUrl ? $currentOrg.avatarUrl : '/logo-192.png'}
-        alt={$currentOrg.name ? $currentOrg.name : 'ClassroomIO'}
+        alt={$currentOrg.name ? $currentOrg.name : 'MP Learning'}
       />
-      <Avatar.Fallback>{$currentOrg.name ? $currentOrg.name : 'ClassroomIO'}</Avatar.Fallback>
+      <Avatar.Fallback>{$currentOrg.name ? $currentOrg.name : 'MP Learning'}</Avatar.Fallback>
     </Avatar.Root>
 
-    <p class="text-xl font-semibold">Something went wrong</p>
+    <p class="text-xl font-semibold">{$t('auth.auth_failed.title')}</p>
 
     {#if errorCode}
       <Card.Description class="border px-2 py-1">
-        CODE: {errorCode}
+        {$t('auth.auth_failed.code', { code: errorCode })}
       </Card.Description>
     {/if}
 
     <Card.Description class="text-center">
-      We encountered an unexpected error. Please try again or return to the home page. If you're a developer, you can
-      find more information about the error here.
+      {$t('auth.auth_failed.description')}
     </Card.Description>
 
-    <Button onclick={goHome} class="">Go Home</Button>
+    <Button onclick={goHome} class="">{$t('common.restricted_page.home')}</Button>
   </div>
 </AuthUI>

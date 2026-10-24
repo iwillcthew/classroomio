@@ -13,7 +13,7 @@ export class ContentApi extends BaseApiWithErrors {
     const result = await this.execute<ReorderCourseContentRequest>({
       requestFn: () => classroomio.course[':courseId'].content.reorder.$put({ param: { courseId }, json: payload }),
       logContext: 'reordering course outline',
-      onError: () => snackbar.error('snackbar.course_settings.sections_reorder_failed')
+      onError: () => snackbar.error('snackbar.lessons.sections_reorder_failed')
     });
     return Boolean(result?.success);
   }
@@ -41,7 +41,7 @@ export class ContentApi extends BaseApiWithErrors {
       },
       onError: (error) => {
         const errorMessage = typeof error === 'string' ? error : (error as any)?.error;
-        snackbar.error(errorMessage || 'Failed to update content');
+        snackbar.error(errorMessage || 'snackbar.course_api.content_update_failed');
       }
     });
 
@@ -65,7 +65,7 @@ export class ContentApi extends BaseApiWithErrors {
       },
       onError: (error) => {
         const errorMessage = typeof error === 'string' ? error : (error as any)?.error;
-        snackbar.error(errorMessage || 'Failed to delete content');
+        snackbar.error(errorMessage || 'snackbar.course_api.content_delete_failed');
       }
     });
 

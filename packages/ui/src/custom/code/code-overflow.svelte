@@ -3,7 +3,7 @@
   import { useCodeOverflow } from './code-utils.svelte';
   import { box } from 'svelte-toolbelt';
   import type { CodeOverflowProps } from './types';
-  import { cn } from '../../tools';
+  import { cn, uiLabels } from '../../tools';
 
   let { collapsed = $bindable(true), class: className, children, ...props }: CodeOverflowProps = $props();
 
@@ -34,7 +34,7 @@
       class="ui:absolute ui:bottom-2 ui:left-1/2 ui:z-20 ui:w-fit ui:-translate-x-1/2"
       onclick={state.toggleCollapsed}
     >
-      Expand
+      {uiLabels.expand}
     </Button>
   {/if}
 </div>

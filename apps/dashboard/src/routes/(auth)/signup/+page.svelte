@@ -226,7 +226,7 @@
 </script>
 
 <svelte:head>
-  <title>Join MP Learning</title>
+  <title>{$t('page_titles.join_platform')}</title>
 </svelte:head>
 
 {#if !$globalStore.isOrgSite || $isFreePlan}
@@ -307,6 +307,10 @@
               id="password"
               bind:value={fields.password}
               placeholder="************"
+              showPasswordTooltip={$t('auth.password.show')}
+              hidePasswordTooltip={$t('auth.password.hide')}
+              showPasswordAriaLabel={$t('auth.password.show')}
+              hidePasswordAriaLabel={$t('auth.password.hide')}
               disabled={loading}
               onblur={handlePasswordBlur}
               oninput={handlePasswordInput}
@@ -328,6 +332,10 @@
               id="confirmPassword"
               bind:value={fields.confirmPassword}
               placeholder="************"
+              showPasswordTooltip={$t('auth.password.show')}
+              hidePasswordTooltip={$t('auth.password.hide')}
+              showPasswordAriaLabel={$t('auth.password.show')}
+              hidePasswordAriaLabel={$t('auth.password.hide')}
               disabled={loading}
               aria-invalid={confirmPasswordError ? 'true' : undefined}
               autocomplete="new-password"

@@ -36,6 +36,12 @@
         "title": "Åbner dit akademi...",
         "caption": "Vi gør dine kurser, elever og indstillinger klar."
       }
+    },
+    "not_found": {
+      "title": "Page not found",
+      "org_title": "Organization not found",
+      "description": "The page you are looking for does not exist or has been moved.",
+      "home": "Back to home"
     }
   },
   "validations": {
@@ -1628,7 +1634,7 @@
           "audit_actor": "Aktør",
           "audit_ip": "IP",
           "scan_qr": "Scan QR",
-          "classroomio_brand": "ClassroomIO.com",
+          "platform_brand": "MP Learning",
           "snackbar_invite_link_copied": "Invitationslinket er kopieret",
           "snackbar_invite_link_regenerated": "Et nyt invitationslink er blevet genereret",
           "snackbar_failed_generate_link": "Kunne ikke generere invitationslink",
@@ -3112,7 +3118,7 @@
     },
     "creator": {
       "heading": "Hvilket kursus vil du lave?",
-      "placeholder": "Bed ClassroomIO om at oprette et kursus til dig...",
+      "placeholder": "Bed MP Learning om at oprette et kursus til dig...",
       "type": {
         "self_paced": "Selv tempo",
         "live_class": "Live klasse"
@@ -3346,7 +3352,8 @@
     "open_academy": "Din akademi",
     "explore_more_courses": "Udforsk flere kurser",
     "view_more": "Se mere",
-    "upcoming_sessions_heading": "Live sessioner"
+    "upcoming_sessions_heading": "Live sessioner",
+    "org_overview_description": "Here is how training is going across your organization."
   },
   "schedule": {
     "title": "Dit skema",
@@ -3406,7 +3413,7 @@
         "save": "Gem",
         "your_domain": "Dit domæne",
         "custom_domain_error": "Du kan ikke tilføje et topniveaudomæne som brugerdefineret domæne. Brug i stedet et underdomæne som 'kurser.[dit websted].com' eller 'www.[dit websted].com'.",
-        "custom_domain_not_classroomio": "Domæne må ikke indeholde \"classroomio\"",
+        "custom_domain_reserved": "Domæne må ikke indeholde \"mp-learning\"",
         "custom_domain_success": "Tilpasset domæne blev tilføjet",
         "dns_description": "Indstil følgende registrering på din DNS-udbyder for at fortsætte:",
         "dns_type": "Type",
@@ -3481,13 +3488,13 @@
     "goto": "Gå til",
     "courses": "Kurser",
     "home": "Hjem",
-    "classroomio_home": "ClassroomIO Home",
+    "mp_home": "MP Learning Home",
     "dashboard": "Dashboard",
     "discussion": "Diskussion",
     "people": "Mennesker",
     "goto_lms": "Gå til LMS",
     "join_academy": "Tilmeld dig akademiet",
-    "goto_home": "Gå til ClassroomIO Home",
+    "goto_home": "Gå til MP Learning Home",
     "login": "Log ind",
     "signup": "Tilmeld dig",
     "redirecting": "Omdirigerer",
@@ -3562,7 +3569,7 @@
         "eyebrow_today": "Early Adopter-pris · Slutter i dag",
         "title": "Lav pris med vilje. Ikke for evigt.",
         "title_closing": "Lav pris med vilje. Lukker snart.",
-        "body": "Vi holder ClassroomIO billig, fordi vi bygger det sammen med vores kunder, ikke kun til dem. Lås dagens pris inden {date}. Derefter lukker Early Adopter-planen, og nye priser træder i kraft.",
+        "body": "Vi holder MP Learning billig, fordi vi bygger det sammen med vores kunder, ikke kun til dem. Lås dagens pris inden {date}. Derefter lukker Early Adopter-planen, og nye priser træder i kraft.",
         "link": "Læs hvorfor vi gør det"
       }
     },
@@ -3608,7 +3615,7 @@
     "tools": "Værktøjer"
   },
   "media_manager": {
-    "page_title": "Medieadministrator - ClassroomIO",
+    "page_title": "Medieadministrator - MP Learning",
     "heading": "Mediemanager",
     "empty": "Ingen aktiver fundet",
     "usage": {
@@ -3778,7 +3785,7 @@
       "provider": "Vi bruger Polar til at hjælpe med at administrere din fakturering",
       "open_billing": "Åben fakturering",
       "error": "Der opstod en fejl under åbning af fakturering",
-      "page_subtitle": "Din plan, faktureringsportal og hvordan du betaler for ClassroomIO.",
+      "page_subtitle": "Din plan, faktureringsportal og hvordan du betaler for MP Learning.",
       "ai_credits": "AI credits",
       "ai_tokens_used": "AI credits brugt denne måned",
       "ai_bonus_credits": "bonus AI credits tilgængelige"
@@ -3786,7 +3793,7 @@
     "integrations": {
       "heading": "Telegram",
       "sub_heading": "Tilslut din konto til telegram for at få besked om enhver ændring i applikationen.",
-      "step_authenticate": "Trin 1: Godkend din konto via ClassroomIO-bot.",
+      "step_authenticate": "Trin 1: Godkend din konto via MP Learning-bot.",
       "open_bot_button": "Åbn Bot",
       "step_chatId": "Trin 2: Indtast det chat-id, du har fået af botten.",
       "connect_button": "Forbind",
@@ -4126,7 +4133,7 @@
       "gallery": {
         "heading": "Populære temaer",
         "description": "Lavet med kernefunktioner, du nemt kan tilpasse - ingen kodning nødvendig.",
-        "by_classroomio": "af ClassroomIO",
+        "by_platform": "af MP Learning",
         "add": "Tilføj",
         "upgrade": "Opgrader",
         "apply_theme": "Anvend tema",
@@ -4204,7 +4211,7 @@
         "accepted": "Accepteret:",
         "validation_error": "Filstørrelsen overstiger den maksimale grænse:"
       },
-      "page_subtitle": "Dit navn, din e-mail og hvordan du fremstår, uanset hvor du arbejder i ClassroomIO."
+      "page_subtitle": "Dit navn, din e-mail og hvordan du fremstår, uanset hvor du arbejder i MP Learning."
     },
     "tabs": {
       "profile_tab": "Profil",
@@ -4475,7 +4482,7 @@
           "description": "Tilmeldinger, afleveringer, lektioner, meddelelser og gennemførelser i dine kurser."
         }
       },
-      "personal_page_subtitle": "Vælg hvilke e-mailnotifikationer du modtager fra ClassroomIO."
+      "personal_page_subtitle": "Vælg hvilke e-mailnotifikationer du modtager fra MP Learning."
     },
     "account": {
       "language": "Sprog",
@@ -4509,7 +4516,7 @@
       "dynamic_content_description": "Indsæt værdier eller et valgfrit link ved markøren. Hold bøjlerne uændrede, så værdien kan tilføjes på afsendelsestidspunktet.",
       "dynamic_link": "Indsæt dynamisk link",
       "protected_content": "Beskyttet e-mail-indhold",
-      "protected_content_description": "Den nødvendige handlingsknap, destination, branding og sidefod administreres af ClassroomIO og kan ikke fjernes.",
+      "protected_content_description": "Den nødvendige handlingsknap, destination, branding og sidefod administreres af MP Learning og kan ikke fjernes.",
       "reset": "Nulstil til oversat standard",
       "templates": {
         "studentCourseInvite": "Kursusinvitation",
@@ -4728,7 +4735,7 @@
       "subtitle": "Vælg den, der er tættest på, hvordan den fungerer lige nu."
     },
     "use_cases": {
-      "label": "Hvad vil du bruge ClassroomIO til?",
+      "label": "Hvad vil du bruge MP Learning til?",
       "customer_training": "Træn mine kunder i mit produkt",
       "customer_certification": "Certificere kunder eller partnere",
       "partner_training": "Træn partnere eller forhandlere",
@@ -4864,7 +4871,7 @@
     "confirm_link_suffix": "for at bekræfte din e-mail"
   },
   "public_courses": {
-    "page_title": "Kurser - ClassroomIO",
+    "page_title": "Kurser - MP Learning",
     "heading": "Kurser",
     "subtitle": "Gennemse alle offentliggjorte kurser",
     "clear_filters": "Ryd filtre",
@@ -4892,7 +4899,7 @@
     }
   },
   "tags_admin": {
-    "page_title": "Mærker - ClassroomIO",
+    "page_title": "Mærker - MP Learning",
     "heading": "Mærker",
     "create": "Opret",
     "tag_modal": {
@@ -4946,7 +4953,7 @@
   },
   "invite": {
     "organization": {
-      "page_title": "Tilmeld dig {orgName} på ClassroomIO",
+      "page_title": "Tilmeld dig {orgName} på MP Learning",
       "invitation_student": "Du er blevet inviteret til {orgName} som elev.",
       "invitation_teacher": "Du er blevet inviteret til {orgName} som lærer.",
       "invitation_admin": "Du er blevet inviteret til {orgName} som administrator.",
@@ -4974,7 +4981,7 @@
       "loading": "Indlæser invitation..."
     },
     "link": {
-      "page_title": "Tilmeld dig {orgName} på ClassroomIO",
+      "page_title": "Tilmeld dig {orgName} på MP Learning",
       "invitation_student": "Du er blevet inviteret til at deltage i {orgName} som elev.",
       "invitation_teacher": "Du er blevet inviteret til at deltage i {orgName} som lærer.",
       "invitation_admin": "Du er blevet inviteret til at deltage i {orgName} som administrator.",
@@ -4995,19 +5002,19 @@
         "title": "Klient opsætning",
         "description": "Brug én nøgle med organisationsomfang pr. integration. Hvis en nøgle roteres eller tilbagekaldes, holder klienten op med at arbejde, indtil den nye hemmelighed er konfigureret.",
         "claude_code_description": "Registrerer `@classroomio/mcp` med Claude Code ved hjælp af den genererede org-omfangede nøgle.",
-        "codex_description": "Tilføjer ClassroomIO MCP-serveren til Codex med den samme org-omfattede nøgle.",
+        "codex_description": "Tilføjer MP Learning MCP-serveren til Codex med den samme org-omfattede nøgle.",
         "cursor_description": "Indsæt dette i `~/.cursor/mcp.json` eller dit arbejdsområde MCP-konfiguration.",
         "opencode_description": "Tilføj dette til `opencode.json` i projektroden eller `~/.config/opencode/opencode.json`."
       },
       "keys": {
         "title": "MCP nøgler",
-        "description": "Disse nøgler autentificerer den aktuelle organisation, når en MCP-klient ringer til ClassroomIO gennem `@classroomio/mcp`.",
+        "description": "Disse nøgler autentificerer den aktuelle organisation, når en MCP-klient ringer til MP Learning gennem `@classroomio/mcp`.",
         "generate": "Generer MCP-nøgle",
         "modal": {
           "title": "Opret MCP-nøgle",
           "description": "Vælg et navn til denne MCP-nøgle, før den genereres.",
           "name_label": "Nøglenavn",
-          "name_placeholder": "ClassroomIO OpenCode",
+          "name_placeholder": "MP Learning OpenCode",
           "cancel": "Annuller",
           "save": "Opret nøgle"
         },
@@ -5022,17 +5029,17 @@
         "rate_limits_description": "Læs/skriv/publicér anmodninger tilladt pr. minut.",
         "used_label": "Brugt:"
       },
-      "page_subtitle": "Forbind AI-værktøjer til ClassroomIO med organisationsnøgler, du kan rotere når som helst.",
+      "page_subtitle": "Forbind AI-værktøjer til MP Learning med organisationsnøgler, du kan rotere når som helst.",
       "view_docs": "Se dokumentation"
     },
     "api": {
-      "subtitle": "Administrer API-nøgler til integration med ClassroomIOs offentlige API.",
+      "subtitle": "Administrer API-nøgler til integration med MP Learnings offentlige API.",
       "keys": {
         "title": "API-nøgler",
-        "description": "Disse nøgler autentificerer den aktuelle organisation, når der kaldes til ClassroomIOs offentlige API.",
+        "description": "Disse nøgler autentificerer den aktuelle organisation, når der kaldes til MP Learnings offentlige API.",
         "generate": "Generer API-nøgle",
         "empty_title": "Ingen API-nøgler endnu",
-        "empty_description": "Opret den første organisationsnøgle til API for at bruge ClassroomIOs offentlige API.",
+        "empty_description": "Opret den første organisationsnøgle til API for at bruge MP Learnings offentlige API.",
         "modal": {
           "title": "Opret API-nøgle",
           "description": "Vælg et navn til denne API-nøgle, før den genereres.",
@@ -5096,11 +5103,11 @@
       "disabled_description": "Kun organisationsadministratorer kan oprette, rotere eller tilbagekalde automatiseringsnøgler. Lærere kan gennemgå opsætningsinstruktionerne her."
     },
     "zapier": {
-      "page_subtitle": "Automatiser ClassroomIO med tusindvis af apps via Zapier. Kommer snart."
+      "page_subtitle": "Automatiser MP Learning med tusindvis af apps via Zapier. Kommer snart."
     },
     "webhooks": {
-      "page_subtitle": "Send ClassroomIO-hændelser i realtid til Slack, dit CRM eller din egen backend.",
-      "description": "ClassroomIO sender en signeret HTTP POST til din URL, hver gang en valgt hændelse opstår. Mislykkede leverancer forsøges automatisk igen.",
+      "page_subtitle": "Send MP Learning-hændelser i realtid til Slack, dit CRM eller din egen backend.",
+      "description": "MP Learning sender en signeret HTTP POST til din URL, hver gang en valgt hændelse opstår. Mislykkede leverancer forsøges automatisk igen.",
       "permissions_description": "Kun organisationsadministratorer kan oprette, redigere eller slette webhooks.",
       "create": "Ny webhook",
       "empty_title": "Ingen webhooks endnu",
@@ -5141,7 +5148,7 @@
       "form": {
         "create_title": "Ny webhook",
         "edit_title": "Rediger webhook",
-        "description": "Vælg, hvortil ClassroomIO sender hændelser, og hvilke hændelser der skal sendes.",
+        "description": "Vælg, hvortil MP Learning sender hændelser, og hvilke hændelser der skal sendes.",
         "sections": {
           "endpoint": "Endepunkt",
           "events": "Hændelser"
@@ -5152,7 +5159,7 @@
         "payload_url_help": "Skal være en offentlig HTTPS-URL, der returnerer et 2xx-svar inden for 10 sekunder.",
         "secret": "Signeringshemmelighed",
         "secret_placeholder": "Lad feltet stå tomt for at generere en",
-        "secret_help": "Bruges til at signere hver forespørgsel, så du kan verificere, at den kom fra ClassroomIO.",
+        "secret_help": "Bruges til at signere hver forespørgsel, så du kan verificere, at den kom fra MP Learning.",
         "secret_edit_placeholder": "Lad feltet stå tomt for at beholde den nuværende hemmelighed",
         "secret_edit_help": "Indtast en ny værdi for at erstatte hemmeligheden. Den nuværende vises aldrig.",
         "verify_ssl": "Verificer SSL-certifikat",
@@ -5477,7 +5484,7 @@
       "border_radius": "Grænseradius",
       "font_family": "Fontfamilie",
       "font_scale": "Skriftstørrelsesskala",
-      "show_powered_by": "Vis Classroomio branding",
+      "show_powered_by": "Vis MP Learning branding",
       "custom_css": "Brugerdefineret CSS",
       "custom_css_locked": "Opgrader for at aktivere tilpasset CSS.",
       "embed_code": "Integrer kode",
@@ -5743,7 +5750,7 @@
     },
     "powered_by": {
       "label": "Drevet af",
-      "brand": "ClassroomIO"
+      "brand": "MP Learning"
     },
     "footer_nav": {
       "previous": "Forrige",
@@ -6177,7 +6184,7 @@
       "disabled": "Invitationslink deaktiveret"
     },
     "join": {
-      "page_title": "Tilmeld dig {resourceName} på ClassroomIO",
+      "page_title": "Tilmeld dig {resourceName} på MP Learning",
       "invitation": "Du er blevet inviteret til at deltage i {resourceName} på {orgName}.",
       "course_button": "Tilmeld dig kurset",
       "cohort_button": "Tilmeld dig kohorte",
@@ -6286,14 +6293,14 @@
     },
     "gallery": {
       "title": "Skabelongalleri",
-      "subtitle": "Start et kursus fra en af dine skabeloner eller en, der er bygget af ClassroomIO.",
+      "subtitle": "Start et kursus fra en af dine skabeloner eller en, der er bygget af MP Learning.",
       "search": "Find skabelon",
       "scope_all": "Alle skabeloner",
       "scope_org": "Mine skabeloner",
       "scope_global": "KlasseværelseIO",
       "empty_org": "Du har ikke lavet nogen skabeloner endnu. Gem ethvert kursus som en skabelon fra dets ⋯-menu.",
       "no_match": "Ingen skabeloner matcher \"{query}\".",
-      "empty_global": "Ingen ClassroomIO-skabeloner endnu.",
+      "empty_global": "Ingen MP Learning-skabeloner endnu.",
       "back": "Alle kurser"
     },
     "preview": {
@@ -6349,7 +6356,7 @@
     },
     "empty": {
       "title": "Ingen kurser endnu",
-      "description": "Vælg en skabelon for at se, hvordan et godt ClassroomIO-kursus ser ud, eller start fra et tomt kursus.",
+      "description": "Vælg en skabelon for at se, hvordan et godt MP Learning-kursus ser ud, eller start fra et tomt kursus.",
       "browse": "Gennemse skabeloner"
     },
     "editor": {
@@ -6470,12 +6477,45 @@
     "eyebrow": "Intern læringsportal",
     "headline": "Lær i dag. Skab forandring i morgen.",
     "description": "Udvikl færdigheder og brug din viden hos MP Transformation.",
-    "learn": "Lær",
-    "practice": "Øv",
-    "grow": "Udvikl dig",
     "internal": "For medarbejdere hos MP Transformation",
     "sign_in_description": "Log ind med din godkendte arbejdskonto.",
     "invitation_hint": "Har du en invitation?",
-    "activate": "Aktivér konto"
+    "activate": "Aktivér konto",
+    "feature_paths": "Structured learning paths",
+    "feature_paths_description": "Courses matched to your role and team",
+    "feature_practice": "Exercises & internal certificates",
+    "feature_practice_description": "Practise, get feedback and earn recognition",
+    "feature_progress": "Track progress anytime",
+    "feature_progress_description": "Pick up where you left off on any device"
+  },
+  "page_titles": {
+    "integrations": "Integrations",
+    "ask_community": "Ask the community",
+    "question": "Question",
+    "community": "Community",
+    "my_learning": "My learning",
+    "explore": "Explore",
+    "exercises": "Exercises",
+    "certificates": "Certificates",
+    "billing": "Billing",
+    "ai_credits": "AI credits",
+    "teams": "Teams",
+    "custom_domain": "Custom domain",
+    "ai_tutor_settings": "AI tutor settings",
+    "audience": "Audience",
+    "email_verification_error": "Email verification error",
+    "setup": "Setup",
+    "reset_password": "Reset password",
+    "settings": "Settings",
+    "organization_settings": "Organization settings",
+    "customize_lms": "Customize LMS",
+    "courses": "Courses",
+    "home": "Home",
+    "cohort": "Cohort",
+    "course": "Course",
+    "quiz": "Quiz",
+    "join_platform": "Join MP Learning",
+    "join_course": "Join {title} on MP Learning",
+    "forgot_password": "Forgot password"
   }
 }

@@ -8,14 +8,13 @@
   import EditorialSpotlight from './editorial-spotlight.svelte';
   import CategoryShelf from './category-shelf.svelte';
   import { ensureWidgetGoogleFontsLoaded } from './ensure-google-fonts';
-  import { buildCssVarsFromDesign, buildPoweredByMarketingUrl } from './utils';
+  import { buildCssVarsFromDesign } from './utils';
 
   let { payload }: { payload: TWidgetPayload | null | undefined } = $props();
 
   let rootEl: HTMLDivElement | null = null;
 
   const cssVars = $derived(payload ? buildCssVarsFromDesign(payload.design) : '');
-  const poweredByHref = $derived(payload ? buildPoweredByMarketingUrl(payload) : '');
   const customCss = $derived(payload?.design.advanced.customCss?.trim() ?? '');
 
   $effect(() => {
@@ -53,12 +52,6 @@
       <EditorialSpotlight {payload} />
     {:else if payload.layoutType === 'category_shelf'}
       <CategoryShelf {payload} />
-    {/if}
-
-    {#if payload.design.branding.showPoweredBy}
-      <a class="cio-branding" href={poweredByHref} target="_blank" rel="noopener noreferrer">
-        {payload.labels.poweredByLabel}
-      </a>
     {/if}
   </div>
 {/if}

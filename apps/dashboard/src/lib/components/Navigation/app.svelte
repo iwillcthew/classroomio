@@ -8,6 +8,7 @@
   import { isStudentExperience } from '$lib/utils/store/app';
   import { currentOrgPath } from '$lib/utils/store/org';
   import { t } from '$lib/utils/functions/translations';
+  import { BRAND } from '$lib/utils/constants/brand';
 
   interface Props {
     title?: string;
@@ -34,11 +35,11 @@
       {/if}
       <a
         href={resolve(coursesPath, {})}
-        title="{$t('navigation.goto')} {isCoursePage ? $t('navigation.courses') : $t('navigation.classroomio_home')}"
+        title="{$t('navigation.goto')} {isCoursePage ? $t('navigation.courses') : $t('navigation.mp_home')}"
         id="logo"
         class="line-clamp-1 text-lg"
       >
-        {isCoursePage ? title : 'ClassroomIO'}
+        {isCoursePage ? title : BRAND.product}
       </a>
     </div>
 

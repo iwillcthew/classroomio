@@ -11,6 +11,7 @@
   import { currentOrgPath } from '$lib/utils/store/org';
   import { profile } from '$lib/utils/store/user';
   import { t } from '$lib/utils/functions/translations';
+  import { BRAND } from '$lib/utils/constants/brand';
 
   const isWelcomeRequested = $derived(
     page.url.searchParams.get('welcomePopup') === 'true' && !!$profile.isEmailVerified
@@ -60,16 +61,16 @@
       </div>
     {:else}
       <Dialog.Header>
-        <Dialog.Title>Welcome</Dialog.Title>
+        <Dialog.Title>{$t('welcome_modal.title')}</Dialog.Title>
       </Dialog.Header>
       <p class="text-md text-black dark:text-white">
         {$t('welcome_modal.we_at')}
-        <a href="https://app.classroomio.com/" class="ui:text-primary no-underline hover:no-underline">ClassroomIO</a>
+        <span class="ui:text-primary">{BRAND.name}</span>
         {$t('welcome_modal.small_team')}
         <span class="ui:text-primary">{$t('welcome_modal.thank_you')};</span>
         {$t('welcome_modal.deeply_appreciate')}
       </p>
-      <img src="/images/welcome-img.svg" alt="A welcome banner" class="my-6 w-full" />
+      <img src="/images/welcome-img.svg" alt={$t('welcome_modal.banner_alt')} class="my-6 w-full" />
     {/if}
   </Dialog.Content>
 </Dialog.Root>

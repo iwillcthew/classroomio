@@ -3,7 +3,6 @@ export { default as PublicCourseSidebar } from './sidebar.svelte';
 export { default as PublicCourseSidebarRow } from './sidebar-row.svelte';
 export { default as PublicCourseBottomNav } from './bottom-nav.svelte';
 export { default as PublicCourseFooterNav } from './footer-nav.svelte';
-export { default as PublicCoursePoweredBy } from './powered-by.svelte';
 export { default as PublicCourseMobileSheet } from './mobile-sheet.svelte';
 export { default as PublicLessonView } from './lesson-view.svelte';
 export { default as PublicExerciseView } from './exercise-view.svelte';

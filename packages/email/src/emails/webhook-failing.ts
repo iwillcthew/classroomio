@@ -24,7 +24,7 @@ export const webhookFailingEmail = defineEmail({
     const content = `
       <p>Hi there,</p>
       <p>The webhook <strong>${webhookName}</strong> (${destination}) in <strong>${orgName}</strong> has failed ${fields.failureCount} deliveries in a row.</p>
-      <p>ClassroomIO keeps retrying each event, but if it reaches ${fields.disableAfter} failed deliveries in a row the webhook is disabled automatically and stops receiving events.</p>
+      <p>MP Learning keeps retrying each event, but if it reaches ${fields.disableAfter} failed deliveries in a row the webhook is disabled automatically and stops receiving events.</p>
       <div>
         <a class="button" href="${webhooksUrl}">Review your webhooks</a>
       </div>

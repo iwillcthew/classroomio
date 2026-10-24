@@ -326,7 +326,9 @@
                             {#if person.profile.avatarUrl}
                               <Avatar.Image
                                 src={person.profile.avatarUrl}
-                                alt={person.profile.fullname ? person.profile.fullname : 'User'}
+                                alt={person.profile.fullname
+                                  ? person.profile.fullname
+                                  : $t('cohorts.newsfeed.user_avatar_alt')}
                               />
                             {/if}
                             <Avatar.Fallback>

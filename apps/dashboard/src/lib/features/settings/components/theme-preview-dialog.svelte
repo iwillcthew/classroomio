@@ -74,12 +74,15 @@
     showCloseButton={false}
     class="h-[calc(100vh-2rem)] max-h-[calc(100vh-2rem)] w-[calc(100vw-2rem)]! max-w-[calc(100vw-2rem)]! gap-0 overflow-hidden p-0 sm:max-w-[calc(100vw-2rem)]! md:max-w-[calc(100vw-2rem)]!"
   >
-    <Dialog.Title class="sr-only">Theme preview</Dialog.Title>
-    <Dialog.Description class="sr-only">Preview the selected landing page theme with sample content.</Dialog.Description
-    >
+    <Dialog.Title class="sr-only">{$t('settings.landing_page.theme_preview.title')}</Dialog.Title>
+    <Dialog.Description class="sr-only">{$t('settings.landing_page.theme_preview.description')}</Dialog.Description>
 
     <div class="absolute top-3 right-3 z-[9999]">
-      <IconButton variant="secondary" aria-label="Close preview" onclick={closePreview}>
+      <IconButton
+        variant="secondary"
+        aria-label={$t('settings.landing_page.theme_preview.close')}
+        onclick={closePreview}
+      >
         <XIcon size={16} />
       </IconButton>
     </div>

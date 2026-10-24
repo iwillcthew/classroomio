@@ -1,7 +1,6 @@
 <script lang="ts">
   import * as Field from '@cio/ui/base/field';
   import * as Select from '@cio/ui/base/select';
-  import { Switch } from '@cio/ui/base/switch';
   import { InputField } from '@cio/ui/custom/input-field';
   import { NumberField } from '@cio/ui/custom/number-field';
   import { TextareaField } from '@cio/ui/custom/textarea-field';
@@ -93,10 +92,6 @@
         helperMessage={errFor('config.typography.fontSizeScale') ? '' : $t('widgets.form.font_scale_hint')}
         errorMessage={errFor('config.typography.fontSizeScale')}
       />
-      <Field.Field orientation="horizontal">
-        <Switch bind:checked={draftConfig.branding.showPoweredBy} />
-        <Field.Label>{$t('widgets.form.show_powered_by')}</Field.Label>
-      </Field.Field>
       <TextareaField
         label={$t('widgets.form.custom_css')}
         bind:value={draftConfig.advanced.customCss}

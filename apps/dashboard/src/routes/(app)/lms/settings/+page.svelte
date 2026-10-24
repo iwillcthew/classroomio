@@ -22,7 +22,7 @@
 </script>
 
 <svelte:head>
-  <title>Settings - MP Learning</title>
+  <title>{$t('page_titles.settings')} · MP Learning</title>
 </svelte:head>
 
 <Page.Header>

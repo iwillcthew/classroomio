@@ -9,6 +9,7 @@
   import { TextareaField } from '@cio/ui/custom/textarea-field';
   import { InputField } from '@cio/ui/custom/input-field';
   import { Button } from '@cio/ui/base/button';
+  import { t } from '$lib/utils/functions/translations';
 
   let isAutomatic = $state(false);
 
@@ -25,30 +26,30 @@
 >
   <Dialog.Content class="w-3/5">
     <Dialog.Header>
-      <Dialog.Title>Send Certificate</Dialog.Title>
+      <Dialog.Title>{$t('course.issue_certificate.title')}</Dialog.Title>
     </Dialog.Header>
     <main>
       <div>
         <div class="mb-4 flex items-center space-x-2">
           <Switch id="auto-certificate" bind:checked={isAutomatic} />
-          <Label for="auto-certificate" class="text-sm font-medium">Automatic</Label>
+          <Label for="auto-certificate" class="text-sm font-medium">{$t('course.issue_certificate.automatic')}</Label>
         </div>
         <p class="my-4 text-sm font-medium">
-          If you set this as automatic, certificates will be issued after the learner completes the course.
+          {$t('course.issue_certificate.automatic_description')}
         </p>
       </div>
-      <p class="my-4 text-xs font-normal text-gray-500">or send a personalised/ custom certificate below:</p>
+      <p class="my-4 text-xs font-normal text-gray-500">{$t('course.issue_certificate.custom_hint')}</p>
       <form onsubmit={preventDefault(issueCertificate)}>
         <div class="flex w-full flex-col gap-2 md:flex-row">
           <InputField
-            label="Email address of the student"
+            label={$t('course.issue_certificate.student_emails')}
             className="w-full my-4"
             labelClassName="text-xs font-normal"
-            placeholder="email,comma seperated"
+            placeholder={$t('course.issue_certificate.student_emails_placeholder')}
             bind:value={$issueCertificateModal.email}
           />
           <InputField
-            label="Schedule date"
+            label={$t('course.issue_certificate.schedule_date')}
             className="w-full my-4"
             labelClassName="text-xs font-normal"
             placeholder="12/06/2023"
@@ -57,16 +58,16 @@
         </div>
 
         <TextareaField
-          label="Add a personalized message"
+          label={$t('course.issue_certificate.message_label')}
           labelClassName="text-xs font-normal"
           bind:value={$issueCertificateModal.message}
           rows={2}
-          placeholder="your message here"
+          placeholder={$t('course.issue_certificate.message_placeholder')}
           className="mb-4"
         />
 
         <div class="mt-5 flex w-full items-end justify-end">
-          <Button type="submit">Issue certificate</Button>
+          <Button type="submit">{$t('course.issue_certificate.submit')}</Button>
         </div>
       </form>
     </main>

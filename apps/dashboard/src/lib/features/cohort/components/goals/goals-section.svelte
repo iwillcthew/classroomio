@@ -51,11 +51,11 @@
     }
 
     if (goal.deadlineKind === 'relative_to_join' && goal.relativeDays) {
-      return `+${goal.relativeDays}d after join`;
+      return $t('cohorts.goals.deadline_after_join', { days: goal.relativeDays });
     }
 
     if (goal.deadlineKind === 'recurring' && goal.recurringMonths) {
-      return `Repeats every ${goal.recurringMonths}mo`;
+      return $t('cohorts.goals.deadline_recurring', { months: goal.recurringMonths });
     }
 
     return $t('cohorts.goals.lms.no_deadline');
@@ -107,7 +107,7 @@
                 <p class="ui:text-muted-foreground mt-1 text-sm">{goal.description}</p>
               {/if}
               <p class="ui:text-muted-foreground mt-2 text-xs">
-                {goal.courseIds.length} courses · {summarizeDeadline(goal)}
+                {$t('cohorts.goals.course_count', { count: goal.courseIds.length })} · {summarizeDeadline(goal)}
               </p>
             </div>
             {#if canManage}

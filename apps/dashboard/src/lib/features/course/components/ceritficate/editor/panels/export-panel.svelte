@@ -24,7 +24,7 @@
 
   async function buildBody() {
     return {
-      studentName: $profile.fullname || 'Preview Recipient',
+      studentName: $profile.fullname || t.get('course.certificate_reports.preview_recipient'),
       studentId: $profile.id || undefined,
       issuedAt: new Date().toISOString(),
       previewMode: true

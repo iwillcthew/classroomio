@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Button } from '../../base/button';
+  import { uiLabels } from '../../tools';
   import * as DropdownMenu from '../../base/dropdown-menu';
   import EllipsisVerticalIcon from '@lucide/svelte/icons/ellipsis-vertical';
   import MessageSquareIcon from '@lucide/svelte/icons/message-square';
@@ -17,8 +18,8 @@
     onReply,
     canDelete = false,
     onDelete,
-    replyLabel = 'Reply',
-    deleteLabel = 'Delete',
+    replyLabel = uiLabels.comment_reply,
+    deleteLabel = uiLabels.delete,
     class: className = ''
   }: Props = $props();
 </script>

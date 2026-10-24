@@ -107,12 +107,12 @@
 
   function buildPayload(): TCreateCohortGoal | null {
     if (!title.trim()) {
-      formError = $t('cohorts.goals.modal.title_label') + ' is required';
+      formError = $t('cohorts.goals.modal.title_required');
       return null;
     }
 
     if (courseIds.length === 0) {
-      formError = $t('cohorts.goals.modal.courses_label') + ' is required';
+      formError = $t('cohorts.goals.modal.courses_required');
       return null;
     }
 
@@ -144,7 +144,7 @@
           ? await cohortGoalApi.updateGoal(cohortId, goal.id, payload as TUpdateCohortGoal)
           : await cohortGoalApi.createGoal(cohortId, payload);
       if (ok) onClose();
-      else formError = cohortGoalApi.error ?? 'Failed to save';
+      else formError = cohortGoalApi.error ?? $t('cohorts.goals.modal.save_failed');
     } finally {
       isSaving = false;
     }
@@ -202,7 +202,7 @@
       <div class="flex flex-col gap-1.5">
         <Label>{$t('cohorts.goals.modal.courses_label')} *</Label>
         {#if availableCourses.length === 0}
-          <p class="ui:text-muted-foreground text-sm">No courses in this cohort yet.</p>
+          <p class="ui:text-muted-foreground text-sm">{$t('cohorts.goals.modal.no_courses')}</p>
         {:else}
           <div class="flex flex-col gap-2 rounded-md border p-3">
             {#each availableCourses as item (item.courseId)}
@@ -211,7 +211,7 @@
                   checked={courseIds.includes(item.courseId)}
                   onCheckedChange={() => toggleCourse(item.courseId)}
                 />
-                <span>{item.course.title ?? 'Untitled course'}</span>
+                <span>{item.course.title ?? $t('course.creator.untitled_course')}</span>
               </label>
             {/each}
           </div>

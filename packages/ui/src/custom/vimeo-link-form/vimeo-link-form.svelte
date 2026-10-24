@@ -2,7 +2,7 @@
   import { Button } from '../../base/button';
   import { Input } from '../../base/input';
   import { Label } from '../../base/label';
-  import { cn } from '../../tools';
+  import { cn, uiLabels } from '../../tools';
   import CopyIcon from '@lucide/svelte/icons/copy';
   import CheckIcon from '@lucide/svelte/icons/check';
   import { extractUniqueLinks, toCanonicalVimeoUrl } from '@cio/utils';
@@ -82,7 +82,7 @@
       rawInput = '';
       onInputChange('');
     } catch (error) {
-      validationError = typeof error === 'string' ? error : (error as Error)?.message || 'Failed to add video';
+      validationError = typeof error === 'string' ? error : (error as Error)?.message || uiLabels.video_add_failed;
     } finally {
       isSubmitting = false;
     }
@@ -120,7 +120,7 @@
         type="button"
         onclick={handleCopyDomain}
         class="ui:inline-flex ui:cursor-pointer ui:items-center ui:gap-1 ui:rounded ui:bg-muted ui:px-1.5 ui:py-0.5 ui:font-mono ui:font-medium ui:text-foreground ui:transition-colors ui:hover:bg-muted/80 ui:align-baseline"
-        title="Copy domain to clipboard"
+        title={uiLabels.vimeo_copy_domain}
       >
         <span>{currentHost}</span>
         {#if hasCopiedDomain}
@@ -135,7 +135,7 @@
         target="_blank"
         rel="noreferrer noopener"
         class="ui:ml-0.5 ui:inline-flex ui:items-center ui:text-primary ui:hover:underline ui:align-baseline"
-        title="Vimeo Privacy Settings Documentation"
+        title={uiLabels.vimeo_privacy_docs}
       >
         <ExternalLinkIcon size={12} class="ui:text-muted-foreground" />
       </a>
