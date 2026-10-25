@@ -28,13 +28,15 @@
 </script>
 
 <svelte:head>
-  <title>{$t('lms_navigation.cohorts') || 'Cohorts'} - MP Learning</title>
+  <title>{$t('lms_navigation.cohorts')} · MP Learning</title>
 </svelte:head>
 
 <Page.Root class="w-full">
   <Page.Header>
     <Page.HeaderContent>
-      <Page.Title>{$t('lms_navigation.cohorts') || 'Cohorts'}</Page.Title>
+      <Page.Eyebrow>{$t('lms_navigation.group_learning')}</Page.Eyebrow>
+      <Page.Title>{$t('lms_navigation.cohorts')}</Page.Title>
+      <Page.Subtitle>{$t('lms_pages.cohorts_subtitle')}</Page.Subtitle>
     </Page.HeaderContent>
   </Page.Header>
   <Page.Body>

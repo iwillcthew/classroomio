@@ -29,7 +29,7 @@
       {#if course.bannerImage}
         <img src={course.bannerImage} alt="" class="h-full w-full object-cover" />
       {:else}
-        <img src="/images/course-img-template.jpg" alt="" class="h-full w-full object-cover" />
+        <img src="/images/mp-course-cover.svg" alt="" class="h-full w-full object-cover" />
       {/if}
     </div>
     <div class="flex min-w-0 flex-1 flex-col gap-1">

@@ -1,14 +1,18 @@
 <script lang="ts">
   import { resolve } from '$app/paths';
   import { goto } from '$app/navigation';
-  import { basePath } from '$lib/utils/store/app';
+  import { page } from '$app/state';
+  import { basePath, isOrgStudent } from '$lib/utils/store/app';
   import * as DropdownMenu from '@cio/ui/base/dropdown-menu';
-  import LogOutIcon from '@lucide/svelte/icons/log-out';
-  import SettingsIcon from '@lucide/svelte/icons/settings';
   import * as Sidebar from '@cio/ui/base/sidebar';
-  import { UserAvatar } from '@cio/ui/custom/user-avatar';
   import { useSidebar } from '@cio/ui/base/sidebar';
+  import { UserAvatar } from '@cio/ui/custom/user-avatar';
+  import BellIcon from '@lucide/svelte/icons/bell';
   import ChevronsUpDownIcon from '@lucide/svelte/icons/chevrons-up-down';
+  import GraduationCapIcon from '@lucide/svelte/icons/graduation-cap';
+  import LayoutDashboardIcon from '@lucide/svelte/icons/layout-dashboard';
+  import LogOutIcon from '@lucide/svelte/icons/log-out';
+  import UserRoundIcon from '@lucide/svelte/icons/user-round';
   import ThemeToggle from './theme-toggle.svelte';
 
   import { t } from '$lib/utils/functions/translations';
@@ -18,6 +22,11 @@
 
   const sidebar = useSidebar();
 
+  const isInLearnerSpace = $derived(page.url.pathname.startsWith('/lms'));
+  const canSwitchSpace = $derived($isOrgStudent === false && !!$currentOrg.siteName);
+  const switchSpaceHref = $derived(isInLearnerSpace ? `/org/${$currentOrg.siteName}/dash` : '/lms');
+  const accountBasePath = $derived(isInLearnerSpace ? '/lms' : $basePath);
+
   function getRoleLabel(roleId: number): string {
     if (roleId === ROLE.ADMIN) return $t('course.navItem.people.roles.admin');
     if (roleId === ROLE.TUTOR) return $t('course.navItem.people.roles.tutor');
@@ -26,103 +35,75 @@
   }
 </script>
 
-<!--
-
-  SNIPPETS
-
--->
-{#snippet avatarblock()}
-  <UserAvatar src={$profile.avatarUrl} alt={$profile.fullname} />
-  <div class="grid flex-1 text-left text-sm leading-tight font-normal">
-    <span class="truncate">{$profile.fullname}</span>
-    <span class="truncate text-xs">{$profile.email}</span>
-  </div>
-{/snippet}
-
-{#snippet triggeravatar()}
-  <UserAvatar src={$profile.avatarUrl} alt={$profile.fullname} />
-  <div class="grid flex-1 text-left text-sm leading-tight font-normal">
-    <span class="truncate">{$profile.fullname}</span>
-    <span class="truncate text-xs">{getRoleLabel($currentOrg.roleId)}</span>
-  </div>
-{/snippet}
-
-{#snippet usertrigger()}
-  <DropdownMenu.Label class="p-0">
-    <a href={resolve(`${$basePath}/settings`, {})} class="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-      <UserAvatar src={$profile.avatarUrl} alt={$profile.fullname} />
-      <div class="grid flex-1 text-left text-sm leading-tight font-normal">
-        <span class="truncate">{$profile.fullname}</span>
-        <span class="truncate text-xs">{$profile.email}</span>
-      </div>
-    </a>
-  </DropdownMenu.Label>
-{/snippet}
-
-{#snippet themetoggle()}
-  <DropdownMenu.Label class="ui:py-0 font-normal">
-    <ThemeToggle />
-  </DropdownMenu.Label>
-{/snippet}
-
-<!--
-
-  COMPONENT
-
--->
 <Sidebar.Menu>
   <Sidebar.MenuItem>
     <DropdownMenu.Root>
-      <!-- DROPDOWN TRIGGER -->
       <DropdownMenu.Trigger>
         {#snippet child({ props })}
           <Sidebar.MenuButton
             size="lg"
             data-testid="app-user-menu-trigger"
-            class="ui:data-[state=open]:bg-sidebar-accent ui:data-[state=open]:text-sidebar-accent-foreground"
+            class="ui:data-[state=open]:bg-sidebar-accent ui:data-[state=open]:text-sidebar-accent-foreground gap-3"
             {...props}
           >
-            {@render triggeravatar()}
-            <ChevronsUpDownIcon class="ml-auto size-4" />
+            <UserAvatar src={$profile.avatarUrl} alt={$profile.fullname} />
+            <div class="grid flex-1 text-left leading-tight">
+              <span class="ui:text-sidebar-accent-foreground truncate text-sm font-medium">{$profile.fullname}</span>
+              <span class="ui:text-sidebar-muted truncate text-xs">{getRoleLabel($currentOrg.roleId)}</span>
+            </div>
+            <ChevronsUpDownIcon class="custom ui:text-sidebar-muted ml-auto size-4" />
           </Sidebar.MenuButton>
         {/snippet}
       </DropdownMenu.Trigger>
 
-      <!-- DROPDOWN CONTENT -->
       <DropdownMenu.Content
-        class="w-(--bits-dropdown-menu-anchor-width) min-w-56 rounded-lg"
+        class="w-(--bits-dropdown-menu-anchor-width) min-w-64 rounded-xl p-1.5"
         side={sidebar.isMobile ? 'bottom' : 'right'}
         align="end"
-        sideOffset={4}
+        sideOffset={8}
       >
-        {@render usertrigger()}
+        <DropdownMenu.Label class="flex items-center gap-3 px-2 py-2 font-normal">
+          <UserAvatar src={$profile.avatarUrl} alt={$profile.fullname} />
+          <div class="grid min-w-0 flex-1 leading-tight">
+            <span class="truncate text-sm font-semibold">{$profile.fullname}</span>
+            <span class="ui:text-muted-foreground truncate text-xs">{$profile.email}</span>
+          </div>
+        </DropdownMenu.Label>
 
         <DropdownMenu.Separator />
-        {@render themetoggle()}
 
-        <DropdownMenu.Separator />
-
-        <DropdownMenu.Item class="m-0">
-          <a href={resolve(`${$basePath}/settings`, {})} class="flex w-full items-center gap-2">
-            <SettingsIcon size={16} />
-            <p class="text-sm">{$t('org_navigation.settings')}</p>
-          </a>
+        <DropdownMenu.Item onclick={() => goto(resolve(`${accountBasePath}/settings`, {}))}>
+          <UserRoundIcon class="size-4" />
+          {$t('settings.tabs.profile_tab')}
+        </DropdownMenu.Item>
+        <DropdownMenu.Item onclick={() => goto(resolve(`${accountBasePath}/settings/notifications`, {}))}>
+          <BellIcon class="size-4" />
+          {$t('settings.tabs.notifications_tab')}
         </DropdownMenu.Item>
 
+        {#if canSwitchSpace}
+          <DropdownMenu.Separator />
+          <DropdownMenu.Item onclick={() => goto(resolve(switchSpaceHref, {}))}>
+            {#if isInLearnerSpace}
+              <LayoutDashboardIcon class="size-4" />
+              {$t('mp_learning.switch_to_admin')}
+            {:else}
+              <GraduationCapIcon class="size-4" />
+              {$t('mp_learning.switch_to_learner')}
+            {/if}
+          </DropdownMenu.Item>
+        {/if}
+
+        <DropdownMenu.Separator />
+        <DropdownMenu.Label class="ui:py-0 font-normal">
+          <ThemeToggle />
+        </DropdownMenu.Label>
         <DropdownMenu.Separator />
 
-        <DropdownMenu.Group>
-          <div class="cursor-pointer space-y-2">
-            <DropdownMenu.Separator />
-
-            <DropdownMenu.Item onclick={() => goto(resolve(`/logout`, {}))}>
-              <span class="flex items-center gap-2">
-                <LogOutIcon />
-                <p class="text-sm">{$t('settings.profile.logout')}</p>
-              </span>
-            </DropdownMenu.Item>
-          </div>
-        </DropdownMenu.Group>
+        <DropdownMenu.Item onclick={() => goto(resolve(`/logout`, {}))}>
+          <LogOutIcon class="size-4" />
+          {$t('settings.profile.logout')}
+        </DropdownMenu.Item>
       </DropdownMenu.Content>
     </DropdownMenu.Root>
   </Sidebar.MenuItem>

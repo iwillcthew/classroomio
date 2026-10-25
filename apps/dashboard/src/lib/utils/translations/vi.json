@@ -226,7 +226,7 @@
     "compliance_label": "Tuân thủ",
     "compliance_subtitle": "Đào tạo định kỳ, có học lại, nhắc nhở và theo dõi gia hạn",
     "public_label": "Công khai",
-    "public_subtitle": "Trang khóa học miễn phí, không cần đăng ký, có thể chia sẻ công khai — phù hợp để giới thiệu rộng rãi"
+    "public_subtitle": "Mở cho mọi người, không cần đăng nhập. Chỉ dùng cho tài liệu giới thiệu chung."
   },
   "public_course": {
     "header": {
@@ -386,10 +386,12 @@
     }
   },
   "welcome_modal": {
-    "we_at": "Chúng tôi tại",
-    "small_team": "mong muốn mang đến những công cụ tốt nhất để mỗi người học và người dạy tạo ra giá trị thật. Học tập là món quà ý nghĩa nhất bạn có thể trao cho người khác, và bạn xứng đáng có đủ công cụ để lan tỏa MÓN QUÀ ấy đến nhiều người hơn.",
-    "thank_you": "Cảm ơn bạn đã đồng hành cùng chúng tôi",
-    "deeply_appreciate": "chúng tôi rất trân trọng điều đó và luôn sẵn sàng hỗ trợ bạn."
+    "we_at": "Tại",
+    "small_team": "học tập là một phần của cách chúng ta cùng phát triển. MP Learning tập trung mọi khóa đào tạo, lớp học và chứng chỉ nội bộ vào một nơi để bạn chỉ cần tập trung nâng cao năng lực.",
+    "thank_you": "Rất vui được đồng hành cùng bạn",
+    "deeply_appreciate": "bộ phận Đào tạo luôn sẵn sàng hỗ trợ bạn.",
+    "title": "Chào mừng đến với MP Learning",
+    "banner_alt": "MP Learning"
   },
   "app": {
     "cancel": "Hủy",
@@ -576,13 +578,13 @@
   "settings": {
     "heading": "Cài đặt",
     "sidebar": {
-      "workspace": "Không gian làm việc",
+      "workspace": "Tổ chức",
       "personal": "Cá nhân",
       "product": "Sản phẩm",
-      "extensions": "Tiện ích mở rộng",
+      "extensions": "Bảo mật & AI",
       "security": "Bảo mật",
       "billing": "Thanh toán",
-      "branding": "Thương hiệu",
+      "branding": "Thông tin tổ chức",
       "ai": "AI",
       "search": "Tìm cài đặt...",
       "new_badge": "Mới"
@@ -591,22 +593,22 @@
       "view_site": "Cổng học tập của bạn"
     },
     "tabs": {
-      "profile_tab": "Hồ sơ",
+      "profile_tab": "Hồ sơ cá nhân",
       "notifications_tab": "Thông báo",
       "organization_tab": "Tổ chức",
-      "landing_page_tab": "Trang giới thiệu",
+      "landing_page_tab": "Giới thiệu khóa học",
       "billing_tab": "Thanh toán",
       "ai_credits_tab": "Lượt dùng AI",
       "ai_tutor_tab": "Trợ giảng AI",
       "integrations_tab": "Tích hợp",
       "language_tab": "Ngôn ngữ",
-      "auth_tab": "Xác thực",
+      "auth_tab": "Đăng nhập & SSO",
       "sso_tab": "SSO",
       "token_auth_tab": "Xác thực token",
-      "customize_lms_tab": "Tùy chỉnh LMS",
+      "customize_lms_tab": "Không gian học tập",
       "emails_tab": "Email",
       "domains_tab": "Tên miền",
-      "teams_tab": "Nhóm quản trị"
+      "teams_tab": "Quản trị viên & giảng viên"
     },
     "emails": {
       "page_title": "Mẫu email",
@@ -1644,23 +1646,23 @@
   "org_navigation": {
     "platform": "Nền tảng",
     "home": "Trang chủ",
-    "content": "Nội dung",
-    "people": "Thành viên",
-    "back_to_app": "Quay lại ứng dụng",
+    "content": "Nội dung đào tạo",
+    "people": "Nhân sự",
+    "back_to_app": "Về trang quản trị",
     "create": "Đào tạo",
     "dashboard": "Tổng quan",
     "stats": "Thống kê",
     "analytics": "Phân tích",
-    "compliance": "Tuân thủ",
+    "compliance": "Đào tạo bắt buộc",
     "courses": "Khóa học",
-    "tags": "Thẻ",
-    "community": "Cộng đồng",
+    "tags": "Thẻ phân loại",
+    "community": "Hỏi đáp",
     "audience": "Học viên",
-    "media": "Thư viện tệp",
+    "media": "Thư viện tài liệu",
     "distribute": "Phân phối",
     "widgets": "Widget",
     "setup": "Thiết lập",
-    "automation": "Tự động hóa",
+    "automation": "Tích hợp",
     "tools": "Công cụ",
     "help": "Trợ giúp",
     "settings": "Cài đặt",
@@ -1674,7 +1676,10 @@
     "upgrade_left": "Còn {count}",
     "cohorts": "Lớp đào tạo",
     "exit_course": "Thoát khóa học",
-    "exit_cohort": "Thoát lớp đào tạo"
+    "exit_cohort": "Thoát lớp đào tạo",
+    "ai_studio": "Soạn khóa học AI",
+    "reports": "Báo cáo",
+    "system": "Hệ thống"
   },
   "pricing": {
     "plan_names": {
@@ -2171,7 +2176,7 @@
     "learning_awaits_you": "Khóa học tiếp theo đang chờ bạn",
     "my_certificate": "Chứng chỉ của tôi",
     "lms_today_progress": "Bạn đã đi được {progress}% chặng đường học tập — mỗi bước đều đáng ghi nhận.",
-    "lms_today_empty": "Hành trình học tập luôn sẵn sàng, chỉ chờ bạn bắt đầu.",
+    "lms_today_empty": "Bạn chưa có khóa học nào. Hãy bắt đầu từ thư viện đào tạo.",
     "compliance_score": "Điểm tuân thủ",
     "compliance": "Tuân thủ",
     "compliance_score_subtitle": "Đã đạt {completed}/{total} khóa học tuân thủ",
@@ -2188,7 +2193,7 @@
     "items_done": "Đã xong {completed}/{total}",
     "no_courses_started": "Chưa bắt đầu khóa học nào",
     "certificates_earned": "Chứng chỉ đã cấp",
-    "certificates_earned_description": "Tổng số chứng chỉ đã cấp cho học viên trong tổ chức",
+    "certificates_earned_description": "Chứng chỉ nhân viên đã đạt được",
     "certification_rate": "Đạt chứng chỉ",
     "recent_certifications": "Chứng chỉ mới cấp",
     "no_certifications_yet": "Chưa có chứng chỉ nào được cấp",
@@ -2196,10 +2201,10 @@
     "view_courses": "Xem khóa học",
     "explore_more_courses": "Khám phá thêm khóa học",
     "view_more": "Xem thêm",
-    "no_of_courses": "Số khóa học",
+    "no_of_courses": "Khóa học",
     "no_courses_description": "Khóa học đã tạo trong tổ chức",
-    "total_students": "Tổng số nhân viên",
-    "total_students_description": "Nhân viên đã ghi danh trong tổ chức",
+    "total_students": "Nhân viên tham gia học",
+    "total_students_description": "Nhân viên đã được ghi danh vào khóa học",
     "top_courses": "Khóa học nổi bật",
     "students": "học viên",
     "student": "học viên",
@@ -2214,7 +2219,18 @@
     "login_activity_description": "Các ngày trong tuần có nhiều hoạt động nhất (90 ngày qua)",
     "login_activity_no_data": "Chưa có dữ liệu đăng nhập",
     "login_activity_logins": "lượt đăng nhập",
-    "org_overview_description": "Tình hình đào tạo của tổ chức bạn hôm nay."
+    "org_overview_description": "Toàn cảnh hoạt động đào tạo của MP Transformation.",
+    "quick_actions": {
+      "title": "Lối tắt quản trị",
+      "add_learners": "Thêm nhân viên học",
+      "add_learners_description": "Nhập danh sách hoặc mời qua email",
+      "create_cohort": "Mở lớp đào tạo",
+      "create_cohort_description": "Gom khóa học và học viên theo chương trình",
+      "mandatory_training": "Theo dõi đào tạo bắt buộc",
+      "mandatory_training_description": "Xem ai quá hạn hoặc chưa bắt đầu",
+      "upload_documents": "Tải tài liệu lên",
+      "upload_documents_description": "Video, slide và tệp dùng cho bài học"
+    }
   },
   "ai": {
     "help_me": "Viết giúp tôi",
@@ -2227,7 +2243,7 @@
   },
   "courses": {
     "heading": "Khóa học",
-    "page_subtitle": "Nơi bài học thành khóa học và khóa học đến với học viên.",
+    "page_subtitle": "Soạn, xuất bản và quản lý các khóa đào tạo nội bộ.",
     "heading_button": "Tạo khóa học",
     "search_placeholder": "Tìm khóa học",
     "load_more": "Tải thêm",
@@ -2392,7 +2408,7 @@
       "nav_people": "Thành viên",
       "nav_analytics": "Phân tích",
       "nav_certificates": "Chứng chỉ",
-      "nav_landing_page": "Trang giới thiệu",
+      "nav_landing_page": "Giới thiệu khóa học",
       "nav_settings": "Cài đặt",
       "nav_ai_assistant": "Trợ lý AI",
       "nav_ai_tutor": "Trợ giảng AI",
@@ -4091,7 +4107,7 @@
           "sample_recipient": "Nguyễn Minh Anh",
           "sample_course": "Chứng nhận xuất sắc",
           "sample_description": "Ghi nhận thành tích nổi bật và tinh thần cống hiến gương mẫu trong công việc.",
-          "sample_org": "Học viện Nghệ thuật Hoàng gia",
+          "sample_org": "MP Transformation",
           "summary_title": "Thiết kế đang dùng",
           "summary_subtitle": "Hình ảnh xem nhanh chứng chỉ khi được cấp.",
           "field_template": "Mẫu",
@@ -4246,8 +4262,8 @@
         "enter": "Nhập email của bạn...",
         "powered_by": "Vận hành bởi",
         "landing_page": "Trang giới thiệu",
-        "explore": "Khám phá khóa học",
-        "find": "Tìm khóa học phù hợp với bạn từ đội ngũ giảng viên giàu kinh nghiệm",
+        "explore": "Thư viện đào tạo",
+        "find": "Tìm khóa học phù hợp với vai trò và công việc của bạn",
         "find_course": "Tìm khóa học...",
         "reviews_modal": {
           "title": "Đánh giá",
@@ -4811,7 +4827,7 @@
     "loading_chart": "Đang tải biểu đồ...",
     "no_data_default": "Chưa có dữ liệu",
     "no_data_default_description": "Hiện chưa có dữ liệu để hiển thị.",
-    "subtitle": "Xem khách truy cập tìm đến khóa học của bạn như thế nào và trở thành học viên ra sao.",
+    "subtitle": "Theo dõi mức độ tham gia và hoàn thành đào tạo của nhân viên.",
     "course_metrics": {
       "page_subtitle": "Ghi danh, hoàn thành bài học, điểm và tiến độ của từng học viên trong khóa học này.",
       "progress_distribution_card_description": "Số học viên ở từng mức hoàn thành.",
@@ -4834,8 +4850,8 @@
     },
     "refresh": "Làm mới",
     "kpi": {
-      "landing_views": "Lượt xem trang giới thiệu",
-      "unique_visitors": "Người truy cập",
+      "landing_views": "Lượt xem giới thiệu khóa học",
+      "unique_visitors": "Người xem",
       "course_page_views": "Lượt xem trang khóa học",
       "enrollments": "Lượt ghi danh",
       "range_description": "Trong khoảng đã chọn"
@@ -4848,11 +4864,11 @@
       "enrollments": "Lượt ghi danh"
     },
     "funnel": {
-      "heading": "Phễu chuyển đổi",
+      "heading": "Hành trình học tập",
       "description": "Từ lần truy cập đầu tiên đến khi hoàn thành khóa học",
       "empty": "Chưa có dữ liệu phễu",
       "step": {
-        "landing_view": "Lượt xem trang giới thiệu",
+        "landing_view": "Xem giới thiệu",
         "course_page_view": "Lượt xem trang khóa học",
         "enrollment_completed": "Lượt ghi danh",
         "course_completed": "Lượt hoàn thành"
@@ -4863,7 +4879,7 @@
       "subtitle": "Tổng cộng {total} người truy cập",
       "empty": "Chưa có dữ liệu vị trí",
       "country": "Quốc gia",
-      "visitors": "Người truy cập",
+      "visitors": "Người xem",
       "enrollments_short": "đã ghi danh"
     },
     "popularTypes": {
@@ -4907,7 +4923,7 @@
   },
   "automation": {
     "title": "Tự động hóa",
-    "subtitle": "Kết nối ứng dụng MCP ngay hôm nay; Zapier và API công khai sẽ dùng chung hệ thống khóa theo tổ chức.",
+    "subtitle": "Kết nối MP Learning với hệ thống nội bộ qua MCP, API và webhook.",
     "coming_soon": "Sắp ra mắt",
     "permissions": {
       "disabled_title": "Chỉ có quyền xem",
@@ -5114,7 +5130,7 @@
       "view_docs": "Xem tài liệu"
     },
     "api": {
-      "subtitle": "Quản lý khóa API để tích hợp với API công khai của MP Learning.",
+      "subtitle": "Dùng API của MP Learning để đồng bộ dữ liệu với hệ thống nội bộ.",
       "keys": {
         "title": "Khóa API",
         "description": "Các khóa này xác thực tổ chức hiện tại khi gọi API công khai của MP Learning.",
@@ -5142,15 +5158,16 @@
     }
   },
   "lms_navigation": {
-    "home": "Trang chủ",
+    "home": "Tổng quan",
     "my_learning": "Khóa học của tôi",
     "certificates": "Chứng chỉ",
     "exercise": "Bài tập",
-    "community": "Cộng đồng",
-    "explore": "Khám phá",
+    "community": "Hỏi đáp",
+    "explore": "Thư viện đào tạo",
     "help": "Trợ giúp",
-    "settings": "Cài đặt",
-    "cohorts": "Lớp đào tạo"
+    "settings": "Tài khoản",
+    "cohorts": "Lớp đào tạo",
+    "group_learning": "Học tập"
   },
   "lms": {
     "view_landing_page": "Trang chủ"
@@ -5187,7 +5204,7 @@
     "lesson": "Bài học"
   },
   "explore": {
-    "heading": "Khám phá khóa học",
+    "heading": "Thư viện đào tạo",
     "empty_heading": "Chưa có khóa học nào",
     "empty_description": "Hiện chưa có khóa học nào được xuất bản"
   },
@@ -6456,7 +6473,11 @@
     "feature_practice": "Bài tập & chứng chỉ nội bộ",
     "feature_practice_description": "Thực hành, nhận phản hồi và được ghi nhận năng lực",
     "feature_progress": "Theo dõi tiến độ mọi lúc",
-    "feature_progress_description": "Học tiếp từ chỗ đang dừng trên mọi thiết bị"
+    "feature_progress_description": "Học tiếp từ chỗ đang dừng trên mọi thiết bị",
+    "context_admin": "Quản trị đào tạo",
+    "context_learner": "Không gian học tập",
+    "switch_to_learner": "Mở không gian học tập",
+    "switch_to_admin": "Mở trang quản trị đào tạo"
   },
   "page_titles": {
     "integrations": "Tích hợp",
@@ -6464,7 +6485,7 @@
     "question": "Câu hỏi",
     "community": "Cộng đồng",
     "my_learning": "Khóa học của tôi",
-    "explore": "Khám phá",
+    "explore": "Thư viện đào tạo",
     "exercises": "Bài tập",
     "certificates": "Chứng chỉ",
     "billing": "Thanh toán",
@@ -6487,5 +6508,35 @@
     "join_platform": "Tham gia MP Learning",
     "join_course": "Tham gia {title} trên MP Learning",
     "forgot_password": "Quên mật khẩu"
+  },
+  "ui_shell": {
+    "breadcrumbs": {
+      "toggle_menu": "Hiện đường dẫn",
+      "navigate_to": "Đi tới",
+      "navigate_description": "Chọn một trang trong đường dẫn"
+    }
+  },
+  "lms_home": {
+    "hero_empty_title": "Bạn chưa được giao khóa học nào",
+    "hero_empty_description": "Mở thư viện đào tạo để tìm khóa học phù hợp với công việc của bạn.",
+    "hero_all_done_title": "Bạn đã hoàn thành mọi khóa học đang theo",
+    "hero_all_done_description": "Làm tốt lắm. Chọn khóa học tiếp theo trong thư viện đào tạo.",
+    "open_library": "Mở thư viện đào tạo",
+    "mandatory": "Bắt buộc",
+    "mandatory_title": "Đào tạo bắt buộc",
+    "mandatory_description": "Khóa học cần hoàn thành, xếp theo hạn chót",
+    "mandatory_empty": "Hiện bạn không có khóa đào tạo bắt buộc nào.",
+    "no_other_courses": "Không còn khóa học nào khác đang học",
+    "recommended_description": "Chọn từ thư viện đào tạo của MP Transformation",
+    "lesson_count": "{count} bài học",
+    "self_enroll_hint": "Bạn có thể tự ghi danh vào khóa học này.",
+    "enroll_via_admin_hint": "Liên hệ bộ phận Đào tạo để được ghi danh vào khóa học này."
+  },
+  "lms_pages": {
+    "my_learning_subtitle": "Các khóa học bạn được giao hoặc đã tự ghi danh.",
+    "explore_subtitle": "Các khóa đào tạo nội bộ dành cho nhân viên MP Transformation.",
+    "cohorts_subtitle": "Các lớp và chương trình đào tạo bạn đang tham gia.",
+    "exercises_subtitle": "Theo dõi bài nộp và điểm số trong các khóa học.",
+    "exercises_column_empty": "Chưa có bài nào"
   }
 }

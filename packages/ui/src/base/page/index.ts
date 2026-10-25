@@ -1,5 +1,6 @@
 import Action from './page-action.svelte';
 import Body from './page-body.svelte';
+import Eyebrow from './page-eyebrow.svelte';
 import BodyHeader from './page-body-header.svelte';
 import FloatingBar from './page-floating-bar.svelte';
 import Header from './page-header.svelte';
@@ -16,6 +17,7 @@ export {
   Action,
   Title,
   Subtitle,
+  Eyebrow,
   Body,
   BodyHeader,
   FloatingBar,
@@ -27,6 +29,7 @@ export {
   Action as PageAction,
   Title as PageTitle,
   Subtitle as PageSubtitle,
+  Eyebrow as PageEyebrow,
   Body as PageBody,
   BodyHeader as PageBodyHeader,
   FloatingBar as PageFloatingBar,

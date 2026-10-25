@@ -34,7 +34,17 @@
 
 <Breadcrumb.Root>
   <Breadcrumb.List class="flex-nowrap!">
+    <Breadcrumb.Item>
+      {#if breadcrumbs.length > 0}
+        <Breadcrumb.Link href="/lms" class="ui:text-muted-foreground whitespace-nowrap">
+          {$t('mp_learning.context_learner')}
+        </Breadcrumb.Link>
+      {:else}
+        <Breadcrumb.Page class="whitespace-nowrap">{$t('mp_learning.context_learner')}</Breadcrumb.Page>
+      {/if}
+    </Breadcrumb.Item>
     {#if breadcrumbs.length > 0}
+      <Breadcrumb.Separator />
       {#if breadcrumbs.length > ITEMS_TO_DISPLAY}
         <!-- Show ellipsis for hidden items -->
         <Breadcrumb.Item>

@@ -59,7 +59,9 @@
     {/if}
 
     <div
-      class={isCoursesList ? 'flex w-full flex-1 flex-col' : 'mx-auto flex w-full max-w-6xl flex-1 flex-col gap-4 px-4'}
+      class={isCoursesList
+        ? 'flex w-full flex-1 flex-col'
+        : 'mx-auto flex w-full max-w-6xl flex-1 flex-col gap-4 px-4 md:px-8'}
     >
       {#if data.orgName === '*'}
         <div class="grid auto-rows-min gap-4 md:grid-cols-3">

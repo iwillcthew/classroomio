@@ -56,16 +56,20 @@
 
 <Item.Root
   variant="outline"
-  class="ui:bg-card ui:mx-auto ui:w-full ui:max-w-[340px] ui:overflow-hidden ui:rounded-xl! ui:p-0! ui:transition-[box-shadow,border-color] ui:hover:border-primary/40 ui:hover:shadow-md"
+  class="ui:bg-card ui:shadow-card ui:h-full ui:w-full ui:overflow-hidden ui:rounded-xl! ui:p-0! ui:transition-[box-shadow,border-color,transform] ui:hover:border-primary/40 ui:hover:shadow-raised"
   {onclick}
 >
   {#snippet child({ props })}
-    <div class={cn('ui:group ui:relative ui:block ui:w-full', className)}>
+    <div class={cn('ui:group ui:relative ui:flex ui:h-full ui:w-full ui:flex-col', className)}>
       {@render overlay?.()}
 
       {#if href}
-        <a {href} {...props} class={cn('ui:block', props.class as string)}>
-          <Item.Header>
+        <a
+          {href}
+          {...props}
+          class={cn(props.class as string, 'ui:flex ui:h-full ui:flex-col ui:flex-nowrap ui:items-stretch ui:gap-0')}
+        >
+          <Item.Header class="ui:basis-auto">
             <Item.Media variant="image" class="ui:relative ui:aspect-video ui:h-auto! ui:w-full! ui:rounded-none!">
               {#if media}
                 {@render media()}
@@ -104,7 +108,7 @@
             </Item.Media>
           </Item.Header>
 
-          <Item.Content class="ui:min-w-0 ui:gap-1.5 ui:p-4">
+          <Item.Content class="ui:flex ui:min-w-0 ui:flex-1 ui:flex-col ui:gap-1.5 ui:p-4">
             <Item.Title
               class="ui:flex ui:min-h-12 ui:items-start ui:text-base! ui:font-semibold ui:leading-snug ui:wrap-anywhere"
             >
@@ -120,14 +124,17 @@
             {/if}
 
             {#if footer}
-              <Separator class="ui:my-3" />
+              <span class="ui:flex-1"></span><Separator class="ui:my-3" />
               {@render footer()}
             {/if}
           </Item.Content>
         </a>
       {:else}
-        <div {...props} class={cn('ui:block', props.class as string)}>
-          <Item.Header>
+        <div
+          {...props}
+          class={cn(props.class as string, 'ui:flex ui:h-full ui:flex-col ui:flex-nowrap ui:items-stretch ui:gap-0')}
+        >
+          <Item.Header class="ui:basis-auto">
             <Item.Media variant="image" class="ui:relative ui:aspect-video ui:h-auto! ui:w-full! ui:rounded-none!">
               {#if media}
                 {@render media()}
@@ -166,7 +173,7 @@
             </Item.Media>
           </Item.Header>
 
-          <Item.Content class="ui:min-w-0 ui:gap-1.5 ui:p-4">
+          <Item.Content class="ui:flex ui:min-w-0 ui:flex-1 ui:flex-col ui:gap-1.5 ui:p-4">
             <Item.Title
               class="ui:flex ui:min-h-12 ui:items-start ui:text-base! ui:font-semibold ui:leading-snug ui:wrap-anywhere"
             >
@@ -182,7 +189,7 @@
             {/if}
 
             {#if footer}
-              <Separator class="ui:my-3" />
+              <span class="ui:flex-1"></span><Separator class="ui:my-3" />
               {@render footer()}
             {/if}
           </Item.Content>

@@ -1,44 +1,28 @@
-<script>
-  import { Skeleton } from '@cio/ui/base/skeleton';
-</script>
-
-<div class="ui:bg-sidebar flex h-[calc(100vh-48px)] w-64 flex-col gap-2 border-r p-2">
-  <!-- org switcher -->
-  <div class="flex items-center gap-2 rounded-md p-2">
-    <Skeleton class="h-8 w-8 rounded-lg" />
-    <div class="flex flex-1 flex-col gap-1">
-      <Skeleton class="h-4 w-24" />
-      <Skeleton class="h-3 w-16" />
+<div data-tone="ink" class="ui:bg-sidebar hidden h-svh w-64 shrink-0 flex-col gap-2 p-3 md:flex">
+  <div class="flex items-center gap-3 p-1.5">
+    <div class="size-9 rounded-lg bg-white/90"></div>
+    <div class="flex flex-1 flex-col gap-1.5">
+      <div class="h-3.5 w-24 animate-pulse rounded bg-white/15"></div>
+      <div class="h-2.5 w-16 animate-pulse rounded bg-white/10"></div>
     </div>
-    <Skeleton class="h-4 w-4" />
   </div>
 
-  <!-- nav main -->
-  <div class="flex flex-col gap-1 py-2">
-    <Skeleton class="mb-2 h-3 w-16 px-2" />
-    {#each Array(5) as _, i (i)}
-      <div class="flex items-center gap-2 rounded-md p-2">
-        <Skeleton class="h-4 w-4" />
-        <Skeleton class="h-4 w-full" />
+  <div class="mt-4 flex flex-col gap-1">
+    {#each Array(7) as _, index (index)}
+      <div class="flex items-center gap-3 rounded-md px-2.5 py-2">
+        <div class="size-4 animate-pulse rounded bg-white/10"></div>
+        <div class="h-3 flex-1 animate-pulse rounded bg-white/10"></div>
       </div>
     {/each}
   </div>
 
-  <!-- spacer -->
   <div class="flex-1"></div>
 
-  <!-- upgrade banner -->
-  <div class="mx-2 mb-2">
-    <Skeleton class="h-10 w-full rounded-md" />
-  </div>
-
-  <!-- nav user -->
-  <div class="flex items-center gap-2 rounded-md p-2">
-    <Skeleton class="h-8 w-8 rounded-lg" />
-    <div class="flex flex-1 flex-col gap-1">
-      <Skeleton class="h-4 w-24" />
-      <Skeleton class="h-3 w-20" />
+  <div class="flex items-center gap-3 p-2">
+    <div class="size-8 animate-pulse rounded-full bg-white/15"></div>
+    <div class="flex flex-1 flex-col gap-1.5">
+      <div class="h-3 w-24 animate-pulse rounded bg-white/15"></div>
+      <div class="h-2.5 w-16 animate-pulse rounded bg-white/10"></div>
     </div>
-    <Skeleton class="h-4 w-4" />
   </div>
 </div>

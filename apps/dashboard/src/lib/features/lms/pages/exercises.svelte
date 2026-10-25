@@ -1,6 +1,5 @@
 <script lang="ts">
   import cloneDeep from 'lodash/cloneDeep';
-  import { Chip } from '@cio/ui/custom/chip';
   import { profile } from '$lib/utils/store/user';
   import { currentOrg } from '$lib/utils/store/org';
   import { snackbar } from '$features/ui/snackbar/store';
@@ -13,26 +12,26 @@
       id: 0,
       title: $t('exercises.not_submitted'),
       items: [],
-      className: 'text-[#E35353] bg-[#FDDFE4]'
+      className: 'ui:bg-danger-soft ui:text-danger-foreground'
     },
     {
       id: 1,
       title: $t('exercises.submitted'),
       items: [],
-      className: 'text-orange-700 bg-orange-200'
+      className: 'ui:bg-warning-soft ui:text-warning-foreground'
     },
     {
       id: 2,
       title: $t('exercises.in_progress'),
       items: [],
-      className: 'text-yellow-700 bg-yellow-200'
+      className: 'ui:bg-info-soft ui:text-info-foreground'
     },
     {
       id: 3,
       title: $t('exercises.graded'),
       value: 0,
       items: [],
-      className: 'text-green-700 bg-green-200'
+      className: 'ui:bg-success-soft ui:text-success-foreground'
     }
   ];
   let sections: Section[] = $state(cloneDeep(defaultSections));
@@ -114,7 +113,6 @@
     if (!lmsExercisesApi.exercises || lmsExercisesApi.exercises.length === 0) return;
 
     sections = generateSections(lmsExercisesApi.exercises);
-    console.log('sections', sections);
   }
 
   $effect(() => {
@@ -122,40 +120,38 @@
   });
 </script>
 
-<div class="flex w-full items-center overflow-x-auto">
-  {#each sections as { title, items, className, id }}
-    <div
-      class="mr-3 h-[70vh] max-w-[355px] min-w-[355px] overflow-hidden rounded-md border border-gray-50 bg-gray-100 p-3 dark:border-neutral-700 dark:bg-black"
-    >
-      <div class="mb-2 flex items-center gap-2">
-        <p class="ml-2 dark:text-white">{title}</p>
-        <Chip value={items.length} {className} />
-      </div>
-      <div class="h-full overflow-y-auto pr-2 pb-3">
-        {#each items as item}
-          <div class=" mx-0 my-2 w-full rounded-md bg-white px-3 py-3 dark:bg-neutral-800">
-            <a class="ui:text-primary mb-2 flex w-full cursor-pointer items-center" href={item.courseURL}>
-              <p class="text-xs">{item.courseTitle}</p>
+<div class="grid w-full gap-4 pb-10 md:grid-cols-2 xl:grid-cols-4">
+  {#each sections as { title, items, className, id } (id)}
+    <section class="ui:bg-muted/50 flex max-h-[70vh] min-w-0 flex-col rounded-xl border p-3">
+      <header class="mb-2 flex items-center justify-between gap-2 px-1">
+        <p class="text-sm font-semibold">{title}</p>
+        <span class={`rounded-md px-2 py-0.5 text-xs font-semibold tabular-nums ${className}`}>{items.length}</span>
+      </header>
+      <div class="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto">
+        {#each items as item (item.exerciseId)}
+          <article class="ui:bg-card ui:shadow-card rounded-lg border p-3">
+            <a class="ui:text-primary line-clamp-1 text-xs font-medium hover:underline" href={item.courseURL}>
+              {item.courseTitle}
             </a>
-            <a class="text-md text-black dark:text-white" href={item.exerciseURL}>
+            <a class="mt-1 block text-sm leading-snug font-medium hover:underline" href={item.exerciseURL}>
               {#if id === 3}
-                ({item.grade}) -
+                <span class="ui:text-success-foreground">({item.grade})</span>
               {/if}
               {item.exerciseTitle}
             </a>
             {#if item.lessonURL}
-              <a class="my-2 flex w-fit items-center text-black no-underline hover:underline" href={item.lessonURL}>
-                <p class="text-grey text-sm dark:text-white">
-                  {$t('exercises.lesson')} <span class="italic">{item.lessonTitle}</span>
-                </p>
+              <a class="ui:text-muted-foreground mt-1.5 block text-xs hover:underline" href={item.lessonURL}>
+                {$t('exercises.lesson')} <span class="italic">{item.lessonTitle}</span>
               </a>
             {/if}
-            <p class="text-xs text-gray-500 dark:text-white">
-              {item.submissionUpdatedAt}
-            </p>
-          </div>
+            <p class="ui:text-muted-foreground mt-2 text-[11px]">{item.submissionUpdatedAt}</p>
+          </article>
+        {:else}
+          <p class="ui:text-muted-foreground rounded-lg border border-dashed px-3 py-6 text-center text-xs">
+            {$t('lms_pages.exercises_column_empty')}
+          </p>
         {/each}
       </div>
-    </div>
+    </section>
   {/each}
 </div>

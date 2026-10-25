@@ -211,7 +211,7 @@
             alt={$t('components.settings.customize_lms.auth_background.preview_alt')}
             src={customization.auth.backgroundImage
               ? customization.auth.backgroundImage
-              : '/images/course-img-template.jpg'}
+              : '/images/mp-course-cover.svg'}
             class="relative mt-2 h-[200px] w-[280px] rounded-md object-cover md:mt-0"
           />
         </div>

@@ -17,13 +17,13 @@
   bind:this={ref}
   data-slot="page-header"
   class={cn(
-    'ui:flex ui:mt-6 ui:mb-4 ui:py-2 ui:flex-col',
-    isSticky && 'ui:sticky ui:top-11 ui:z-10 ui:bg-background',
+    'ui:flex ui:pt-7 ui:pb-1 ui:flex-col',
+    isSticky && 'ui:sticky ui:top-14 ui:z-10 ui:bg-background',
     className
   )}
   {...restProps}
 >
-  <div class="ui:flex ui:items-center ui:justify-between ui:gap-4 ui:flex-col ui:md:flex-row">
+  <div class="ui:flex ui:items-start ui:justify-between ui:gap-4 ui:flex-col ui:md:flex-row ui:md:items-end">
     {@render children?.()}
   </div>
 </div>

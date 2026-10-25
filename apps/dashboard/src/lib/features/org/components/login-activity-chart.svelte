@@ -9,6 +9,8 @@
   import { browser } from '$app/environment';
   import type { ChartConfig } from '@cio/ui/base/chart/types';
   import { Spinner } from '@cio/ui/base/spinner';
+  import ChartColumnIcon from '@lucide/svelte/icons/chart-column';
+  import SectionCard from '$features/ui/section-card.svelte';
   import { t } from '$lib/utils/functions/translations';
   import type { LoginActivityData } from '$features/org/utils/types';
 
@@ -37,31 +39,25 @@
   const hasData = $derived(data !== null && data.some((d) => d.count > 0));
 </script>
 
-<div class="ui:bg-card flex min-h-[45vh] w-full flex-col rounded-xl border p-3 md:p-5 dark:text-white">
-  <div class="mb-4">
-    <h3 class="text-lg font-semibold tracking-tight">
-      {$t('dashboard.login_activity_title')}
-    </h3>
-    <p class="ui:text-muted-foreground mt-1 text-sm">
-      {$t('dashboard.login_activity_description')}
-    </p>
-  </div>
-
+<SectionCard title={$t('dashboard.login_activity_title')} description={$t('dashboard.login_activity_description')}>
   <div class="flex h-full flex-col justify-center">
     {#if browser && hasData}
       {#await loadChart() then C}
-        <C.ChartContainer class="h-[260px] w-full" config={chartConfig}>
+        <C.ChartContainer class="h-[240px] w-full" config={chartConfig}>
           <C.BarChart {data} x="day" axis="x" {series} />
         </C.ChartContainer>
       {/await}
     {:else if hasData}
-      <div class="flex h-[260px] items-center justify-center">
+      <div class="flex h-[240px] items-center justify-center">
         <Spinner class="ui:text-muted-foreground size-6" />
       </div>
     {:else}
-      <div class="ui:text-muted-foreground flex h-[260px] items-center justify-center text-sm">
+      <div
+        class="ui:bg-muted/50 ui:text-muted-foreground flex h-[240px] flex-col items-center justify-center gap-3 rounded-lg border border-dashed text-sm"
+      >
+        <ChartColumnIcon class="ui:text-muted-foreground/70 size-6" />
         {$t('dashboard.login_activity_no_data')}
       </div>
     {/if}
   </div>
-</div>
+</SectionCard>

@@ -4,37 +4,40 @@
   import { page } from '$app/state';
   import { t } from '$lib/utils/functions/translations';
   import { IS_AI_ENABLED } from '$lib/utils/constants/ai';
-  import { BackButton } from '@cio/ui';
   import Search from '$features/ui/search.svelte';
   import { isActive } from '$lib/utils/functions/app';
+  import ArrowLeftIcon from '@lucide/svelte/icons/arrow-left';
+  import BellIcon from '@lucide/svelte/icons/bell';
+  import BotIcon from '@lucide/svelte/icons/bot';
+  import Building2Icon from '@lucide/svelte/icons/building-2';
+  import KeyRoundIcon from '@lucide/svelte/icons/key-round';
+  import MailIcon from '@lucide/svelte/icons/mail';
+  import PaletteIcon from '@lucide/svelte/icons/palette';
+  import UserRoundIcon from '@lucide/svelte/icons/user-round';
+  import UsersRoundIcon from '@lucide/svelte/icons/users-round';
 
   const groups = [
     {
       label: 'settings.sidebar.personal',
       items: [
-        { key: 'settings.tabs.profile_tab', path: '/settings' },
-        { key: 'settings.tabs.notifications_tab', path: '/settings/notifications' }
+        { key: 'settings.tabs.profile_tab', path: '/settings', icon: UserRoundIcon },
+        { key: 'settings.tabs.notifications_tab', path: '/settings/notifications', icon: BellIcon }
       ]
     },
     {
       label: 'settings.sidebar.workspace',
       items: [
-        { key: 'settings.sidebar.branding', path: '/settings/org' },
-        { key: 'settings.tabs.teams_tab', path: '/settings/teams' },
-        { key: 'settings.tabs.customize_lms_tab', path: '/settings/customize-lms' },
-        { key: 'settings.tabs.emails_tab', path: '/settings/emails', isNew: true }
+        { key: 'settings.sidebar.branding', path: '/settings/org', icon: Building2Icon },
+        { key: 'settings.tabs.teams_tab', path: '/settings/teams', icon: UsersRoundIcon },
+        { key: 'settings.tabs.customize_lms_tab', path: '/settings/customize-lms', icon: PaletteIcon },
+        { key: 'settings.tabs.emails_tab', path: '/settings/emails', icon: MailIcon }
       ]
     },
     {
       label: 'settings.sidebar.extensions',
       items: [
-        ...(IS_AI_ENABLED
-          ? [
-              { key: 'settings.tabs.ai_tutor_tab', path: '/settings/ai-tutor' },
-              { key: 'settings.tabs.ai_credits_tab', path: '/settings/ai-credits' }
-            ]
-          : []),
-        { key: 'settings.tabs.auth_tab', path: '/settings/auth' }
+        ...(IS_AI_ENABLED ? [{ key: 'settings.tabs.ai_tutor_tab', path: '/settings/ai-tutor', icon: BotIcon }] : []),
+        { key: 'settings.tabs.auth_tab', path: '/settings/auth', icon: KeyRoundIcon }
       ]
     }
   ];
@@ -42,33 +45,39 @@
   const currentPath = $derived($currentOrgPath);
 </script>
 
-<Sidebar.Root collapsible="offcanvas" class="border-r">
-  <Sidebar.Header class="gap-2">
+<Sidebar.Root collapsible="offcanvas" data-tone="ink">
+  <Sidebar.Header class="gap-3 px-3! pt-4!">
     <div class="flex items-center justify-between gap-1">
-      <BackButton href={currentPath} label={t.get('org_navigation.back_to_app')} class="min-w-0 px-2! py-2!" />
-      <Sidebar.Trigger testId="settings-sidebar-trigger" />
+      <a
+        href={`${currentPath}/dash`}
+        class="ui:text-sidebar-muted ui:hover:text-sidebar-accent-foreground ui:hover:bg-sidebar-accent flex min-w-0 items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium transition-colors"
+      >
+        <ArrowLeftIcon size={16} class="custom shrink-0" />
+        <span class="truncate">{$t('org_navigation.back_to_app')}</span>
+      </a>
+      <Sidebar.Trigger testId="settings-sidebar-trigger" class="ui:text-sidebar-muted" />
     </div>
-    <Search compact placeholder={t.get('settings.sidebar.search')} />
+    <p class="ui:text-sidebar-accent-foreground px-2 text-lg font-semibold tracking-tight">
+      {$t('org_navigation.settings')}
+    </p>
+    <Search compact placeholder={$t('settings.sidebar.search')} />
   </Sidebar.Header>
   <Sidebar.Content>
     {#each groups as group (group.label)}
-      <Sidebar.Group class="px-2! pt-0!">
-        <Sidebar.GroupLabel>{t.get(group.label)}</Sidebar.GroupLabel>
-        <Sidebar.Menu>
+      <Sidebar.Group class="py-1!">
+        <Sidebar.GroupLabel>{$t(group.label)}</Sidebar.GroupLabel>
+        <Sidebar.Menu class="gap-0.5">
           {#each group.items as item (item.path)}
             {@const href = `${currentPath}${item.path}`}
+            {@const Icon = item.icon}
             <Sidebar.MenuItem>
               <Sidebar.MenuButton
                 isActive={isActive(page.url.pathname, href, undefined, item.path !== '/settings/auth')}
               >
                 {#snippet child({ props })}
                   <a {href} {...props}>
-                    {t.get(item.key)}
-                    {#if 'isNew' in item}
-                      <Sidebar.MenuBadge class="ui:text-primary ui:bg-primary/10">
-                        {t.get('settings.sidebar.new_badge')}
-                      </Sidebar.MenuBadge>
-                    {/if}
+                    <Icon size={17} strokeWidth={1.75} class="custom" />
+                    <span>{$t(item.key)}</span>
                   </a>
                 {/snippet}
               </Sidebar.MenuButton>

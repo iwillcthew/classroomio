@@ -24,7 +24,7 @@
     bind:this={ref}
     data-slot={dataSlot}
     class={cn(
-      'ui:selection:bg-primary ui:dark:bg-input/30 ui:selection:text-primary-foreground ui:border-input ui:ring-offset-background ui:placeholder:text-muted-foreground ui:shadow-xs ui:flex ui:h-9 ui:w-full ui:min-w-0 ui:rounded-md ui:border ui:bg-transparent ui:px-3 ui:pt-1.5 ui:text-sm ui:font-medium ui:outline-none ui:transition-[color,box-shadow] ui:disabled:cursor-not-allowed ui:disabled:opacity-50',
+      'ui:selection:bg-primary ui:dark:bg-input/30 ui:selection:text-primary-foreground ui:border-input ui:ring-offset-background ui:placeholder:text-muted-foreground ui:shadow-xs ui:flex ui:h-9 ui:w-full ui:min-w-0 ui:rounded-lg ui:border ui:bg-transparent ui:px-3 ui:pt-1.5 ui:text-sm ui:font-medium ui:outline-none ui:transition-[color,box-shadow] ui:disabled:cursor-not-allowed ui:disabled:opacity-50',
       'ui:focus-visible:border-ring ui:focus-visible:ring-ring/50 ui:focus-visible:ring-[3px]',
       'ui:aria-invalid:ring-destructive/20 ui:dark:aria-invalid:ring-destructive/40 ui:aria-invalid:border-destructive',
       className
@@ -39,7 +39,7 @@
     bind:this={ref}
     data-slot={dataSlot}
     class={cn(
-      'ui:border-input ui:bg-background ui:selection:bg-primary ui:dark:bg-input/30 ui:selection:text-primary-foreground ui:ring-offset-background ui:placeholder:text-muted-foreground ui:shadow-xs ui:flex ui:h-9 ui:w-full ui:min-w-0 ui:rounded-md ui:border ui:px-3 ui:py-1 ui:text-base ui:outline-none ui:transition-[color,box-shadow] ui:disabled:cursor-not-allowed ui:disabled:opacity-50 ui:md:text-sm',
+      'ui:border-input ui:bg-card ui:selection:bg-primary ui:dark:bg-input/30 ui:selection:text-primary-foreground ui:ring-offset-background ui:placeholder:text-muted-foreground ui:shadow-xs ui:flex ui:h-9 ui:w-full ui:min-w-0 ui:rounded-lg ui:border ui:px-3 ui:py-1 ui:text-base ui:outline-none ui:transition-[color,box-shadow] ui:disabled:cursor-not-allowed ui:disabled:opacity-50 ui:md:text-sm',
       'ui:focus-visible:border-ring ui:focus-visible:ring-ring/50 ui:focus-visible:ring-[3px]',
       'ui:aria-invalid:ring-destructive/20 ui:dark:aria-invalid:ring-destructive/40 ui:aria-invalid:border-destructive',
       className

@@ -2,22 +2,15 @@
   import { Skeleton } from '@cio/ui/base/skeleton';
 </script>
 
-<div class="mr-4 mb-4 h-[370px] w-72 rounded-md border p-2 transition ease-in-out">
-  <Skeleton class="h-[45%] w-full" />
-  <div class="flex h-[50%] flex-col justify-between pt-4 pb-2">
-    <!-- Title -->
-    <Skeleton class="h-4 w-2/4" />
-
-    <!-- Description -->
-    <div class="mt-4 mb-6 flex flex-col gap-2">
-      <Skeleton class=" h-4 w-full" />
-      <Skeleton class=" h-4 w-full" />
-      <Skeleton class=" h-4 w-full" />
-    </div>
-
-    <div class="flex justify-between">
-      <Skeleton class="h-4 w-1/4" />
-      <Skeleton class="h-4 w-1/4" />
+<div class="ui:bg-card ui:shadow-card flex w-full flex-col overflow-hidden rounded-xl border">
+  <Skeleton class="aspect-video w-full rounded-none" />
+  <div class="flex flex-col gap-3 p-4">
+    <Skeleton class="h-4 w-3/4" />
+    <Skeleton class="h-3 w-full" />
+    <Skeleton class="h-3 w-2/3" />
+    <div class="mt-3 flex justify-between">
+      <Skeleton class="h-3 w-1/3" />
+      <Skeleton class="h-3 w-1/5" />
     </div>
   </div>
 </div>

@@ -20,9 +20,9 @@
 {#if !isOrgLoaded}
   <SidebarSkeleton />
 {:else}
-  <Sidebar.Root collapsible="icon">
+  <Sidebar.Root collapsible="icon" data-tone="ink">
     <Sidebar.Header>
-      <AppLogo />
+      <AppLogo context="admin" />
     </Sidebar.Header>
 
     <Sidebar.Content class="gap-0!">

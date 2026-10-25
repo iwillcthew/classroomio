@@ -15,7 +15,7 @@
   data-slot="input-group"
   role="group"
   class={cn(
-    'ui:group/input-group ui:border-input ui:dark:bg-input/30 ui:shadow-xs ui:relative ui:flex ui:w-full ui:items-center ui:rounded-md ui:border ui:outline-none ui:transition-[color,box-shadow]',
+    'ui:group/input-group ui:border-input ui:dark:bg-input/30 ui:shadow-xs ui:relative ui:flex ui:w-full ui:items-center ui:rounded-lg ui:border ui:outline-none ui:transition-[color,box-shadow]',
     'ui:h-9 ui:has-[>textarea]:h-auto',
 
     // Variants based on alignment.

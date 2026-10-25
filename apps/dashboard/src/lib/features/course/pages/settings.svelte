@@ -588,7 +588,7 @@
         <div class="flex flex-col items-start gap-4 sm:flex-row">
           <img
             alt={$t('course.navItem.settings.cover_image')}
-            src={$settings.bannerImage ? $settings.bannerImage : '/images/course-img-template.jpg'}
+            src={$settings.bannerImage ? $settings.bannerImage : '/images/mp-course-cover.svg'}
             class="h-[120px] w-[168px] rounded-md border object-cover"
           />
           <div class="flex min-w-0 flex-1 flex-col gap-2">

@@ -18,7 +18,7 @@
   import SlidePlatformIcon from './slide-platform-icon.svelte';
   import type { SlideEmbedPickerLabels } from './types';
 
-  const DEFAULT_DOCS_BASE_URL = 'https://classroomio.com/help/build-courses/add-slides-and-presentations';
+  const DEFAULT_DOCS_BASE_URL = '';
 
   interface Props {
     labels?: SlideEmbedPickerLabels;
@@ -184,17 +184,19 @@
         {#if !hideAddButton}
           <Button type="button" disabled={!previewSlide} onclick={addEmbed}>{labels.addEmbed}</Button>
         {/if}
-        <Button
-          variant="outline"
-          size="sm"
-          href="{docsBaseUrl}#{selectedPlatform.docsHash}"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <ExternalLinkIcon class="ui:size-4" aria-hidden="true" />
-          {labels.howToEmbed}
-          {selectedPlatform.name}
-        </Button>
+        {#if docsBaseUrl}
+          <Button
+            variant="outline"
+            size="sm"
+            href="{docsBaseUrl}#{selectedPlatform.docsHash}"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <ExternalLinkIcon class="ui:size-4" aria-hidden="true" />
+            {labels.howToEmbed}
+            {selectedPlatform.name}
+          </Button>
+        {/if}
       </div>
 
       <div>

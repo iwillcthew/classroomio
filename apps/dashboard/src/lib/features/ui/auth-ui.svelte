@@ -98,9 +98,10 @@
 
 <div class="mp-auth">
   <aside class="mp-auth-story">
-    <svg class="mp-chevrons" viewBox="0 0 600 800" aria-hidden="true">
-      <path d="M300 -40 L520 180 L300 400 L380 400 L600 180 L380 -40 Z" />
-      <path d="M120 420 L340 640 L120 860 L200 860 L420 640 L200 420 Z" />
+    <svg class="mp-chevrons" viewBox="0 0 600 800" preserveAspectRatio="xMaxYMid slice" aria-hidden="true">
+      <path d="M330 -20 L450 -20 L250 820 L130 820 Z" fill-opacity="0.06" />
+      <path d="M450 -20 L530 -20 L330 820 L250 820 Z" fill-opacity="0.11" />
+      <path d="M530 -20 L620 -20 L620 120 L420 820 L330 820 Z" fill-opacity="0.05" />
     </svg>
     <img src={BRAND.logo} alt={BRAND.name} class="mp-brand" />
     <div class="mp-story-copy">
@@ -209,7 +210,7 @@
     justify-content: space-between;
     gap: 3rem;
     padding: clamp(2rem, 5vw, 4.5rem);
-    background: linear-gradient(160deg, #24539f 0%, #1e4a9c 45%, #163a7d 100%);
+    background: var(--facet-gradient);
     color: #ffffff;
   }
   .mp-chevrons {
@@ -218,7 +219,7 @@
     z-index: -1;
     height: 100%;
     width: auto;
-    fill: rgb(255 255 255 / 7%);
+    fill: #ffffff;
   }
   .mp-brand {
     width: min(100%, 260px);
@@ -240,7 +241,7 @@
     width: 0.45rem;
     height: 0.45rem;
     border-radius: 999px;
-    background: #7cc8f0;
+    background: var(--brand-cyan);
   }
   h1 {
     display: flex;
@@ -254,7 +255,7 @@
     text-wrap: balance;
   }
   .mp-headline-accent {
-    color: #a9d8f5;
+    color: #9be3ff;
   }
   .mp-description {
     max-width: 480px;

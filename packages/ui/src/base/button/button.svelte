@@ -12,7 +12,7 @@
         destructive:
           'ui:bg-destructive ui:[a&]:hover:bg-destructive/90 ui:focus-visible:ring-destructive/20 ui:dark:bg-destructive/60 ui:dark:focus-visible:ring-destructive/40 ui:text-white ui:shadow-2xs',
         outline:
-          'ui:bg-background ui:[a&]:hover:bg-accent ui:[a&]:hover:text-accent-foreground ui:dark:border-input ui:dark:bg-input/30 ui:dark:hover:bg-input/50 ui:border ui:shadow-2xs',
+          'ui:bg-card ui:hover:bg-muted ui:[a&]:hover:text-foreground ui:dark:border-input ui:dark:bg-input/30 ui:dark:hover:bg-input/50 ui:border ui:shadow-2xs',
         secondary: 'ui:bg-secondary ui:text-secondary-foreground ui:[a&]:hover:bg-secondary/80 ui:shadow-2xs',
         ghost: 'ui:[a&]:hover:bg-accent ui:[a&]:hover:text-accent-foreground ui:dark:[a&]:hover:bg-accent/50',
         'ghost-default':

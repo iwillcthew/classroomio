@@ -481,7 +481,7 @@
   }}
 />
 
-<Page.Header>
+<Page.Header class={mode === MODES.edit ? '' : 'mx-auto w-full max-w-3xl'}>
   <Page.HeaderContent>
     <LessonPageEditHeader
       {mode}
@@ -566,19 +566,23 @@
           <StudentContentLockedNotice reason={contentLockReason} contentType={ContentType.Lesson} />
         {:else if lessonApi.lesson && !isMaterialsEmpty}
           {#key lessonId}
-            <div class="mb-20 flex w-full flex-col" in:fade={{ delay: 500 }} out:fade>
-              {#if !hasLessonVideos}
-                <LessonMaterialActions showSummarize {lessonId} alignWithNote />
-              {/if}
+            <div class="mb-20 flex w-full flex-col gap-4" in:fade={{ duration: 150 }}>
+              <article
+                class="ui:bg-card ui:shadow-card flex w-full flex-col rounded-xl border px-5 py-5 md:px-8 md:py-7"
+              >
+                {#if !hasLessonVideos}
+                  <LessonMaterialActions showSummarize {lessonId} alignWithNote />
+                {/if}
 
-              {#each viewModeComponents as Component, index (index)}
-                <Component {mode} {lessonId} {courseId} />
-              {/each}
+                {#each viewModeComponents as Component, index (index)}
+                  <Component {mode} {lessonId} {courseId} />
+                {/each}
+              </article>
 
               {#if showLessonComments}
-                <hr class="my-2" />
-
-                <Comments {lessonId} />
+                <section class="ui:bg-card ui:shadow-card rounded-xl border px-5 py-5 md:px-8">
+                  <Comments {lessonId} />
+                </section>
               {/if}
             </div>
           {/key}
@@ -649,19 +653,21 @@
         </UnderlineTabs.Root>
       {:else if lessonApi.lesson && !isMaterialsEmpty}
         {#key lessonId}
-          <div class="mb-20 flex w-full flex-col" in:fade={{ delay: 500 }} out:fade>
-            {#if !hasLessonVideos}
-              <LessonMaterialActions showSummarize {lessonId} alignWithNote />
-            {/if}
+          <div class="mb-20 flex w-full flex-col gap-4" in:fade={{ duration: 150 }}>
+            <article class="ui:bg-card ui:shadow-card flex w-full flex-col rounded-xl border px-5 py-5 md:px-8 md:py-7">
+              {#if !hasLessonVideos}
+                <LessonMaterialActions showSummarize {lessonId} alignWithNote />
+              {/if}
 
-            {#each viewModeComponents as Component, index (index)}
-              <Component {mode} {lessonId} {courseId} />
-            {/each}
+              {#each viewModeComponents as Component, index (index)}
+                <Component {mode} {lessonId} {courseId} />
+              {/each}
+            </article>
 
             {#if showLessonComments}
-              <hr class="my-2" />
-
-              <Comments {lessonId} />
+              <section class="ui:bg-card ui:shadow-card rounded-xl border px-5 py-5 md:px-8">
+                <Comments {lessonId} />
+              </section>
             {/if}
           </div>
         {/key}

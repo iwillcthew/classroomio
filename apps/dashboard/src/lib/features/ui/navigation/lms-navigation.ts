@@ -1,19 +1,15 @@
-import {
-  CertificateIcon,
-  CommunityIcon,
-  CourseIcon,
-  ExerciseIcon,
-  ExploreIcon,
-  GoalIcon,
-  HomeIcon,
-  SettingsIcon
-} from '@cio/ui/custom/moving-icons';
+import AwardIcon from '@lucide/svelte/icons/award';
+import BookMarkedIcon from '@lucide/svelte/icons/book-marked';
+import ClipboardListIcon from '@lucide/svelte/icons/clipboard-list';
+import HouseIcon from '@lucide/svelte/icons/house';
+import LibraryBigIcon from '@lucide/svelte/icons/library-big';
+import MessagesSquareIcon from '@lucide/svelte/icons/messages-square';
+import SettingsIcon from '@lucide/svelte/icons/settings';
+import UsersRoundIcon from '@lucide/svelte/icons/users-round';
 
 import type { AccountOrg } from '$features/app/types';
 import type { Component } from 'svelte';
 import { isActive } from '$lib/utils/functions/app';
-import { isOrgOnFreePlan } from '@cio/utils/plans';
-import { PUBLIC_IS_SELFHOSTED } from '$env/static/public';
 
 export interface NavItem {
   title: string;
@@ -23,6 +19,7 @@ export interface NavItem {
   isActive?: boolean;
   isExpanded?: boolean;
   show?: () => boolean;
+  hideFromSidebar?: boolean;
   items?: NavItem[];
   useHashUrl?: boolean;
   nestedRoutes?: NestedRouteConfig[];
@@ -39,6 +36,7 @@ export interface NavItemConfig {
   path: string;
   icon?: Component;
   show?: (currentOrg: AccountOrg | null) => boolean;
+  hideFromSidebar?: boolean;
   matchPattern?: string;
   items?: NavItemConfig[];
   useHashUrl?: boolean;
@@ -46,55 +44,48 @@ export interface NavItemConfig {
   supportsDynamicSegment?: boolean;
 }
 
-// Base navigation configuration structure
 export const baseNavConfig: NavItemConfig[] = [
   {
     titleKey: 'lms_navigation.home',
     path: '',
-    icon: HomeIcon,
+    icon: HouseIcon,
     matchPattern: '^/lms/?$'
   },
   {
     titleKey: 'lms_navigation.my_learning',
     path: '/mylearning',
-    icon: CourseIcon,
+    icon: BookMarkedIcon,
     matchPattern: '^/lms/mylearning(/.*)?$'
-  },
-  {
-    titleKey: 'lms_navigation.certificates',
-    path: '/certificates',
-    icon: CertificateIcon,
-    matchPattern: '^/lms/certificates(/.*)?$',
-    show: (currentOrg) =>
-      !isOrgOnFreePlan({
-        plans: currentOrg?.plans,
-        isSelfHosted: PUBLIC_IS_SELFHOSTED === 'true',
-        orgId: currentOrg?.id
-      })
   },
   {
     titleKey: 'lms_navigation.explore',
     path: '/explore',
-    icon: ExploreIcon,
+    icon: LibraryBigIcon,
     matchPattern: '^/lms/explore(/.*)?$'
   },
   {
     titleKey: 'lms_navigation.cohorts',
     path: '/cohorts',
-    icon: GoalIcon,
+    icon: UsersRoundIcon,
     matchPattern: '^/lms/cohorts(/.*)?$'
   },
   {
     titleKey: 'lms_navigation.exercise',
     path: '/exercises',
-    icon: ExerciseIcon,
+    icon: ClipboardListIcon,
     matchPattern: '^/lms/exercises(/.*)?$',
     show: (currentOrg) => currentOrg?.customization?.dashboard?.exercise === true
   },
   {
+    titleKey: 'lms_navigation.certificates',
+    path: '/certificates',
+    icon: AwardIcon,
+    matchPattern: '^/lms/certificates(/.*)?$'
+  },
+  {
     titleKey: 'lms_navigation.community',
     path: '/community',
-    icon: CommunityIcon,
+    icon: MessagesSquareIcon,
     matchPattern: '^/lms/community(/.*)?$',
     show: (currentOrg) => currentOrg?.customization?.dashboard?.community === true,
     supportsDynamicSegment: true,
@@ -109,22 +100,8 @@ export const baseNavConfig: NavItemConfig[] = [
     titleKey: 'lms_navigation.settings',
     path: '/settings',
     icon: SettingsIcon,
-    useHashUrl: true,
+    hideFromSidebar: true,
     matchPattern: '^/lms/settings(/.*)?$',
-    items: [
-      {
-        titleKey: 'Profile',
-        path: '/settings'
-      },
-      {
-        titleKey: 'Notifications',
-        path: '/settings/notifications'
-      },
-      {
-        titleKey: 'Integrations',
-        path: '/settings/integrations'
-      }
-    ],
     nestedRoutes: [
       {
         path: 'notifications',
@@ -167,6 +144,7 @@ export function getLmsNavigationItems(
       useHashUrl: config.useHashUrl,
       nestedRoutes: config.nestedRoutes,
       supportsDynamicSegment: config.supportsDynamicSegment,
+      hideFromSidebar: config.hideFromSidebar,
       show: config.show ? () => config.show!(currentOrg) : undefined
     };
 

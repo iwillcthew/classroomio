@@ -2,6 +2,7 @@
   import CoursesPage from '$features/course/pages/courses.svelte';
   import TemplateRow from '$features/course/components/template-row.svelte';
   import { Button } from '@cio/ui/base/button';
+  import LayoutTemplateIcon from '@lucide/svelte/icons/layout-template';
   import { CreateCourseButton } from '$features/course/components';
   import { isStudentExperience } from '$lib/utils/store/app';
   import { currentOrgPath, isOrgAdmin } from '$lib/utils/store/org';
@@ -229,11 +230,27 @@
   <title>{$t('page_titles.courses')} · MP Learning</title>
 </svelte:head>
 
-<Page.Root class="w-full gap-0">
+<Page.Root class="mx-auto w-full max-w-6xl gap-4 px-4 pb-10 md:px-8">
+  <Page.Header>
+    <Page.HeaderContent>
+      <Page.Eyebrow>{$t('org_navigation.content')}</Page.Eyebrow>
+      <Page.Title>{$t('org_navigation.courses')}</Page.Title>
+      <Page.Subtitle>{$t('courses.page_subtitle')}</Page.Subtitle>
+    </Page.HeaderContent>
+    {#if !$isStudentExperience}
+      <Page.Action>
+        <Button variant="outline" href={`${$currentOrgPath}/courses/templates`}>
+          <LayoutTemplateIcon class="size-4" />
+          {$t('course_templates.row.gallery')}
+        </Button>
+        <CreateCourseButton isResponsive />
+      </Page.Action>
+    {/if}
+  </Page.Header>
   {#if !$isStudentExperience}
     <TemplateRow />
   {/if}
-  <div class="mx-auto w-full max-w-6xl px-4 pt-3">
+  <div class="w-full">
     <Page.Body>
       {#snippet child()}
         <CoursesPage

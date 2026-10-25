@@ -14,9 +14,9 @@
 {#if !isOrgLoaded}
   <SidebarSkeleton />
 {:else}
-  <Sidebar.Root collapsible="icon">
+  <Sidebar.Root collapsible="icon" data-tone="ink">
     <Sidebar.Header>
-      <OrgLogo />
+      <OrgLogo context="learner" />
     </Sidebar.Header>
 
     <Sidebar.Content>

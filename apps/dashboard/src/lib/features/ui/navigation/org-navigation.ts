@@ -1,18 +1,17 @@
-import {
-  ChartColumnIcon,
-  AttachmentIcon,
-  CommunityIcon,
-  CourseIcon,
-  DashboardIcon,
-  GoalIcon,
-  HomeIcon,
-  PeopleIcon,
-  SettingsIcon,
-  TagIcon
-} from '@cio/ui/custom/moving-icons';
+import BookOpenIcon from '@lucide/svelte/icons/book-open';
+import ChartColumnIcon from '@lucide/svelte/icons/chart-column';
+import ContactRoundIcon from '@lucide/svelte/icons/contact-round';
+import FolderOpenIcon from '@lucide/svelte/icons/folder-open';
+import LayoutDashboardIcon from '@lucide/svelte/icons/layout-dashboard';
+import MessagesSquareIcon from '@lucide/svelte/icons/messages-square';
+import PlugIcon from '@lucide/svelte/icons/plug';
+import SettingsIcon from '@lucide/svelte/icons/settings';
+import ShieldCheckIcon from '@lucide/svelte/icons/shield-check';
+import SparklesIcon from '@lucide/svelte/icons/sparkles';
+import TagsIcon from '@lucide/svelte/icons/tags';
+import UsersRoundIcon from '@lucide/svelte/icons/users-round';
 
 import type { AccountOrg } from '$features/app/types';
-import BotIcon from '@lucide/svelte/icons/bot';
 import type { Component } from 'svelte';
 import { isActive } from '$lib/utils/functions/app';
 import { IS_AI_ENABLED } from '$lib/utils/constants/ai';
@@ -98,53 +97,32 @@ function resolveNavTestId(path: string, testId?: string): string {
 export const baseNavConfig: NavItemConfig[] = [
   {
     group: null,
-    titleKey: 'org_navigation.home',
-    path: '',
-    icon: HomeIcon,
-    matchPattern: '^/org/[^/]+/?$'
-  },
-  {
-    group: null,
     titleKey: 'org_navigation.dashboard',
     path: '/dash',
-    icon: DashboardIcon,
+    icon: LayoutDashboardIcon,
     matchPattern: '^/org/[^/]+/dash(/.*)?$'
-  },
-  {
-    group: null,
-    titleKey: 'org_navigation.stats',
-    path: '/stats',
-    icon: ChartColumnIcon,
-    useHashUrl: true,
-    matchPattern: '^/org/[^/]+/(analytics|compliance)(/.*)?$',
-    items: [
-      {
-        titleKey: 'org_navigation.analytics',
-        path: '/analytics',
-        matchPattern: '^/org/[^/]+/analytics(/.*)?$'
-      },
-      {
-        titleKey: 'org_navigation.compliance',
-        path: '/compliance',
-        requiresAdmin: true,
-        matchPattern: '^/org/[^/]+/compliance(/.*)?$'
-      }
-    ]
   },
   {
     group: 'content',
     titleKey: 'org_navigation.courses',
     path: '/courses',
-    icon: CourseIcon,
+    icon: BookOpenIcon,
     countKey: 'courses',
     matchPattern: '^/org/[^/]+/courses(/.*)?$',
     nestedRoutes: [{ titleKey: 'course_templates.gallery.title', path: 'templates' }]
   },
   {
     group: 'content',
+    titleKey: 'org_navigation.ai_studio',
+    path: '',
+    icon: SparklesIcon,
+    matchPattern: '^/org/[^/]+/?$'
+  },
+  {
+    group: 'content',
     titleKey: 'org_navigation.cohorts',
     path: '/cohorts',
-    icon: GoalIcon,
+    icon: UsersRoundIcon,
     countKey: 'cohorts',
     matchPattern: '^/org/[^/]+/cohorts(/.*)?$'
   },
@@ -152,7 +130,7 @@ export const baseNavConfig: NavItemConfig[] = [
     group: 'content',
     titleKey: 'org_navigation.media',
     path: '/media',
-    icon: AttachmentIcon,
+    icon: FolderOpenIcon,
     countKey: 'media',
     matchPattern: '^/org/[^/]+/media(/.*)?$'
   },
@@ -160,7 +138,7 @@ export const baseNavConfig: NavItemConfig[] = [
     group: 'content',
     titleKey: 'org_navigation.tags',
     path: '/tags',
-    icon: TagIcon,
+    icon: TagsIcon,
     requiresAdmin: true,
     countKey: 'tags',
     matchPattern: '^/org/[^/]+/tags(/.*)?$'
@@ -169,17 +147,16 @@ export const baseNavConfig: NavItemConfig[] = [
     group: 'people',
     titleKey: 'org_navigation.audience',
     path: '/audience',
-    icon: PeopleIcon,
-    upgradeResource: 'students',
-    matchPattern: '^/org/[^/]+/audience(/.*)?$' // Matches nested routes
+    icon: ContactRoundIcon,
+    matchPattern: '^/org/[^/]+/audience(/.*)?$'
   },
   {
     group: 'people',
     titleKey: 'org_navigation.community',
     path: '/community',
-    icon: CommunityIcon,
-    supportsDynamicSegment: true, // Supports /community/[slug]
-    matchPattern: '^/org/[^/]+/community(/.*)?$', // Matches nested routes
+    icon: MessagesSquareIcon,
+    supportsDynamicSegment: true,
+    matchPattern: '^/org/[^/]+/community(/.*)?$',
     nestedRoutes: [
       {
         path: 'ask',
@@ -188,13 +165,26 @@ export const baseNavConfig: NavItemConfig[] = [
     ]
   },
   {
-    group: 'automation',
+    group: 'reports',
+    titleKey: 'org_navigation.analytics',
+    path: '/analytics',
+    icon: ChartColumnIcon,
+    matchPattern: '^/org/[^/]+/analytics(/.*)?$'
+  },
+  {
+    group: 'reports',
+    titleKey: 'org_navigation.compliance',
+    path: '/compliance',
+    icon: ShieldCheckIcon,
+    requiresAdmin: true,
+    matchPattern: '^/org/[^/]+/compliance(/.*)?$'
+  },
+  {
+    group: 'system',
     titleKey: 'org_navigation.automation',
     path: '/automation/mcp',
-    icon: BotIcon,
+    icon: PlugIcon,
     requiresAdmin: true,
-    disableWhenNotAdmin: true,
-    isNew: true,
     matchPattern: '^/org/[^/]+/(automation|mcp|api|zapier)(/.*)?$',
     nestedRoutes: [
       { path: 'mcp', titleKey: 'automation.tabs.mcp' },
@@ -204,19 +194,15 @@ export const baseNavConfig: NavItemConfig[] = [
     ]
   },
   {
+    group: 'system',
     titleKey: 'org_navigation.settings',
     path: '/settings',
     icon: SettingsIcon,
-    hideFromSidebar: true,
-    matchPattern: '^/org/[^/]+/settings(/.*)?$', // Matches nested routes
+    matchPattern: '^/org/[^/]+/settings(/.*)?$',
     nestedRoutes: [
       {
         path: 'notifications',
         titleKey: 'settings.tabs.notifications_tab'
-      },
-      {
-        path: 'ai-credits',
-        titleKey: 'settings.tabs.ai_credits_tab'
       },
       {
         path: 'ai-tutor',
@@ -343,10 +329,10 @@ export function getOrgNavigationItems(
 
 const GROUP_ORDER: Array<{ key: string | null; labelKey: string | null }> = [
   { key: null, labelKey: null },
-  { key: 'content', labelKey: 'org_navigation.create' },
-  { key: 'distribute', labelKey: 'org_navigation.distribute' },
+  { key: 'content', labelKey: 'org_navigation.content' },
   { key: 'people', labelKey: 'org_navigation.people' },
-  { key: 'automation', labelKey: 'org_navigation.tools' }
+  { key: 'reports', labelKey: 'org_navigation.reports' },
+  { key: 'system', labelKey: 'org_navigation.system' }
 ];
 
 /**

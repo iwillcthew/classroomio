@@ -158,24 +158,21 @@
   }
 
   :global(.cards-container) {
-    width: 90%;
-    margin: 0 auto;
-    padding: 0;
+    width: 100%;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    column-gap: 12px;
-    row-gap: 12px;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 1rem;
   }
 
-  @media screen and (max-width: 768px) {
+  @media screen and (min-width: 640px) {
     :global(.cards-container) {
-      width: 95%;
-      margin: 0 auto;
-      padding: 0;
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      column-gap: 12px;
-      row-gap: 12px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media screen and (min-width: 1280px) {
+    :global(.cards-container) {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
     }
   }
 </style>

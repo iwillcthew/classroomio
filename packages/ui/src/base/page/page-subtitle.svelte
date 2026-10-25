@@ -13,7 +13,7 @@
 <p
   bind:this={ref}
   data-slot="page-subtitle"
-  class={cn('ui:text-muted-foreground ui:text-sm ui:leading-relaxed', className)}
+  class={cn('ui:text-muted-foreground ui:text-sm ui:leading-relaxed ui:max-w-2xl', className)}
   {...restProps}
 >
   {@render children?.()}

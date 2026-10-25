@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { env } from '$env/dynamic/public';
   import { CompactLoader } from '@cio/ui/custom/compact-loader';
   import { currentOrg, isEnterprisePlan } from '$lib/utils/store/org';
   import { tokenAuthApi } from '$features/org/api/token-auth.svelte';
@@ -45,7 +46,7 @@
 async function main() {
   // Secret generated above
   const secret = process.env.TOKEN_AUTH_SECRET;
-  const baseUrl = 'https://api.classroomio.dev';
+  const baseUrl = env.PUBLIC_SERVER_URL || '';
 
   const token = await new SignJWT({
     sub: 'test-user-123',

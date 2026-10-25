@@ -226,7 +226,7 @@
     "compliance_label": "Compliance",
     "compliance_subtitle": "Recurring training with retakes, reminders, and renewal tracking",
     "public_label": "Public",
-    "public_subtitle": "Free, no-signup course pages you can share publicly — great for lead gen"
+    "public_subtitle": "Open to anyone without signing in. Use only for general introductory material."
   },
   "public_course": {
     "header": {
@@ -386,10 +386,12 @@
     }
   },
   "welcome_modal": {
-    "we_at": "We at",
-    "small_team": "are a small team with a large mission to empower educators with great software to help them make an impact in people's lives. Education is the most powerful gift you can give anyone, and it makes perfect sense to provide you with all the tools you need to give this GIFT to more people.",
-    "thank_you": "Thank you for choosing us",
-    "deeply_appreciate": "we deeply appreciate it and are at your service."
+    "we_at": "At",
+    "small_team": "learning is part of how we grow together. MP Learning brings every internal course, class and certificate into one place so you can focus on building skills.",
+    "thank_you": "Glad to have you here",
+    "deeply_appreciate": "the Training team is always ready to help.",
+    "title": "Welcome to MP Learning",
+    "banner_alt": "MP Learning"
   },
   "app": {
     "cancel": "Cancel",
@@ -576,13 +578,13 @@
   "settings": {
     "heading": "Settings",
     "sidebar": {
-      "workspace": "Workspace",
+      "workspace": "Organization",
       "personal": "Personal",
       "product": "Product",
-      "extensions": "Extensions",
+      "extensions": "Security & AI",
       "security": "Security",
       "billing": "Billing",
-      "branding": "Branding",
+      "branding": "Organization profile",
       "ai": "AI",
       "search": "Search settings...",
       "new_badge": "New"
@@ -594,19 +596,19 @@
       "profile_tab": "Profile",
       "notifications_tab": "Notifications",
       "organization_tab": "Organization",
-      "landing_page_tab": "Landing Page",
+      "landing_page_tab": "Course overview",
       "billing_tab": "Billing",
       "ai_credits_tab": "AI Credits",
       "ai_tutor_tab": "AI Tutor",
       "integrations_tab": "Integrations",
       "language_tab": "Language",
-      "auth_tab": "Authentication",
+      "auth_tab": "Sign-in & SSO",
       "sso_tab": "SSO",
       "token_auth_tab": "Token Auth",
-      "customize_lms_tab": "Customize LMS",
+      "customize_lms_tab": "Learning space",
       "emails_tab": "Emails",
       "domains_tab": "Domains",
-      "teams_tab": "Teams"
+      "teams_tab": "Admins & instructors"
     },
     "emails": {
       "page_title": "Email templates",
@@ -1644,23 +1646,23 @@
   "org_navigation": {
     "platform": "Platform",
     "home": "Home",
-    "content": "Content",
+    "content": "Training content",
     "people": "People",
-    "back_to_app": "Back to app",
+    "back_to_app": "Back to training admin",
     "create": "Training",
-    "dashboard": "Dashboard",
+    "dashboard": "Overview",
     "stats": "Stats",
     "analytics": "Analytics",
-    "compliance": "Compliance",
+    "compliance": "Mandatory training",
     "courses": "Courses",
     "tags": "Tags",
-    "community": "Community",
+    "community": "Q&A",
     "audience": "Employees",
-    "media": "Media",
+    "media": "Document library",
     "distribute": "Distribute",
     "widgets": "Widgets",
     "setup": "Setup",
-    "automation": "Automation",
+    "automation": "Integrations",
     "tools": "Tools",
     "help": "Help",
     "settings": "Settings",
@@ -1674,7 +1676,10 @@
     "upgrade_left": "{count} left",
     "cohorts": "Training programs",
     "exit_course": "Exit this course",
-    "exit_cohort": "Exit this cohort"
+    "exit_cohort": "Exit this cohort",
+    "ai_studio": "AI course studio",
+    "reports": "Reports",
+    "system": "System"
   },
   "pricing": {
     "plan_names": {
@@ -2171,7 +2176,7 @@
     "learning_awaits_you": "Your next course awaits you",
     "my_certificate": "My Certificate",
     "lms_today_progress": "You're {progress}% through your learning - every step counts.",
-    "lms_today_empty": "Your learning path is ready when you are.",
+    "lms_today_empty": "No training assigned yet. Start with the training library.",
     "compliance_score": "Compliance Score",
     "compliance": "Compliance",
     "compliance_score_subtitle": "{completed} of {total} compliance courses currently satisfied",
@@ -2188,7 +2193,7 @@
     "items_done": "{completed} of {total} done",
     "no_courses_started": "No courses started",
     "certificates_earned": "Certificates issued",
-    "certificates_earned_description": "Total certificates issued to students in your organization",
+    "certificates_earned_description": "Certificates employees have earned",
     "certification_rate": "Certified",
     "recent_certifications": "Recent certifications",
     "no_certifications_yet": "No certificates earned yet",
@@ -2196,10 +2201,10 @@
     "view_courses": "View courses",
     "explore_more_courses": "Explore more courses",
     "view_more": "View more",
-    "no_of_courses": "Number of courses",
-    "no_courses_description": "Courses created within this organization",
-    "total_students": "Total employees",
-    "total_students_description": "Employees enrolled in your organization",
+    "no_of_courses": "Courses",
+    "no_courses_description": "Courses created in the organization",
+    "total_students": "Employees learning",
+    "total_students_description": "Employees enrolled in at least one course",
     "top_courses": "Top Courses",
     "students": "students",
     "student": "student",
@@ -2214,7 +2219,18 @@
     "login_activity_description": "Most active days of the week (last 90 days)",
     "login_activity_no_data": "No login activity yet",
     "login_activity_logins": "logins",
-    "org_overview_description": "Here is how training is going across your organization."
+    "org_overview_description": "Training activity across MP Transformation at a glance.",
+    "quick_actions": {
+      "title": "Admin shortcuts",
+      "add_learners": "Add employees",
+      "add_learners_description": "Import a list or invite by email",
+      "create_cohort": "Open a training class",
+      "create_cohort_description": "Group courses and learners by programme",
+      "mandatory_training": "Track mandatory training",
+      "mandatory_training_description": "See who is overdue or not started",
+      "upload_documents": "Upload documents",
+      "upload_documents_description": "Videos, slides and files for lessons"
+    }
   },
   "ai": {
     "help_me": "Help me write",
@@ -2227,7 +2243,7 @@
   },
   "courses": {
     "heading": "Courses",
-    "page_subtitle": "Where lessons turn into courses and courses turn into enrollments.",
+    "page_subtitle": "Create, publish and manage internal training courses.",
     "heading_button": "Create Course",
     "search_placeholder": "Find Course",
     "load_more": "Load more",
@@ -2392,7 +2408,7 @@
       "nav_people": "People",
       "nav_analytics": "Analytics",
       "nav_certificates": "Certificates",
-      "nav_landing_page": "Landing Page",
+      "nav_landing_page": "Course overview",
       "nav_settings": "Settings",
       "nav_ai_assistant": "Assistant",
       "nav_ai_tutor": "AI Tutor",
@@ -4091,7 +4107,7 @@
           "sample_recipient": "Eleanor Vance",
           "sample_course": "Certificate of Excellence",
           "sample_description": "In recognition of outstanding achievement and exemplary dedication to the craft.",
-          "sample_org": "The Royal Academy of Arts",
+          "sample_org": "MP Transformation",
           "summary_title": "Active design",
           "summary_subtitle": "Snapshot of how the certificate will look when issued.",
           "field_template": "Template",
@@ -4246,8 +4262,8 @@
         "enter": "Enter your email...",
         "powered_by": "Powered by",
         "landing_page": "Landing Page",
-        "explore": "Explore courses",
-        "find": "Find courses you will love from best teachers all over the world",
+        "explore": "Training library",
+        "find": "Find courses that fit your role and work",
         "find_course": "Find a course...",
         "reviews_modal": {
           "title": "Reviews",
@@ -4811,7 +4827,7 @@
     "loading_chart": "Loading chart...",
     "no_data_default": "No data available",
     "no_data_default_description": "There is no data to display at this time.",
-    "subtitle": "Understand how visitors discover your courses and convert into students.",
+    "subtitle": "Track how employees engage with and complete training.",
     "course_metrics": {
       "page_subtitle": "Enrollment, lesson completion, grades, and per-student progress for this course.",
       "progress_distribution_card_description": "How many students fall into each completion band.",
@@ -4834,8 +4850,8 @@
     },
     "refresh": "Refresh",
     "kpi": {
-      "landing_views": "Landing views",
-      "unique_visitors": "Unique visitors",
+      "landing_views": "Course overview views",
+      "unique_visitors": "Viewers",
       "course_page_views": "Course page views",
       "enrollments": "Enrollments",
       "range_description": "In selected range"
@@ -4848,11 +4864,11 @@
       "enrollments": "Enrollments"
     },
     "funnel": {
-      "heading": "Conversion funnel",
+      "heading": "Learning journey",
       "description": "From first visit to course completion",
       "empty": "No funnel data yet",
       "step": {
-        "landing_view": "Landing views",
+        "landing_view": "Viewed overview",
         "course_page_view": "Course page views",
         "enrollment_completed": "Enrollments",
         "course_completed": "Completions"
@@ -4863,7 +4879,7 @@
       "subtitle": "{total} visitors total",
       "empty": "No location data yet",
       "country": "Country",
-      "visitors": "Visitors",
+      "visitors": "Viewers",
       "enrollments_short": "enrolled"
     },
     "popularTypes": {
@@ -4907,7 +4923,7 @@
   },
   "automation": {
     "title": "Automation",
-    "subtitle": "Connect MCP clients now, with Zapier and the public API following on the same org-scoped key system.",
+    "subtitle": "Connect MP Learning to internal systems through MCP, API and webhooks.",
     "coming_soon": "Coming soon",
     "permissions": {
       "disabled_title": "Read-only access",
@@ -5114,7 +5130,7 @@
       "view_docs": "View Docs"
     },
     "api": {
-      "subtitle": "Manage API keys to integrate with the MP Learning public API.",
+      "subtitle": "Use the MP Learning API to sync data with internal systems.",
       "keys": {
         "title": "API keys",
         "description": "These keys authenticate the current organization when calling the MP Learning public API.",
@@ -5142,15 +5158,16 @@
     }
   },
   "lms_navigation": {
-    "home": "Dashboard",
-    "my_learning": "My Learning",
+    "home": "Overview",
+    "my_learning": "My courses",
     "certificates": "Certificates",
     "exercise": "Exercise",
-    "community": "Community",
-    "explore": "Explore",
+    "community": "Q&A",
+    "explore": "Training library",
     "help": "Help",
-    "settings": "Settings",
-    "cohorts": "Cohorts"
+    "settings": "Account",
+    "cohorts": "Training classes",
+    "group_learning": "Learning"
   },
   "lms": {
     "view_landing_page": "Home"
@@ -5187,7 +5204,7 @@
     "lesson": "Lesson"
   },
   "explore": {
-    "heading": "Explore our courses",
+    "heading": "Training library",
     "empty_heading": "No course available",
     "empty_description": "There are currently no published course available"
   },
@@ -6456,15 +6473,19 @@
     "feature_practice": "Exercises & internal certificates",
     "feature_practice_description": "Practise, get feedback and earn recognition",
     "feature_progress": "Track progress anytime",
-    "feature_progress_description": "Pick up where you left off on any device"
+    "feature_progress_description": "Pick up where you left off on any device",
+    "context_admin": "Training admin",
+    "context_learner": "Learning space",
+    "switch_to_learner": "Open learning space",
+    "switch_to_admin": "Open training admin"
   },
   "page_titles": {
     "integrations": "Integrations",
     "ask_community": "Ask the community",
     "question": "Question",
     "community": "Community",
-    "my_learning": "My learning",
-    "explore": "Explore",
+    "my_learning": "My courses",
+    "explore": "Training library",
     "exercises": "Exercises",
     "certificates": "Certificates",
     "billing": "Billing",
@@ -6487,5 +6508,35 @@
     "join_platform": "Join MP Learning",
     "join_course": "Join {title} on MP Learning",
     "forgot_password": "Forgot password"
+  },
+  "ui_shell": {
+    "breadcrumbs": {
+      "toggle_menu": "Show path",
+      "navigate_to": "Go to",
+      "navigate_description": "Choose a page in this path"
+    }
+  },
+  "lms_home": {
+    "hero_empty_title": "No courses assigned yet",
+    "hero_empty_description": "Browse the training library to find courses that support your work.",
+    "hero_all_done_title": "You're all caught up",
+    "hero_all_done_description": "Great work. Pick your next course from the training library.",
+    "open_library": "Open training library",
+    "mandatory": "Mandatory",
+    "mandatory_title": "Mandatory training",
+    "mandatory_description": "Courses you must complete, sorted by deadline",
+    "mandatory_empty": "You have no mandatory training right now.",
+    "no_other_courses": "No other courses in progress",
+    "recommended_description": "Picked from the MP Transformation training library",
+    "lesson_count": "{count} lessons",
+    "self_enroll_hint": "You can enroll in this course yourself.",
+    "enroll_via_admin_hint": "Contact the Training team to be enrolled in this course."
+  },
+  "lms_pages": {
+    "my_learning_subtitle": "Courses assigned to you or that you enrolled in.",
+    "explore_subtitle": "Internal courses open to MP Transformation employees.",
+    "cohorts_subtitle": "Training classes and programmes you belong to.",
+    "exercises_subtitle": "Track submissions and grades across your courses.",
+    "exercises_column_empty": "Nothing here yet"
   }
 }

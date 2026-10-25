@@ -11,6 +11,7 @@
 <Page.Root class="w-full">
   <Page.Header>
     <Page.HeaderContent>
+      <Page.Eyebrow>{$t('lms_navigation.group_learning')}</Page.Eyebrow>
       <Page.Title>{$t('certificates.heading')}</Page.Title>
       <Page.Subtitle>{$t('certificates.description')}</Page.Subtitle>
     </Page.HeaderContent>

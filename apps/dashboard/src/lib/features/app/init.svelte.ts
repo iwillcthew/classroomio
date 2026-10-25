@@ -432,7 +432,7 @@ class AppInitApi extends BaseApi {
   goToOrg() {
     const selectedOrg = get(currentOrg);
 
-    goto(resolve(`/org/${selectedOrg.siteName}`, {}));
+    goto(resolve(`/org/${selectedOrg.siteName}/dash`, {}));
   }
 
   setUserAnalytics() {

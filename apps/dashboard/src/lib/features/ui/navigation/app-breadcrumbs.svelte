@@ -9,7 +9,6 @@
   import { t } from '$lib/utils/functions/translations';
   import { getOrgNavigationItems } from './org-navigation';
   import { generateBreadcrumbs } from './breadcrumb';
-  import OrgSwitcher from '../sidebar/org-sidebar/org-switcher.svelte';
 
   const navItems = $derived(getOrgNavigationItems($currentOrgPath, $currentOrg, $isOrgAdmin, $t, page.url.pathname));
 
@@ -27,13 +26,15 @@
   let open = $state(false);
 
   const isDesktop = new MediaQuery('(min-width: 768px)');
-  const ITEMS_TO_DISPLAY = $derived(isDesktop.current ? 2 : 1); // Show last 2 items (since we have org switcher as first)
+  const ITEMS_TO_DISPLAY = $derived(isDesktop.current ? 2 : 1);
 </script>
 
 <Breadcrumb.Root>
   <Breadcrumb.List class="flex-nowrap!">
     <Breadcrumb.Item>
-      <OrgSwitcher variant="breadcrumb" />
+      <Breadcrumb.Link href={`${$currentOrgPath}/dash`} class="ui:text-muted-foreground whitespace-nowrap">
+        {$t('mp_learning.context_admin')}
+      </Breadcrumb.Link>
     </Breadcrumb.Item>
 
     {#if breadcrumbs.length > 0}

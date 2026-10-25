@@ -389,7 +389,9 @@
     "we_at": "Noi di",
     "small_team": "siamo un piccolo team con una grande missione: fornire agli insegnanti ottimi software per aiutarli ad avere un impatto nella vita delle persone. L’istruzione è il dono più potente che puoi fare a chiunque ed è perfettamente logico fornirti tutti gli strumenti necessari per offrire questo REGALO a più persone.",
     "thank_you": "Grazie per averci scelto",
-    "deeply_appreciate": "lo apprezziamo profondamente e siamo al vostro servizio."
+    "deeply_appreciate": "lo apprezziamo profondamente e siamo al vostro servizio.",
+    "title": "Welcome to MP Learning",
+    "banner_alt": "MP Learning"
   },
   "app": {
     "cancel": "Annulla",
@@ -1674,7 +1676,10 @@
     "upgrade_left": "{count} Sinistra",
     "cohorts": "Programmi di formazione",
     "exit_course": "Esci da questo corso",
-    "exit_cohort": "Esci da questa coorte"
+    "exit_cohort": "Esci da questa coorte",
+    "ai_studio": "AI course studio",
+    "reports": "Reports",
+    "system": "System"
   },
   "pricing": {
     "plan_names": {
@@ -2214,7 +2219,18 @@
     "login_activity_description": "Giorni più attivi della settimana (ultimi 90 giorni)",
     "login_activity_no_data": "Nessuna attività di accesso ancora",
     "login_activity_logins": "accessi",
-    "org_overview_description": "Here is how training is going across your organization."
+    "org_overview_description": "Here is how training is going across your organization.",
+    "quick_actions": {
+      "title": "Admin shortcuts",
+      "add_learners": "Add employees",
+      "add_learners_description": "Import a list or invite by email",
+      "create_cohort": "Open a training class",
+      "create_cohort_description": "Group courses and learners by programme",
+      "mandatory_training": "Track mandatory training",
+      "mandatory_training_description": "See who is overdue or not started",
+      "upload_documents": "Upload documents",
+      "upload_documents_description": "Videos, slides and files for lessons"
+    }
   },
   "ai": {
     "help_me": "Aiutami a scrivere",
@@ -5150,7 +5166,8 @@
     "explore": "Esplorare",
     "help": "Aiuto",
     "settings": "Impostazioni",
-    "cohorts": "Coorti"
+    "cohorts": "Coorti",
+    "group_learning": "Learning"
   },
   "lms": {
     "view_landing_page": "Home"
@@ -6456,7 +6473,11 @@
     "feature_practice": "Exercises & internal certificates",
     "feature_practice_description": "Practise, get feedback and earn recognition",
     "feature_progress": "Track progress anytime",
-    "feature_progress_description": "Pick up where you left off on any device"
+    "feature_progress_description": "Pick up where you left off on any device",
+    "context_admin": "Training admin",
+    "context_learner": "Learning space",
+    "switch_to_learner": "Open learning space",
+    "switch_to_admin": "Open training admin"
   },
   "page_titles": {
     "integrations": "Integrations",
@@ -6487,5 +6508,35 @@
     "join_platform": "Join MP Learning",
     "join_course": "Join {title} on MP Learning",
     "forgot_password": "Forgot password"
+  },
+  "ui_shell": {
+    "breadcrumbs": {
+      "toggle_menu": "Show path",
+      "navigate_to": "Go to",
+      "navigate_description": "Choose a page in this path"
+    }
+  },
+  "lms_home": {
+    "hero_empty_title": "No courses assigned yet",
+    "hero_empty_description": "Browse the training library to find courses that support your work.",
+    "hero_all_done_title": "You're all caught up",
+    "hero_all_done_description": "Great work. Pick your next course from the training library.",
+    "open_library": "Open training library",
+    "mandatory": "Mandatory",
+    "mandatory_title": "Mandatory training",
+    "mandatory_description": "Courses you must complete, sorted by deadline",
+    "mandatory_empty": "You have no mandatory training right now.",
+    "no_other_courses": "No other courses in progress",
+    "recommended_description": "Picked from the MP Transformation training library",
+    "lesson_count": "{count} lessons",
+    "self_enroll_hint": "You can enroll in this course yourself.",
+    "enroll_via_admin_hint": "Contact the Training team to be enrolled in this course."
+  },
+  "lms_pages": {
+    "my_learning_subtitle": "Courses assigned to you or that you enrolled in.",
+    "explore_subtitle": "Internal courses open to MP Transformation employees.",
+    "cohorts_subtitle": "Training classes and programmes you belong to.",
+    "exercises_subtitle": "Track submissions and grades across your courses.",
+    "exercises_column_empty": "Nothing here yet"
   }
 }

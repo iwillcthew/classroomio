@@ -14,7 +14,7 @@
   bind:this={ref}
   data-slot="card-header"
   class={cn(
-    'ui:has-data-[slot=card-action]:grid-cols-[1fr_auto] ui:[.border-b]:pb-6 ui:grid ui:auto-rows-min ui:grid-rows-[auto_auto] ui:items-start ui:gap-1.5 ui:px-6 @container/card-header',
+    'ui:has-data-[slot=card-action]:grid-cols-[1fr_auto] ui:[.border-b]:pb-5 ui:grid ui:auto-rows-min ui:grid-rows-[auto_auto] ui:items-start ui:gap-1.5 ui:px-5 @container/card-header',
     className
   )}
   {...restProps}

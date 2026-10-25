@@ -1,12 +1,11 @@
 <script lang="ts">
-  import { Separator } from '@cio/ui/base/separator';
   import * as Sidebar from '@cio/ui/base/sidebar';
   import * as ButtonGroup from '@cio/ui/base/button-group';
   import * as DropdownMenu from '@cio/ui/base/dropdown-menu';
   import ExternalLinkIcon from '@lucide/svelte/icons/external-link';
   import EllipsisVerticalIcon from '@lucide/svelte/icons/ellipsis-vertical';
   import { Button } from '@cio/ui/base/button';
-  import { Waves } from '@cio/ui/custom/animation';
+  import ChevronRightIcon from '@lucide/svelte/icons/chevron-right';
   import { page } from '$app/state';
   import { currentOrg, currentOrgDomain } from '$lib/utils/store/org';
   import { isStudentExperience, isCourseLearnerView } from '$lib/utils/store/app';
@@ -76,18 +75,21 @@
 </script>
 
 <header
-  class="ui:border-border ui:bg-background ui:z-app-bar sticky top-0 flex h-12 w-full shrink-0 items-center gap-2 border-b backdrop-blur transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-8"
+  class="ui:border-border ui:bg-background/85 ui:z-app-bar sticky top-0 flex h-14 w-full shrink-0 items-center border-b backdrop-blur-md backdrop-saturate-150"
 >
-  <div class="flex w-full items-center gap-2 px-4">
-    <Sidebar.Trigger />
+  <div class="flex w-full min-w-0 items-center gap-3 px-4 md:px-6">
+    <Sidebar.Trigger class="ui:text-muted-foreground -ml-1" />
+    <span class="ui:bg-border h-5 w-px shrink-0" aria-hidden="true"></span>
 
-    <div class="h-4 w-2">
-      <Separator orientation="vertical" />
-    </div>
-
-    <div class="flex w-[60%] min-w-0 flex-1 flex-col justify-center gap-0.5">
-      <div class="flex min-w-0 items-center gap-2">
-        <p class="max-w-xs truncate text-sm font-medium">
+    <div class="flex min-w-0 flex-1 flex-col justify-center">
+      <div class="flex min-w-0 items-center gap-2 text-sm">
+        {#if courseApi.course?.title}
+          <span class="ui:text-muted-foreground hidden max-w-[16rem] truncate md:inline">{courseApi.course.title}</span>
+          {#if activeNavKey}
+            <ChevronRightIcon class="ui:text-muted-foreground/70 hidden size-3.5 shrink-0 md:inline" />
+          {/if}
+        {/if}
+        <p class="truncate font-medium">
           {activeNavKey ? $t(activeNavKey) : ''}
         </p>
 
@@ -110,28 +112,15 @@
     {/if}
 
     {#if IS_AI_ENABLED}
-      <Button
-        size="sm"
-        onclick={toggleAiAssistant}
-        class="ui:bg-primary ui:text-primary-foreground relative overflow-hidden border-0"
-      >
-        <Waves
-          lineColor="rgba(255,255,255,0.55)"
-          xGap={8}
-          yGap={12}
-          waveAmpX={18}
-          waveAmpY={9}
-          waveSpeedX={0.04}
-          waveSpeedY={0.02}
-        />
-        <SparklesIcon size={14} class="relative z-10" />
-        <span class="relative z-10">{$t('course.navItems.nav_ai_assistant')}</span>
+      <Button size="sm" variant="outline" onclick={toggleAiAssistant}>
+        <SparklesIcon size={14} class="ui:text-brand-cyan" />
+        <span class="hidden sm:inline">{$t('course.navItems.nav_ai_assistant')}</span>
       </Button>
     {/if}
 
     {#if !$isStudentExperience}
       <ButtonGroup.Root>
-        {#if !courseApi.course?.isTemplate}
+        {#if !courseApi.course?.isTemplate && isPublicCourse}
           <Button
             variant="outline"
             size="sm"

@@ -589,7 +589,8 @@
     "explore": "Entdecken",
     "help": "Hilfe",
     "settings": "Einstellungen",
-    "cohorts": "Kohorten"
+    "cohorts": "Kohorten",
+    "group_learning": "Learning"
   },
   "upgrade": {
     "certificate": "Aktualisieren Sie Ihren Plan, um Zertifikate zu generieren",
@@ -3353,7 +3354,18 @@
     "explore_more_courses": "Entdecken Sie weitere Kurse",
     "view_more": "Mehr anzeigen",
     "upcoming_sessions_heading": "Live-Sitzungen",
-    "org_overview_description": "Here is how training is going across your organization."
+    "org_overview_description": "Here is how training is going across your organization.",
+    "quick_actions": {
+      "title": "Admin shortcuts",
+      "add_learners": "Add employees",
+      "add_learners_description": "Import a list or invite by email",
+      "create_cohort": "Open a training class",
+      "create_cohort_description": "Group courses and learners by programme",
+      "mandatory_training": "Track mandatory training",
+      "mandatory_training_description": "See who is overdue or not started",
+      "upload_documents": "Upload documents",
+      "upload_documents_description": "Videos, slides and files for lessons"
+    }
   },
   "schedule": {
     "title": "Ihr Zeitplan",
@@ -3612,7 +3624,10 @@
     "back_to_app": "Zurück zur App",
     "create": "Schulung",
     "distribute": "Verteilen",
-    "tools": "Werkzeuge"
+    "tools": "Werkzeuge",
+    "ai_studio": "AI course studio",
+    "reports": "Reports",
+    "system": "System"
   },
   "media_manager": {
     "page_title": "Medienverwaltung - MP Learning",
@@ -4675,7 +4690,9 @@
     "we_at": "Wir bei",
     "small_team": "sind ein kleines Team mit der großen Mission, Pädagogen mit großartiger Software auszustatten, damit sie im Leben der Menschen etwas bewirken können. Bildung ist das größte Geschenk, das Sie jemandem machen können, und es ist absolut sinnvoll, Ihnen alle Werkzeuge zur Verfügung zu stellen, die Sie benötigen, um dieses GESCHENK noch mehr Menschen zu machen.",
     "thank_you": "Vielen Dank, dass Sie sich für uns entschieden haben",
-    "deeply_appreciate": "Wir wissen das sehr zu schätzen und stehen Ihnen gerne zur Verfügung."
+    "deeply_appreciate": "Wir wissen das sehr zu schätzen und stehen Ihnen gerne zur Verfügung.",
+    "title": "Welcome to MP Learning",
+    "banner_alt": "MP Learning"
   },
   "onboarding": {
     "expanding": "Auf einer anderen Plattform, hier erweitert",
@@ -6486,7 +6503,11 @@
     "feature_practice": "Exercises & internal certificates",
     "feature_practice_description": "Practise, get feedback and earn recognition",
     "feature_progress": "Track progress anytime",
-    "feature_progress_description": "Pick up where you left off on any device"
+    "feature_progress_description": "Pick up where you left off on any device",
+    "context_admin": "Training admin",
+    "context_learner": "Learning space",
+    "switch_to_learner": "Open learning space",
+    "switch_to_admin": "Open training admin"
   },
   "page_titles": {
     "integrations": "Integrations",
@@ -6517,5 +6538,35 @@
     "join_platform": "Join MP Learning",
     "join_course": "Join {title} on MP Learning",
     "forgot_password": "Forgot password"
+  },
+  "ui_shell": {
+    "breadcrumbs": {
+      "toggle_menu": "Show path",
+      "navigate_to": "Go to",
+      "navigate_description": "Choose a page in this path"
+    }
+  },
+  "lms_home": {
+    "hero_empty_title": "No courses assigned yet",
+    "hero_empty_description": "Browse the training library to find courses that support your work.",
+    "hero_all_done_title": "You're all caught up",
+    "hero_all_done_description": "Great work. Pick your next course from the training library.",
+    "open_library": "Open training library",
+    "mandatory": "Mandatory",
+    "mandatory_title": "Mandatory training",
+    "mandatory_description": "Courses you must complete, sorted by deadline",
+    "mandatory_empty": "You have no mandatory training right now.",
+    "no_other_courses": "No other courses in progress",
+    "recommended_description": "Picked from the MP Transformation training library",
+    "lesson_count": "{count} lessons",
+    "self_enroll_hint": "You can enroll in this course yourself.",
+    "enroll_via_admin_hint": "Contact the Training team to be enrolled in this course."
+  },
+  "lms_pages": {
+    "my_learning_subtitle": "Courses assigned to you or that you enrolled in.",
+    "explore_subtitle": "Internal courses open to MP Transformation employees.",
+    "cohorts_subtitle": "Training classes and programmes you belong to.",
+    "exercises_subtitle": "Track submissions and grades across your courses.",
+    "exercises_column_empty": "Nothing here yet"
   }
 }

@@ -7,6 +7,8 @@ import { redirect } from '@sveltejs/kit';
 
 const APP_SUBDOMAINS = env.PRIVATE_APP_SUBDOMAINS?.split(',') || ['app'];
 const ORG_ID_COOKIE_PREFIX = 'cio_org_id_';
+const HOSTED_ONLY_ORG_ROUTES =
+  /^\/org\/[^/]+\/(settings\/(billing|workspaces|domains|ai-credits)|widgets|zapier|landingpage|setup)(\/|$)/;
 
 export const load = async ({ params, url, cookies }) => {
   const loadStart = performance.now();
@@ -20,6 +22,11 @@ export const load = async ({ params, url, cookies }) => {
   }
 
   const siteName = params.slug;
+
+  if (PUBLIC_IS_SELFHOSTED === 'true' && HOSTED_ONLY_ORG_ROUTES.test(url.pathname)) {
+    redirect(307, `/org/${siteName}/dash`);
+  }
+
   const cookieKey = `${ORG_ID_COOKIE_PREFIX}${siteName}`;
   const cachedOrgId = cookies.get(cookieKey);
 

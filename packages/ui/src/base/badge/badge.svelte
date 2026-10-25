@@ -2,17 +2,16 @@
   import { type VariantProps, tv } from 'tailwind-variants';
 
   export const badgeVariants = tv({
-    base: 'ui:focus-visible:border-ring ui:focus-visible:ring-ring/50 ui:aria-invalid:ring-destructive/20 ui:dark:aria-invalid:ring-destructive/40 ui:aria-invalid:border-destructive ui:inline-flex ui:w-fit ui:shrink-0 ui:items-center ui:justify-center ui:gap-1 ui:overflow-hidden ui:whitespace-nowrap ui:rounded-full ui:border ui:px-2 ui:py-0.5 ui:text-xs ui:font-medium ui:transition-[color,box-shadow] ui:focus-visible:ring-[3px] ui:[&>svg]:pointer-events-none ui:[&>svg]:size-3',
+    base: 'ui:focus-visible:border-ring ui:focus-visible:ring-ring/50 ui:aria-invalid:ring-destructive/20 ui:dark:aria-invalid:ring-destructive/40 ui:aria-invalid:border-destructive ui:inline-flex ui:w-fit ui:shrink-0 ui:items-center ui:justify-center ui:gap-1 ui:overflow-hidden ui:whitespace-nowrap ui:rounded-md ui:border ui:px-2 ui:py-0.5 ui:text-xs ui:font-medium ui:transition-[color,box-shadow] ui:focus-visible:ring-[3px] ui:[&>svg]:pointer-events-none ui:[&>svg]:size-3',
     variants: {
       variant: {
         default: 'ui:bg-primary ui:text-primary-foreground ui:[a&]:hover:bg-primary/90 ui:border-transparent',
-        secondary: 'ui:bg-secondary ui:text-secondary-foreground ui:[a&]:hover:bg-secondary/90 ui:border-transparent',
+        secondary: 'ui:bg-muted ui:text-muted-foreground ui:[a&]:hover:bg-secondary/90 ui:border-transparent',
         destructive:
-          'ui:bg-destructive ui:[a&]:hover:bg-destructive/90 ui:focus-visible:ring-destructive/20 ui:dark:focus-visible:ring-destructive/40 ui:dark:bg-destructive/70 ui:border-transparent ui:text-white',
-        warning:
-          'ui:bg-amber-50 ui:text-amber-700 ui:border-amber-200 ui:[a&]:hover:bg-amber-100 ui:dark:bg-amber-500/15 ui:dark:text-amber-300 ui:dark:border-amber-500/30',
-        success:
-          'ui:bg-emerald-50 ui:text-emerald-700 ui:border-emerald-200 ui:[a&]:hover:bg-emerald-100 ui:dark:bg-emerald-500/15 ui:dark:text-emerald-300 ui:dark:border-emerald-500/30',
+          'ui:bg-danger-soft ui:text-danger-foreground ui:border-transparent ui:[a&]:hover:bg-danger-soft/80',
+        warning: 'ui:bg-warning-soft ui:text-warning-foreground ui:border-transparent ui:[a&]:hover:bg-warning-soft/80',
+        success: 'ui:bg-success-soft ui:text-success-foreground ui:border-transparent ui:[a&]:hover:bg-success-soft/80',
+        info: 'ui:bg-info-soft ui:text-info-foreground ui:border-transparent ui:[a&]:hover:bg-info-soft/80',
         outline: 'ui:text-foreground ui:[a&]:hover:bg-accent ui:[a&]:hover:text-accent-foreground'
       }
     },

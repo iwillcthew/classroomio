@@ -46,12 +46,12 @@
   onDestroy(() => clearTimeout(galleryIconTimer));
 </script>
 
-<section class="ui:bg-muted/30 ui:border-border border-b py-4">
-  <div class="mx-auto w-full max-w-6xl px-4">
+<section class="ui:bg-card ui:shadow-card rounded-xl border px-5 py-4">
+  <div class="w-full">
     <div class="mb-3 flex items-center justify-between gap-3">
-      <h2 class="text-sm font-medium">{$t('course_templates.row.heading')}</h2>
+      <h2 class="text-[15px] font-semibold tracking-tight">{$t('course_templates.row.heading')}</h2>
       <a
-        class="ui:hover:text-primary inline-flex items-center gap-1 text-sm font-medium"
+        class="ui:text-primary ui:hover:text-primary/80 inline-flex items-center gap-1 text-sm font-medium"
         href={galleryHref()}
         onmouseenter={pulseGalleryIcon}
       >

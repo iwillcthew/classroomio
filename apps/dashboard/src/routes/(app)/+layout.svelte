@@ -1,5 +1,6 @@
 <script lang="ts">
   import { page } from '$app/state';
+  import { PUBLIC_IS_SELFHOSTED } from '$env/static/public';
 
   import { UpgradeModal, PageLoadProgress, PageRestricted } from '$features/ui';
   import { VerifyEmailModal, WelcomeModal } from '$features/onboarding/components';
@@ -45,8 +46,10 @@
   });
 </script>
 
-<EarlyAdopterClaimHandler />
-<UpgradeModal />
+{#if PUBLIC_IS_SELFHOSTED !== 'true'}
+  <EarlyAdopterClaimHandler />
+  <UpgradeModal />
+{/if}
 <VerifyEmailModal />
 <WelcomeModal />
 <CommandPalette />

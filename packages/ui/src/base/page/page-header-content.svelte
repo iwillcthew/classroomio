@@ -13,7 +13,7 @@
 <div
   bind:this={ref}
   data-slot="page-header-content"
-  class={cn('ui:flex ui:flex-col ui:gap-1', className)}
+  class={cn('ui:flex ui:min-w-0 ui:flex-col ui:gap-1.5', className)}
   {...restProps}
 >
   {@render children?.()}

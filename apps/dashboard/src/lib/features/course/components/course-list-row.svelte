@@ -10,6 +10,7 @@
   import { goto } from '$app/navigation';
   import { resolve } from '$app/paths';
   import { Image } from '$features/ui';
+  import CourseCover from './course-cover.svelte';
   import { locale, t } from '$lib/utils/functions/translations';
   import { buildCoursePlaceholderAvatarUrl } from '$features/course/utils/course-list-row-utils';
   import CoursePublicBadge from './course-public-badge.svelte';
@@ -74,8 +75,6 @@
   }: Props = $props();
 
   const titleInitial = $derived(title.trim().charAt(0).toUpperCase() || 'C');
-
-  const bannerImageUrl = $derived(bannerImage?.trim() ? bannerImage : '/images/course-img-template.jpg');
 
   const showPublicCourseLinks = $derived(isPublished && type === 'PUBLIC' && slug.trim().length > 0);
 
@@ -253,7 +252,15 @@
       class="ui:border-border ui:bg-muted relative size-11 shrink-0 overflow-hidden rounded-md border @3xl:size-28"
       aria-hidden="true"
     >
-      <Image src={bannerImageUrl} alt="" className="h-full w-full object-cover" />
+      {#if bannerImage?.trim()}
+        <Image src={bannerImage} alt="" className="h-full w-full object-cover" />
+      {:else}
+        <CourseCover
+          {title}
+          class="size-full"
+          initialsClass="bottom-1 left-1.5 text-xs @3xl:bottom-2 @3xl:left-2.5 @3xl:text-xl"
+        />
+      {/if}
     </div>
 
     <!-- Mobile Middle Content (flex-1) / Desktop Columns 2-6 (@3xl:contents) -->

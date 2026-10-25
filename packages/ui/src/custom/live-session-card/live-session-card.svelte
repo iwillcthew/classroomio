@@ -130,7 +130,7 @@
       'VERSION:2.0',
       'PRODID:-//MP Learning//Live Session//EN',
       'BEGIN:VEVENT',
-      `UID:session-${startMs}@classroomio`,
+      `UID:session-${startMs}@mp-learning`,
       `DTSTAMP:${toIcsUtc(now)}`,
       `DTSTART:${toIcsUtc(startMs)}`,
       `DTEND:${toIcsUtc(endMs)}`,

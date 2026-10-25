@@ -13,7 +13,10 @@
 <h1
   bind:this={ref}
   data-slot="page-title"
-  class={cn('ui:text-2xl ui:font-semibold ui:tracking-tight ui:text-foreground', className)}
+  class={cn(
+    'ui:text-2xl ui:font-semibold ui:leading-tight ui:tracking-[-0.02em] ui:text-foreground ui:text-balance',
+    className
+  )}
   {...restProps}
 >
   {@render children?.()}

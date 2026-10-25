@@ -9,8 +9,9 @@
 
   const todayLabel = new Intl.DateTimeFormat(getIntlLocale(), {
     weekday: 'long',
+    day: 'numeric',
     month: 'long',
-    day: 'numeric'
+    year: 'numeric'
   }).format(new Date());
 
   const firstName = $derived($profile.fullname?.trim().split(/\s+/).at(-1) || $t('dashboard.learner'));
@@ -40,14 +41,11 @@
   <title>{$t('lms_navigation.home')} · MP Learning</title>
 </svelte:head>
 
-<Page.Root class="mx-auto w-full max-w-4xl">
+<Page.Root class="w-full">
   <Page.Header>
     <Page.HeaderContent>
-      <Page.Subtitle>{todayLabel}</Page.Subtitle>
-      <Page.Title>
-        {$t(getGreeting())},
-        <span class="ui:text-primary">{firstName}</span>
-      </Page.Title>
+      <Page.Eyebrow class="first-letter:uppercase">{todayLabel}</Page.Eyebrow>
+      <Page.Title>{$t(getGreeting())}, {firstName}</Page.Title>
       <Page.Subtitle>
         {#if totalLessons > 0}
           {$t('dashboard.lms_today_progress', { progress: progressPercentage })}

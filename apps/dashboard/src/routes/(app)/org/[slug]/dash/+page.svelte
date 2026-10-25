@@ -2,13 +2,18 @@
   import { goto } from '$app/navigation';
   import { resolve } from '$app/paths';
   import AwardIcon from '@lucide/svelte/icons/award';
-  import BookIcon from '@lucide/svelte/icons/book';
+  import BookOpenIcon from '@lucide/svelte/icons/book-open';
   import ChevronRightIcon from '@lucide/svelte/icons/chevron-right';
+  import ShieldCheckIcon from '@lucide/svelte/icons/shield-check';
+  import UploadIcon from '@lucide/svelte/icons/upload';
+  import UserPlusIcon from '@lucide/svelte/icons/user-plus';
   import UsersIcon from '@lucide/svelte/icons/users';
+  import UsersRoundIcon from '@lucide/svelte/icons/users-round';
   import { Skeleton } from '@cio/ui/base/skeleton';
 
   import { t } from '$lib/utils/functions/translations';
-  import { calDateDiff } from '$lib/utils/functions/date';
+  import { calDateDiff, getGreeting } from '$lib/utils/functions/date';
+  import { getIntlLocale } from '$lib/utils/functions/intl-locale';
   import { currentOrgPath, isOrgAdmin } from '$lib/utils/store/org';
 
   import { CreateCourseButton } from '$features/course/components';
@@ -16,11 +21,11 @@
   import { Progress } from '@cio/ui/base/progress';
   import { Button } from '@cio/ui/base/button';
   import { ActivityCard } from '$features/ui';
+  import SectionCard from '$features/ui/section-card.svelte';
   import LoginActivityChart from '$features/org/components/login-activity-chart.svelte';
   import * as Page from '@cio/ui/base/page';
   import { Empty } from '@cio/ui/custom/empty';
   import { profile } from '$lib/utils/store/user';
-  import { getGreeting } from '$lib/utils/functions/date';
 
   const { data } = $props();
 
@@ -32,17 +37,58 @@
   const totalStudents = $derived(stats?.totalStudents || 0);
   const topCourses = $derived(stats?.topCourses || []);
   const firstName = $derived($profile.fullname?.trim().split(/\s+/).at(-1) ?? '');
+
+  const todayLabel = new Intl.DateTimeFormat(getIntlLocale(), {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  }).format(new Date());
+
+  const quickActions = $derived(
+    [
+      {
+        icon: UserPlusIcon,
+        titleKey: 'dashboard.quick_actions.add_learners',
+        descriptionKey: 'dashboard.quick_actions.add_learners_description',
+        href: `${$currentOrgPath}/audience/import`,
+        adminOnly: true
+      },
+      {
+        icon: UsersRoundIcon,
+        titleKey: 'dashboard.quick_actions.create_cohort',
+        descriptionKey: 'dashboard.quick_actions.create_cohort_description',
+        href: `${$currentOrgPath}/cohorts`,
+        adminOnly: false
+      },
+      {
+        icon: ShieldCheckIcon,
+        titleKey: 'dashboard.quick_actions.mandatory_training',
+        descriptionKey: 'dashboard.quick_actions.mandatory_training_description',
+        href: `${$currentOrgPath}/compliance`,
+        adminOnly: true
+      },
+      {
+        icon: UploadIcon,
+        titleKey: 'dashboard.quick_actions.upload_documents',
+        descriptionKey: 'dashboard.quick_actions.upload_documents_description',
+        href: `${$currentOrgPath}/media`,
+        adminOnly: false
+      }
+    ].filter((action) => !action.adminOnly || $isOrgAdmin)
+  );
 </script>
 
 <svelte:head>
   <title>{$t('org_navigation.dashboard')} · MP Learning</title>
 </svelte:head>
 
-<Page.Root class="w-full">
+<Page.Root class="w-full pb-10">
   <Page.Header>
     <Page.HeaderContent>
+      <Page.Eyebrow class="first-letter:uppercase">{todayLabel}</Page.Eyebrow>
       <Page.Title>
-        {$t(getGreeting())}, <span class="ui:text-primary">{firstName}</span>
+        {$t(getGreeting())}{#if firstName}, {firstName}{/if}
       </Page.Title>
       <Page.Subtitle>{$t('dashboard.org_overview_description')}</Page.Subtitle>
     </Page.HeaderContent>
@@ -52,186 +98,188 @@
   </Page.Header>
   <Page.Body>
     {#snippet child()}
-      <div class="flex flex-wrap items-start">
-        <div class="grid w-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-          <ActivityCard
-            activity={{
-              icon: AwardIcon,
-              title: $t('dashboard.certificates_earned'),
-              percentage: totalCertificates ?? 0,
-              description: $t('dashboard.certificates_earned_description'),
-              hidePercentage: true,
-              href: $isOrgAdmin ? resolve(`${$currentOrgPath}/audience?certificate=earned`, {}) : undefined
-            }}
-          />
-          <ActivityCard
-            activity={{
-              icon: BookIcon,
-              title: $t('dashboard.no_of_courses'),
-              percentage: numberOfCourses ?? 0,
-              description: $t('dashboard.no_courses_description'),
-              hidePercentage: true,
-              href: resolve(`${$currentOrgPath}/courses`, {})
-            }}
-          />
-          <ActivityCard
-            activity={{
-              icon: UsersIcon,
-              title: $t('dashboard.total_students'),
-              percentage: totalStudents ?? 0,
-              description: $t('dashboard.total_students_description'),
-              hidePercentage: true,
-              href: $isOrgAdmin ? resolve(`${$currentOrgPath}/audience`, {}) : undefined
-            }}
-          />
-        </div>
+      <div class="grid w-full grid-cols-1 gap-4 sm:grid-cols-3">
+        <ActivityCard
+          activity={{
+            icon: UsersIcon,
+            title: $t('dashboard.total_students'),
+            percentage: totalStudents ?? 0,
+            description: $t('dashboard.total_students_description'),
+            hidePercentage: true,
+            href: $isOrgAdmin ? resolve(`${$currentOrgPath}/audience`, {}) : undefined
+          }}
+        />
+        <ActivityCard
+          activity={{
+            icon: BookOpenIcon,
+            title: $t('dashboard.no_of_courses'),
+            percentage: numberOfCourses ?? 0,
+            description: $t('dashboard.no_courses_description'),
+            hidePercentage: true,
+            href: resolve(`${$currentOrgPath}/courses`, {})
+          }}
+        />
+        <ActivityCard
+          activity={{
+            icon: AwardIcon,
+            title: $t('dashboard.certificates_earned'),
+            percentage: totalCertificates ?? 0,
+            description: $t('dashboard.certificates_earned_description'),
+            hidePercentage: true,
+            href: $isOrgAdmin ? resolve(`${$currentOrgPath}/audience?certificate=earned`, {}) : undefined
+          }}
+        />
       </div>
 
-      <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
-        <div class="flex flex-col gap-4 lg:col-span-2">
+      <div class="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
+        <div class="flex min-w-0 flex-col gap-4">
           <LoginActivityChart data={loginActivity} />
-          <div class="ui:bg-card flex w-full flex-col rounded-xl border p-4 md:p-5">
-            <div class="mb-4 flex items-center justify-between">
-              <h3 class="text-lg font-semibold tracking-tight">
-                {$t('dashboard.top_courses')}
-              </h3>
-            </div>
 
-            <div class="flex h-full flex-col">
-              {#if !stats}
-                <div class="space-y-3">
-                  {#each Array(5) as _, i (i)}
-                    <Skeleton class="h-16 w-full rounded-lg" />
-                  {/each}
-                </div>
-              {:else if topCourses.length === 0}
-                <Empty
-                  title={$t('dashboard.create_first_course')}
-                  description={$t('dashboard.create_first_course_description')}
-                  icon={BookIcon}
-                  class="h-full"
-                >
-                  <CreateCourseButton variant="outline" />
-                </Empty>
-              {:else}
-                <ul class="ui:divide-border -mx-2 divide-y">
-                  {#each topCourses as course, i (course.id)}
-                    {@const rank = i + 1}
-                    <li>
-                      <a
-                        href={`/courses/${course.id}`}
-                        class="group ui:hover:bg-muted/50 flex items-center gap-3 rounded-lg px-2 py-3 transition-colors md:gap-4"
+          <SectionCard title={$t('dashboard.top_courses')} bodyClass="px-2! pb-2!">
+            {#snippet action()}
+              <Button variant="ghost" size="sm" href={`${$currentOrgPath}/courses`} class="ui:text-primary">
+                {$t('dashboard.view_courses')}
+              </Button>
+            {/snippet}
+            {#if !stats}
+              <div class="space-y-2 px-3 pb-3">
+                {#each Array(4) as _, index (index)}
+                  <Skeleton class="h-14 w-full rounded-lg" />
+                {/each}
+              </div>
+            {:else if topCourses.length === 0}
+              <Empty
+                title={$t('dashboard.create_first_course')}
+                description={$t('dashboard.create_first_course_description')}
+                icon={BookOpenIcon}
+              >
+                <CreateCourseButton variant="outline" />
+              </Empty>
+            {:else}
+              <ul class="ui:divide-border divide-y">
+                {#each topCourses as course, index (course.id)}
+                  <li>
+                    <a
+                      href={`/courses/${course.id}`}
+                      class="group ui:hover:bg-muted/60 flex items-center gap-3 rounded-lg px-3 py-3 transition-colors md:gap-4"
+                    >
+                      <span
+                        class={[
+                          'flex size-8 shrink-0 items-center justify-center rounded-lg text-xs font-semibold tabular-nums',
+                          index === 0 ? 'ui:bg-facet text-white' : 'ui:bg-accent ui:text-accent-foreground'
+                        ]}
                       >
-                        <span
-                          class={[
-                            'flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold tabular-nums',
-                            rank === 1 && 'bg-amber-100 text-amber-900 dark:bg-amber-500/20 dark:text-amber-200',
-                            rank === 2 && 'bg-slate-100 text-slate-700 dark:bg-slate-500/20 dark:text-slate-200',
-                            rank === 3 && 'bg-orange-100 text-orange-800 dark:bg-orange-500/20 dark:text-orange-200',
-                            rank > 3 && 'ui:bg-muted ui:text-muted-foreground'
-                          ]}
-                        >
-                          {rank}
-                        </span>
+                        {index + 1}
+                      </span>
 
-                        <div class="min-w-0 flex-1">
-                          <p class="line-clamp-1 text-sm leading-snug font-medium group-hover:underline">
-                            {course.title}
-                          </p>
-                          <div class="ui:text-muted-foreground mt-1 flex items-center gap-1 text-xs">
-                            <UsersIcon class="h-3 w-3" />
-                            <span class="tabular-nums">{course.enrollments}</span>
-                            <span>
-                              {$t(course.enrollments === 1 ? 'dashboard.student' : 'dashboard.students')}
+                      <div class="min-w-0 flex-1">
+                        <p class="line-clamp-1 text-sm leading-snug font-medium">{course.title}</p>
+                        <p class="ui:text-muted-foreground mt-0.5 flex items-center gap-1 text-xs">
+                          <UsersIcon class="size-3" />
+                          <span class="tabular-nums">{course.enrollments}</span>
+                          {$t(course.enrollments === 1 ? 'dashboard.student' : 'dashboard.students')}
+                        </p>
+                      </div>
+
+                      <div class="hidden w-52 shrink-0 grid-cols-2 gap-4 sm:grid">
+                        <div class="space-y-1.5">
+                          <div class="flex items-baseline justify-between gap-1">
+                            <span class="ui:text-muted-foreground text-[11px]">{$t('dashboard.completion')}</span>
+                            <span class="text-xs font-semibold tabular-nums">{course.completion}%</span>
+                          </div>
+                          <Progress value={course.completion} class="h-1.5" />
+                        </div>
+                        <div class="space-y-1.5">
+                          <div class="flex items-baseline justify-between gap-1">
+                            <span class="ui:text-muted-foreground text-[11px]">
+                              {$t('dashboard.certification_rate')}
                             </span>
+                            <span class="text-xs font-semibold tabular-nums">{course.certification}%</span>
                           </div>
+                          <Progress value={course.certification} class="h-1.5" />
                         </div>
+                      </div>
 
-                        <div class="hidden w-48 shrink-0 grid-cols-2 gap-3 sm:grid">
-                          <div class="space-y-1">
-                            <div class="flex items-baseline justify-between gap-1">
-                              <span class="ui:text-muted-foreground text-[10px] tracking-wide uppercase">
-                                {$t('dashboard.completion')}
-                              </span>
-                              <span class="text-xs font-semibold tabular-nums">{course.completion}%</span>
-                            </div>
-                            <Progress value={course.completion} class="h-1.5" />
-                          </div>
-                          <div class="space-y-1">
-                            <div class="flex items-baseline justify-between gap-1">
-                              <span class="ui:text-muted-foreground text-[10px] tracking-wide uppercase">
-                                {$t('dashboard.certification_rate')}
-                              </span>
-                              <span class="text-xs font-semibold tabular-nums">{course.certification}%</span>
-                            </div>
-                            <Progress value={course.certification} class="h-1.5" />
-                          </div>
-                        </div>
-
-                        <ChevronRightIcon
-                          class="ui:text-muted-foreground h-4 w-4 shrink-0 opacity-0 transition-opacity group-hover:opacity-100"
-                        />
-                      </a>
-                    </li>
-                  {/each}
-                </ul>
-              {/if}
-            </div>
-          </div>
+                      <ChevronRightIcon
+                        class="ui:text-muted-foreground size-4 shrink-0 transition-transform group-hover:translate-x-0.5"
+                      />
+                    </a>
+                  </li>
+                {/each}
+              </ul>
+            {/if}
+          </SectionCard>
         </div>
 
-        <div class="ui:bg-card flex w-full flex-col self-start rounded-xl border p-4 md:p-5">
-          <h3 class="mb-4 text-lg font-semibold tracking-tight">
-            {$t('dashboard.recent_certifications')}
-          </h3>
-
-          <div class="h-full space-y-6">
-            {#if !stats}
-              {#each Array(5) as _, i (i)}
-                <Skeleton class="h-10 w-full rounded-md" />
+        <div class="flex min-w-0 flex-col gap-4">
+          <SectionCard title={$t('dashboard.quick_actions.title')} bodyClass="px-2! pb-2!">
+            <ul class="flex flex-col">
+              {#each quickActions as action (action.titleKey)}
+                {@const Icon = action.icon}
+                <li>
+                  <a
+                    href={action.href}
+                    class="group ui:hover:bg-muted/60 flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors"
+                  >
+                    <span
+                      class="ui:bg-accent ui:text-accent-foreground grid size-9 shrink-0 place-items-center rounded-lg"
+                    >
+                      <Icon class="custom size-4" strokeWidth={1.9} />
+                    </span>
+                    <span class="min-w-0 flex-1">
+                      <span class="block text-sm font-medium">{$t(action.titleKey)}</span>
+                      <span class="ui:text-muted-foreground block truncate text-xs">{$t(action.descriptionKey)}</span>
+                    </span>
+                    <ChevronRightIcon
+                      class="ui:text-muted-foreground size-4 shrink-0 transition-transform group-hover:translate-x-0.5"
+                    />
+                  </a>
+                </li>
               {/each}
-            {:else}
-              {#each recentCertifications as certification (`${certification.id}-${certification.courseId}-${certification.date}`)}
-                <div class="flex items-center justify-between gap-2">
-                  <div class="flex items-center gap-2">
+            </ul>
+          </SectionCard>
+
+          <SectionCard title={$t('dashboard.recent_certifications')}>
+            {#if !stats}
+              <div class="space-y-3">
+                {#each Array(4) as _, index (index)}
+                  <Skeleton class="h-10 w-full rounded-md" />
+                {/each}
+              </div>
+            {:else if recentCertifications.length > 0}
+              <ul class="space-y-4">
+                {#each recentCertifications as certification (`${certification.id}-${certification.courseId}-${certification.date}`)}
+                  <li class="flex items-start gap-3">
                     <UserAvatar
                       src={certification.avatarUrl}
                       alt={certification.name ?? $t('cohorts.newsfeed.user_avatar_alt')}
-                      class="h-6 w-6"
+                      class="size-8"
                     />
-
-                    <div class="min-h-[45px] space-y-1">
-                      <p class="text-sm leading-none capitalize">{certification.name}</p>
-                      <p class="ui:text-muted-foreground text-sm">
-                        <span class="italic">
-                          {calDateDiff(certification.date)}
-                        </span>
-                      </p>
-                    </div>
-                  </div>
-
-                  <div class="w-2/4">
-                    <a class="hover:underline" href={`/courses/${certification.courseId}`}>
-                      <p class="line-clamp-2 pb-[0.1rem] text-sm leading-none">
+                    <div class="min-w-0 flex-1">
+                      <p class="truncate text-sm font-medium capitalize">{certification.name}</p>
+                      <a
+                        class="ui:text-muted-foreground ui:hover:text-primary line-clamp-1 text-xs"
+                        href={`/courses/${certification.courseId}`}
+                      >
                         {certification.course}
-                      </p>
-                    </a>
-                  </div>
-                </div>
-              {:else}
-                <Empty
-                  title={$t('dashboard.no_certifications_yet')}
-                  description={$t('dashboard.no_certifications_yet_description')}
-                  icon={AwardIcon}
-                  class="h-full"
-                >
-                  <Button variant="outline" onclick={() => goto(`${$currentOrgPath}/courses`)}>
-                    {$t('dashboard.view_courses')}
-                  </Button>
-                </Empty>
-              {/each}
+                      </a>
+                    </div>
+                    <span class="ui:text-muted-foreground shrink-0 text-[11px]">{calDateDiff(certification.date)}</span>
+                  </li>
+                {/each}
+              </ul>
+            {:else}
+              <Empty
+                title={$t('dashboard.no_certifications_yet')}
+                description={$t('dashboard.no_certifications_yet_description')}
+                icon={AwardIcon}
+              >
+                <Button variant="outline" size="sm" onclick={() => goto(`${$currentOrgPath}/courses`)}>
+                  {$t('dashboard.view_courses')}
+                </Button>
+              </Empty>
             {/if}
-          </div>
+          </SectionCard>
         </div>
       </div>
     {/snippet}
