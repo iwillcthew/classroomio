@@ -1,6 +1,4 @@
 <script lang="ts">
-  import PersonnelFilters from '$features/workforce/components/personnel-filters.svelte';
-  import { InputField } from '@cio/ui/custom/input-field';
   import { onDestroy, untrack } from 'svelte';
   import { t } from '$lib/utils/functions/translations';
   import { getIntlLocale } from '$lib/utils/functions/intl-locale';
@@ -155,19 +153,6 @@
   </Page.Header>
   <Page.Body>
     {#snippet child()}
-      <div class="grid items-end gap-4 md:grid-cols-2">
-        <InputField
-          label={$t('workforce.search')}
-          bind:value={learningApi.search.draft}
-          onInput={() => learningApi.search.input(learningApi.search.draft)}
-          placeholder={$t('workforce.search_hint')}
-        />
-        <PersonnelFilters
-          unitId={learningApi.personnelFilters.unitId}
-          jobTitleId={learningApi.personnelFilters.jobTitleId}
-          onFilterChange={(patch) => learningApi.filterPersonnel(patch)}
-        />
-      </div>
       {#if learningApi.failed}
         <div
           role="alert"

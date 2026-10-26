@@ -16,7 +16,6 @@ import {
 import { db } from '@db/drizzle';
 import { isExerciseCompletedSql } from '@db/queries/course/progression';
 import { deleteStudentCourseProgress } from '@db/queries/course/reset-progress';
-import { workforceMemberFilter, workforceMemberSearch } from '@db/queries/workforce/filters';
 
 export type CourseMemberWithProfile = TGroupmember & {
   profile: {
@@ -29,8 +28,6 @@ export type CourseMemberWithProfile = TGroupmember & {
 };
 
 export interface PaginatedCourseMembersOptions {
-  unitId?: string;
-  jobTitleId?: string;
   page: number;
   limit: number;
   search?: string;
@@ -229,7 +226,6 @@ export async function getPaginatedCourseMembers(
 
   try {
     const conditions: SQL[] = [eq(schema.course.id, courseId)];
-    conditions.push(workforceMemberFilter(schema.profile.id, options));
 
     if (roleId) {
       conditions.push(eq(schema.groupmember.roleId, roleId));
@@ -269,8 +265,7 @@ export async function getPaginatedCourseMembers(
       const searchCondition = or(
         ilike(schema.profile.fullname, searchPattern),
         ilike(schema.profile.email, searchPattern),
-        ilike(schema.groupmember.email, searchPattern),
-        workforceMemberSearch(schema.profile.id, search)
+        ilike(schema.groupmember.email, searchPattern)
       );
 
       if (searchCondition) {

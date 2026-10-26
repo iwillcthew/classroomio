@@ -1,7 +1,6 @@
 import { env } from '../config/env';
 
 export const EMAIL_IDS = [
-  'employeeActivation',
   'forgotPassword',
   'inviteTeacher',
   'newsfeedComment',

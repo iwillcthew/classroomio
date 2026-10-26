@@ -34,8 +34,6 @@ import {
 } from '@cio/utils/constants/live-session-reminder';
 import { sql } from 'drizzle-orm';
 
-export * from './workforce-schema';
-
 export const courseType = pgEnum('COURSE_TYPE', [...COURSE_TYPE_VALUES]);
 export const locale = pgEnum('LOCALE', [...EMAIL_LOCALES]);
 export const lessonVersionKind = pgEnum('LESSON_VERSION_KIND', [...LESSON_VERSION_KIND_VALUES]);

@@ -1,6 +1,5 @@
 <script lang="ts">
   import { AuthUI } from '$features/ui';
-  import { employeeLoginApi } from '$features/auth/api/employee-login.svelte';
   import { LOGIN_FIELDS } from '$lib/utils/constants/authentication';
   import { t } from '$lib/utils/functions/translations';
   import { authValidation } from '$lib/utils/functions/validator';
@@ -20,6 +19,7 @@
   import { authSsoStore, ensureSsoInfoLoaded } from '$features/auth/utils/auth-sso-store';
 
   const emailFromUrl = page.url.searchParams.get('email') ?? '';
+  const isEmailPrefilled = !!emailFromUrl;
 
   let fields = $state(Object.assign({}, LOGIN_FIELDS, emailFromUrl ? { email: emailFromUrl } : {}));
 
@@ -68,11 +68,6 @@
   }
 
   async function handleSubmit() {
-    if (!fields.email.includes('@')) {
-      await employeeLoginApi.login(fields.email, fields.password, redirectUrl || '/lms');
-      return;
-    }
-
     if (ssoState.required && ssoState.available) {
       handleSsoLogin();
       return;
@@ -155,22 +150,23 @@
 <AuthUI
   isLogin={true}
   {handleSubmit}
-  isLoading={loading || employeeLoginApi.loading}
+  isLoading={loading}
   {hideGoogleAuth}
   getPasswordAuthAlternative={ssoState.available ? getPasswordAuthAlternative : undefined}
 >
   <div class="flex flex-col gap-6">
     <Field.Field>
-      <Field.Label for="email">{$t('workforce.login_identifier')}</Field.Label>
+      <Field.Label for="email">{$t('login.email')}</Field.Label>
       <Field.Content>
         <Input
           id="email"
-          type="text"
+          type="email"
           bind:value={fields.email}
           data-testid="auth-login-email"
           oninput={handleEmailChange}
-          placeholder={$t('workforce.employee_code')}
-          disabled={loading || employeeLoginApi.loading}
+          placeholder="you@domain.com"
+          disabled={loading || isEmailPrefilled}
+          readonly={isEmailPrefilled}
           autofocus
           aria-invalid={errors.email ? 'true' : undefined}
           autocomplete="username"
@@ -210,17 +206,11 @@
         </Field.Content>
       </Field.Field>
 
-      {#if submitError || employeeLoginApi.error}
-        <p class="ui:text-destructive text-sm">{employeeLoginApi.error || submitError}</p>
+      {#if submitError}
+        <p class="ui:text-destructive text-sm">{submitError}</p>
       {/if}
 
-      <Button
-        type="submit"
-        disabled={loading || employeeLoginApi.loading}
-        loading={loading || employeeLoginApi.loading}
-        class="w-full"
-        testId="auth-login-submit"
-      >
+      <Button type="submit" disabled={loading} {loading} class="w-full" testId="auth-login-submit">
         {$t('login.login')}
       </Button>
     {:else if $globalStore.isOrgSite && $currentOrg.disableEmailPassword && !ssoState.available}

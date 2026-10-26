@@ -19,7 +19,6 @@
   import type { CourseComplianceLearner, LearnerComplianceRecord } from '$features/course/utils/types';
   import { snackbar } from '$features/ui/snackbar/store';
   import { SvelteSet } from 'svelte/reactivity';
-  import PersonnelScope from '$features/workforce/components/personnel-scope.svelte';
 
   type ComplianceStatus = CourseComplianceLearner['status'] | LearnerComplianceRecord['status'] | 'no_record';
   type StaffAction = 'reset' | 'extend' | 'waive' | null;
@@ -45,12 +44,7 @@
   const learnerHistory = $derived(complianceApi.learnerHistory);
   const historyRecords = $derived(learnerHistory?.history ?? []);
   const currentRecord = $derived(learnerHistory?.currentRecord ?? null);
-  let matchingProfileIds = $state<string[] | null>(null);
-  const learnerRows = $derived(
-    (overview?.learners ?? []).filter(
-      (learner) => matchingProfileIds === null || (learner.profileId && matchingProfileIds.includes(learner.profileId))
-    )
-  );
+  const learnerRows = $derived(overview?.learners ?? []);
   const selectedProfileIds = $derived(Array.from(selectedLearnerIds));
   const allVisibleSelected = $derived(
     learnerRows.length > 0 &&
@@ -486,13 +480,6 @@
     </Tabs.Content>
 
     <Tabs.Content value="learners" class="mt-4 space-y-4">
-      <PersonnelScope
-        courseId={courseApi.course?.id}
-        onScopeChange={(profileIds) => {
-          matchingProfileIds = profileIds;
-          selectedLearnerIds.clear();
-        }}
-      />
       <div class="ui:bg-muted/40 flex flex-wrap items-center justify-between gap-3 rounded-lg p-4">
         <div class="flex flex-wrap items-center gap-3">
           <div class="flex items-center gap-2">
@@ -626,7 +613,7 @@
             bind:value={actionFields.waiverReason}
             helperMessage={$t('course.navItem.compliance.bulk_actions.waiver_reason_helper')}
             errorMessage={complianceApi.errors.waiverReason}
-            autofocus
+            autoFocus
           />
 
           <InputField

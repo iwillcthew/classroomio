@@ -429,8 +429,6 @@ export type CourseMembers = ListPeopleSuccess['data'];
 export type CourseMember = CourseMembers[number];
 export type CourseMembersPagination = ListPeopleSuccess['pagination'];
 export type ListPeopleQuery = {
-  unitId?: string;
-  jobTitleId?: string;
   page: number;
   limit: number;
   search?: string;

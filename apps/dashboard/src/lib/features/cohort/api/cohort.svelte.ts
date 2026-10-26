@@ -194,8 +194,6 @@ class CohortApi extends BaseApiWithErrors {
             page: String(query.page),
             limit: String(query.limit),
             search: query.search,
-            unitId: query.unitId,
-            jobTitleId: query.jobTitleId,
             roleId: query.roleId === undefined ? undefined : String(query.roleId),
             sortBy: query.sortBy,
             sortOrder: query.sortOrder,

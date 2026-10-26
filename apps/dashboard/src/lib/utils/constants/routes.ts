@@ -22,7 +22,6 @@ export const ROUTE = {
 };
 
 export const PUBLIC_ROUTES = [
-  '^/activate$',
   `^${ROUTE.HOME}$`,
   ROUTE.LOGIN,
   ROUTE.LOGOUT,

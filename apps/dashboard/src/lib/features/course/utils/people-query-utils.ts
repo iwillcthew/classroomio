@@ -32,8 +32,6 @@ export const DEFAULT_PEOPLE_QUERY: ListPeopleQuery = {
 
 /** Params this page owns; anything else on the URL belongs to a different feature. */
 const OWNED_PARAMS = [
-  'unitId',
-  'jobTitleId',
   'page',
   'limit',
   'search',
@@ -58,8 +56,6 @@ export function getPeopleQueryFromSearchParams(searchParams: URLSearchParams): L
 
   return {
     page: Number.isFinite(page) && page > 0 ? Math.floor(page) : DEFAULT_PEOPLE_QUERY.page,
-    unitId: searchParams.get('unitId') || undefined,
-    jobTitleId: searchParams.get('jobTitleId') || undefined,
     limit:
       Number.isFinite(limit) && limit > 0 ? Math.min(Math.max(Math.floor(limit), 1), 100) : DEFAULT_PEOPLE_QUERY.limit,
     search: searchParams.get('search')?.trim() || undefined,
@@ -92,8 +88,6 @@ export function getPeopleSearchParams(
   if (query.sortBy !== DEFAULT_PEOPLE_QUERY.sortBy) searchParams.set('sortBy', query.sortBy);
   if (query.sortOrder !== DEFAULT_PEOPLE_QUERY.sortOrder) searchParams.set('sortOrder', query.sortOrder);
   if (query.search) searchParams.set('search', query.search);
-  if (query.unitId) searchParams.set('unitId', query.unitId);
-  if (query.jobTitleId) searchParams.set('jobTitleId', query.jobTitleId);
   if (query.roleId !== undefined) searchParams.set('roleId', String(query.roleId));
   if (query.progress) searchParams.set('progress', query.progress);
   if (query.membership) searchParams.set('membership', query.membership);
@@ -116,8 +110,6 @@ const VIEW_FILTERS: Record<CoursePeopleView, Partial<ListPeopleQuery>> = {
 export const COURSE_PEOPLE_VIEWS = Object.keys(VIEW_FILTERS) as CoursePeopleView[];
 
 const VIEW_MATCHED_KEYS = [
-  'unitId',
-  'jobTitleId',
   'progress',
   'membership',
   'enrolledWithin',

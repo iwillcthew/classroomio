@@ -22,14 +22,6 @@
   import { ComingSoon, UpgradeBanner } from '$features/ui';
   import * as Dialog from '@cio/ui/base/dialog';
   import * as Field from '@cio/ui/base/field';
-  import PersonnelScope from '$features/workforce/components/personnel-scope.svelte';
-
-  let matchingProfileIds = $state<string[] | null>(null);
-  const visibleTeamMembers = $derived(
-    orgApi.teamMembers.filter(
-      (member) => matchingProfileIds === null || (member.profileId && matchingProfileIds.includes(member.profileId))
-    )
-  );
 
   let emailsStr = $state('');
   let errorMessage = $state('');
@@ -324,12 +316,11 @@
 
     <Field.Set>
       <Field.Legend>{$t('course.navItem.people.teams.members')}</Field.Legend>
-      <PersonnelScope onScopeChange={(profileIds) => (matchingProfileIds = profileIds)} />
       <Field.Group>
         {#if orgApi.isLoading && orgApi.teamMembers.length === 0}
           <CompactLoader label={$t('common.loading')} />
-        {:else if visibleTeamMembers.length > 0}
-          {#each visibleTeamMembers as teamMember}
+        {:else if orgApi.teamMembers.length > 0}
+          {#each orgApi.teamMembers as teamMember}
             <Field.Field>
               <div class="flex items-center justify-between">
                 <div class="flex items-center">

@@ -7,7 +7,6 @@
 
 // Import all email definitions (side effect: registers them)
 export * from './forgot-password';
-export * from './employee-activation';
 export * from './welcome';
 export * from './verify-email';
 export * from './on-password-reset';
@@ -39,7 +38,6 @@ import type { newsfeedCommentEmail, newsfeedPostEmail } from './newsfeed';
 
 // Import types for schema mapping (must be after exports to avoid circular dependency)
 import type { forgotPasswordEmail } from './forgot-password';
-import type { employeeActivationEmail } from './employee-activation';
 import type { inviteTeacherEmail } from './invite-teacher';
 import type { onPasswordResetEmail } from './on-password-reset';
 import type { studentCourseInviteEmail } from './student-course-invite';
@@ -73,7 +71,6 @@ import type { welcomeEmail } from './welcome';
  * **Important**: When adding a new email, add its schema mapping here!
  */
 export type EmailSchemas = {
-  employeeActivation: typeof employeeActivationEmail.template.schema;
   forgotPassword: typeof forgotPasswordEmail.template.schema;
   welcome: typeof welcomeEmail.template.schema;
   verifyEmail: typeof verifyEmailEmail.template.schema;

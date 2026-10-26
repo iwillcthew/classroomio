@@ -1,5 +1,4 @@
 <script lang="ts">
-  import PersonnelFilters from '$features/workforce/components/personnel-filters.svelte';
   import { Button } from '@cio/ui/base/button';
   import { SortPopover } from '$features/ui';
   import { t } from '$lib/utils/functions/translations';
@@ -109,8 +108,6 @@
     return Object.fromEntries(Object.keys(patch).map((key) => [key, undefined])) as Partial<ListPeopleQuery>;
   }
 </script>
-
-<PersonnelFilters unitId={query.unitId} jobTitleId={query.jobTitleId} {onFilterChange} />
 
 <SortPopover
   {sortOptions}

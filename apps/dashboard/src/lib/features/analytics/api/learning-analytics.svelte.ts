@@ -1,24 +1,11 @@
 import { BaseApi, classroomio } from '$lib/utils/services/api';
-import type {
-  AnalyticsRange,
-  LearningAnalyticsRequest,
-  LearningReport,
-  LearningPersonnelFilters
-} from '../utils/types';
-import { DebouncedSearch } from '$lib/utils/functions/debounced-search.svelte';
+import type { AnalyticsRange, LearningAnalyticsRequest, LearningReport } from '../utils/types';
 
 export class LearningAnalyticsApi extends BaseApi {
   report = $state<LearningReport | null>(null);
   range = $state<AnalyticsRange>(30);
   loading = $state(true);
   failed = $state(false);
-  personnelFilters = $state<LearningPersonnelFilters>({});
-  search = new DebouncedSearch({
-    onApply: (search) => {
-      this.personnelFilters.search = search || undefined;
-      void this.load();
-    }
-  });
   #controller: AbortController | null = null;
   #organizationId = '';
 
@@ -37,7 +24,7 @@ export class LearningAnalyticsApi extends BaseApi {
     this.range = days;
     this.loading = true;
     this.failed = false;
-    const query = { days: String(days), ...this.personnelFilters };
+    const query = { days: String(days) };
     const options = { init: { signal: controller.signal } };
     const result = await this.execute<LearningAnalyticsRequest>({
       requestFn: () => classroomio.dash['learning-analytics'].$get({ query }, options),
@@ -56,11 +43,5 @@ export class LearningAnalyticsApi extends BaseApi {
 
   cancel() {
     this.#controller?.abort();
-    this.search.destroy();
-  }
-
-  async filterPersonnel(patch: LearningPersonnelFilters) {
-    Object.assign(this.personnelFilters, patch);
-    await this.load();
   }
 }

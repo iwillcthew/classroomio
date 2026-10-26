@@ -25,11 +25,8 @@ import { syncUserWithProfile } from './auth/hooks/sync-user';
 import { tokenExchange } from './auth/plugins/token-exchange';
 import { trackLoginHook } from './auth/hooks/track-login';
 import { syncProfileEmailVerificationFromAuthUser } from './queries/auth/profile';
-import { workforceProfileAccess } from './queries/workforce';
-import { APIError } from 'better-auth/api';
 
 export { mintLoginLinkToken } from './auth/login-link';
-export { hashAuthPassword } from './auth/password';
 
 /**
  * Cloud (multi-tenant) only. Routes OAuth/SSO callbacks to the canonical
@@ -100,7 +97,7 @@ export const auth: ReturnType<typeof betterAuth> = betterAuth({
     expiresIn: 60 * 60 * 24 * 30, // 30 days
     updateAge: 60 * 60 * 24, // 1 day (every 1 day the session expiration is updated)
     cookieCache: {
-      enabled: false,
+      enabled: true,
       maxAge: 60 * 60 // 1 hour
     }
   },
@@ -122,12 +119,6 @@ export const auth: ReturnType<typeof betterAuth> = betterAuth({
     },
     session: {
       create: {
-        before: async (session) => {
-          const allowed = await workforceProfileAccess(session.userId);
-          if (!allowed) throw new APIError('FORBIDDEN', { message: 'workforce.errors.inactive' });
-
-          return { data: session };
-        },
         after: async (session) => {
           await trackLoginHook(session);
           await syncProfileEmailVerificationFromAuthUser(session.userId);

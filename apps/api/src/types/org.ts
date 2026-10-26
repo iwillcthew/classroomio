@@ -45,8 +45,6 @@ export type OrgWidgetPagination = {
 };
 
 export type OrgAudienceQuery = {
-  unitId?: string;
-  jobTitleId?: string;
   page: number;
   limit: number;
   search?: string;

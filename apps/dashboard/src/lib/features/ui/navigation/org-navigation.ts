@@ -96,13 +96,6 @@ function resolveNavTestId(path: string, testId?: string): string {
 // Base navigation configuration structure
 export const baseNavConfig: NavItemConfig[] = [
   {
-    group: 'people',
-    titleKey: 'workforce.title',
-    path: '/workforce',
-    icon: ContactRoundIcon,
-    matchPattern: '^/org/[^/]+/workforce(/.*)?$'
-  },
-  {
     group: null,
     titleKey: 'org_navigation.dashboard',
     path: '/dash',

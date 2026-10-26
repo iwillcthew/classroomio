@@ -24,8 +24,6 @@ type ListCohortPeopleSuccess = Extract<ListCohortPeopleResponse, { success: true
 export type CohortPerson = ListCohortPeopleSuccess['data'][number];
 export type CohortPeoplePagination = ListCohortPeopleSuccess['pagination'];
 export type ListCohortPeopleQuery = {
-  unitId?: string;
-  jobTitleId?: string;
   page: number;
   limit: number;
   search?: string;

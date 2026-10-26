@@ -14,8 +14,8 @@ export const learningAnalyticsRouter = new Hono().get(
   async (context) => {
     try {
       const orgId = context.req.header('cio-org-id')!;
-      const { days, ...filters } = context.req.valid('query');
-      const report = await getLearningAnalytics(orgId, days, filters);
+      const { days } = context.req.valid('query');
+      const report = await getLearningAnalytics(orgId, days);
       context.header('Cache-Control', 'private, no-store');
       return context.json({ success: true, data: report });
     } catch (error) {

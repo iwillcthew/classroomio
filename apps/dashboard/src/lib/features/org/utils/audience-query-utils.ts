@@ -59,9 +59,7 @@ export function getAudienceQueryFromSearchParams(
     // Only an explicit "false" turns the guard off.
     excludeRecentJoiners:
       excludeRecentJoiners === null ? defaults.excludeRecentJoiners : excludeRecentJoiners !== 'false',
-    search,
-    unitId: searchParams.get('unitId') || undefined,
-    jobTitleId: searchParams.get('jobTitleId') || undefined
+    search
   };
 }
 
@@ -71,8 +69,6 @@ export function getAudienceSearchParams(
   defaults: OrganizationAudienceQuery = DEFAULT_ORG_AUDIENCE_QUERY
 ): URLSearchParams {
   const searchParams = new URLSearchParams();
-  if (query.unitId) searchParams.set('unitId', query.unitId);
-  if (query.jobTitleId) searchParams.set('jobTitleId', query.jobTitleId);
 
   if (query.page !== defaults.page) searchParams.set('page', String(query.page));
   if (query.limit !== defaults.limit) searchParams.set('limit', String(query.limit));
@@ -104,8 +100,6 @@ export function toAudienceRequestQuery(
     page: query.page != null ? String(query.page) : undefined,
     limit: query.limit != null ? String(query.limit) : undefined,
     search: query.search,
-    unitId: query.unitId,
-    jobTitleId: query.jobTitleId,
     sortBy: query.sortBy,
     sortOrder: query.sortOrder,
     status: query.status,
@@ -125,8 +119,6 @@ export function toAudienceRequestQuery(
  */
 export function toAudienceBulkFilterQuery(query: OrganizationAudienceQuery) {
   return {
-    unitId: query.unitId,
-    jobTitleId: query.jobTitleId,
     status: query.status,
     inviteStatus: query.inviteStatus,
     enrollment: query.enrollment,
@@ -134,7 +126,7 @@ export function toAudienceBulkFilterQuery(query: OrganizationAudienceQuery) {
     certificate: query.certificate,
     lastLoginBefore: query.lastLoginBefore,
     lastActiveBefore: query.lastActiveBefore,
-    excludeRecentJoiners: query.excludeRecentJoiners ? ('true' as const) : ('false' as const),
+    excludeRecentJoiners: String(query.excludeRecentJoiners),
     search: query.search
   };
 }
@@ -199,8 +191,6 @@ export function countActiveAudienceFilters(query: OrganizationAudienceQuery): nu
 
   if (query.status !== DEFAULT_ORG_AUDIENCE_QUERY.status) active += 1;
   if (query.inviteStatus) active += 1;
-  if (query.unitId) active += 1;
-  if (query.jobTitleId) active += 1;
   if (query.enrollment) active += 1;
   if (query.completion) active += 1;
   if (query.certificate) active += 1;

@@ -1,5 +1,4 @@
 import { classroomio, type InferResponseType } from '$lib/utils/services/api';
-export type LearningPersonnelFilters = { unitId?: string; jobTitleId?: string; search?: string };
 
 export type LandingStatsRequest = (typeof classroomio.dash)['landing-stats']['$get'];
 export type CountryBreakdownRequest = (typeof classroomio.dash)['country-breakdown']['$get'];
