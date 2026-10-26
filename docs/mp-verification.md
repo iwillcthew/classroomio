@@ -31,3 +31,31 @@ Node kiểm tra là 24.14.0; repository yêu cầu 24.22.1 nên trình quản l�
 - Chưa chạy đầy đủ luồng nhân viên học, nộp bài, cấp chứng chỉ và xử lý video qua background worker.
 - Chưa có domain, HTTPS, SMTP và storage endpoint production; chưa kiểm tra backup/restore trên hạ tầng doanh nghiệp.
 - Bộ bản dịch mới có đủ 12 locale. Lệnh dịch tự động gặp giới hạn 429 với một số khóa cũ còn thiếu của upstream; các khóa MP mới đã được bổ sung và kiểm tra placeholder.
+
+## Kiểm tra giao diện doanh nghiệp — 25/10/2026
+
+- Build dependency dashboard (bao gồm DB, utils, core và API): đạt.
+- Build dashboard production với `NODE_OPTIONS=--max-old-space-size=8192`: đạt; heap mặc định không đủ cho bundle hiện tại.
+- 54 kiểm thử liên quan: 28 dashboard (ưu tiên khóa học, tìm kiếm tiếng Việt, trạng thái tuân thủ và route nội bộ), 19 API (đăng ký nội bộ, chặn endpoint công khai), 7 kiểm tra hợp đồng tìm kiếm thư viện: đạt.
+- Story ScrollToTop biên dịch thành công, không có cảnh báo của Svelte compiler.
+- Changed-file formatter, kiểm tra định dạng toàn bộ file thay đổi, `git diff --check` và kiểm tra prefix UI: đạt. `pnpm format:check` cũng được chạy; không có file staged.
+- Các khóa dịch mới có đủ 12 locale; placeholder được đối chiếu với tiếng Anh. `pnpm translate vi` hoàn tất và không còn khóa mới bị thiếu.
+- API thật: đăng nhập tài khoản thử thành công; catalog yêu cầu đăng nhập (401 khi thiếu phiên), từ chối trang phân số và kích thước vượt giới hạn (400), truy vấn tìm kiếm/sắp xếp trả thành công (200).
+- Giữ nguyên database/migration, giấy phép, dữ liệu khóa học và cấu hình triển khai hiện hữu.
+
+Môi trường xác minh dùng Node 24.14.0 đang cài trên máy; repo yêu cầu 24.22.1 nên vẫn có cảnh báo engine. Chưa xác minh lại bằng đúng bản vá 24.22.1. Các cảnh báo a11y và state của component upstream còn xuất hiện khi build; không có tuyên bố đã kiểm thử toàn bộ mọi màn hình hoặc đạt chứng nhận WCAG.
+
+Ảnh và log QA cục bộ nằm trong `reports/mp-redesign/` (được Git bỏ qua). Không đưa tài khoản thử, cookie hay file `.env` vào commit.
+
+Vòng Playwright cuối chạy trên bản production tại `http://localhost:3082` đã đạt:
+
+- Đăng nhập nhân viên qua form thật; mở tổng quan và dữ liệu khóa học.
+- Desktop 1440 px, mobile 390 px không tràn ngang, giao diện tối, reduced motion và ngưỡng hiện/ẩn nút về đầu trang.
+- URL mở tab đào tạo bắt buộc, tìm kiếm không dấu và trạng thái không có kết quả.
+- Tìm kiếm debounce và sắp xếp thư viện gọi API qua production proxy thành công.
+- Học tiếp điều hướng tới bài học chưa hoàn thành và tải được nội dung.
+- Tổng quan quản trị, danh sách khóa học và liên kết chia sẻ nội bộ ở cài đặt.
+- Landing page khóa học cũ trả 404.
+- Không ghi nhận `pageerror` ở các luồng trên; không phát sinh request `/ingest` của PostHog.
+
+Kết quả máy đọc được: `reports/mp-redesign/verification.json`; ảnh desktop/mobile và log đầy đủ cùng thư mục. Chưa kiểm thử toàn bộ nghiệp vụ nộp bài/chấm điểm/cấp chứng chỉ hoặc hạ tầng email và worker production trong đợt này.

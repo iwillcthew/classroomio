@@ -37,6 +37,7 @@
     isExplore?: boolean;
     isLMS?: boolean;
     searchValue?: string;
+    onSearchChange?: (value: string) => void;
     sortKey?: CourseSortBy;
     isLoading?: boolean;
     showSortSelect?: boolean;
@@ -56,6 +57,7 @@
     isExplore = false,
     isLMS = false,
     searchValue = $bindable(''),
+    onSearchChange,
     sortKey = $bindable(DEFAULT_COURSE_SORT),
     isLoading = false,
     showSortSelect = true,
@@ -126,7 +128,7 @@
     <h2 class="text-sm font-medium">{sectionTitle}</h2>
   {/if}
   <Page.BodyHeader align="right" class="p-0!">
-    <Search placeholder={$t('courses.search_placeholder')} bind:value={searchValue} />
+    <Search placeholder={$t('courses.search_placeholder')} bind:value={searchValue} onValueChange={onSearchChange} />
     {#if showSortSelect}
       <SortSelect options={filterOptions} bind:value={sortKey} />
     {/if}

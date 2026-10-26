@@ -108,6 +108,7 @@ export {
 export type { SlideEmbed, SlideEmbedCardLabels, SlideEmbedPickerLabels, SlidePlatformId } from './custom/slide-embed';
 export { AttentionHighlight, type AttentionHighlightProps } from './custom/attention-highlight';
 export { CircularProgress } from './custom/circular-progress';
+export { ScrollToTop } from './custom/scroll-to-top';
 export {
   PageOutline,
   injectHeadingIds,

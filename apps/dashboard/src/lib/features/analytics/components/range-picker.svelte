@@ -16,9 +16,14 @@
   ];
 </script>
 
-<div class="inline-flex gap-1 rounded-md border p-1">
+<div class="inline-flex gap-1 rounded-md border p-1" role="group" aria-label={$t('learning_analytics.period')}>
   {#each options as opt (opt.days)}
-    <Button variant={value === opt.days ? 'default' : 'ghost'} size="xs" onclick={() => onChange(opt.days)}>
+    <Button
+      variant={value === opt.days ? 'default' : 'ghost'}
+      size="xs"
+      aria-pressed={value === opt.days}
+      onclick={() => onChange(opt.days)}
+    >
       {$t(opt.labelKey)}
     </Button>
   {/each}

@@ -7,7 +7,6 @@
   import { Switch } from '@cio/ui/base/switch';
   import * as RadioGroup from '@cio/ui/base/radio-group';
   import * as Select from '@cio/ui/base/select';
-  import RotateCcwIcon from '@lucide/svelte/icons/rotate-ccw';
   import ArrowUpRightIcon from '@lucide/svelte/icons/arrow-up-right';
   import XIcon from '@lucide/svelte/icons/x';
 
@@ -42,7 +41,6 @@
   import { Button } from '@cio/ui/base/button';
 
   import { settings } from '$features/course/utils/settings-store';
-  import { getNavItemRoute } from '$features/course/utils/functions';
   import Copy from '@lucide/svelte/icons/copy';
   import * as Alert from '@cio/ui/base/alert';
   import LockOpenIcon from '@lucide/svelte/icons/lock-open';
@@ -60,7 +58,7 @@
   import { uploadImage } from '$lib/utils/services/upload';
   import { copyToClipboard } from '$lib/utils/functions/formatYoutubeVideo';
   import { handleOpenWidget } from '$features/ui/course-landing-page/store';
-  import { currentOrgDomain, currentOrgPath, isFreePlan } from '$lib/utils/store/org';
+  import { currentOrgPath, isFreePlan } from '$lib/utils/store/org';
   import { page } from '$app/stores';
   import { NAVIGATION_SOURCE, NAVIGATION_SOURCE_PARAM, ROUTE_NAME, ROUTE_SECTIONS } from '$lib/routing/routes';
   import { buildRoutePath } from '$lib/routing/route-path';
@@ -72,7 +70,6 @@
   let { hasUnsavedChanges = $bindable(false) }: Props = $props();
 
   let isLoading = $state(false);
-  let isGeneratingLink = $state(false);
   let isDeleting = $state(false);
   let openCertificateDeadlineDialog = $state(false);
   let completionDeadlineTrigger = $state(0);
@@ -235,11 +232,6 @@
       return;
     }
 
-    if (Number(courseApi.course?.cost) > 0 && !(courseApi.course?.metadata?.paymentLink ?? '').trim()) {
-      snackbar.error('course.navItem.landing_page.editor.pricing_form.payment_required');
-      return;
-    }
-
     try {
       let bannerImageUrl = $settings.bannerImage;
 
@@ -336,26 +328,6 @@
       snackbar.error();
     }
   }
-
-  const generateNewCourseLink = async () => {
-    if (!courseApi.course || isGeneratingLink) return;
-
-    isGeneratingLink = true;
-    try {
-      const newSlug = generateSlug(courseApi.course.title, { appendTimestamp: true });
-      const response = await courseApi.update(courseApi.course.id, { slug: newSlug }, { showSuccessToast: false });
-
-      if (courseApi.success && response) {
-        courseApi.course.slug = response.slug ?? newSlug;
-        snackbar.success('snackbar.course_settings.success.link_generated');
-      }
-    } catch (error) {
-      console.error(error);
-      snackbar.error();
-    } finally {
-      isGeneratingLink = false;
-    }
-  };
 
   async function setDefault(course: Course) {
     if (!course || !Object.keys(course).length) return;
@@ -528,9 +500,8 @@
 
   const hasAnyTagsCreated = $derived(tagApi.tagGroups.some((group) => group.tags.length > 0));
 
-  let courseLink = $derived(courseApi.course?.slug ? `${$currentOrgDomain}/course/${courseApi.course.slug}` : '#');
-  const landingPageHref = $derived(
-    courseApi.course?.id ? resolve(getNavItemRoute(courseApi.course.id, 'landingpage'), {}) : '#'
+  const courseLink = $derived(
+    courseApi.course?.id ? new URL(`/courses/${courseApi.course.id}/lessons`, $page.url.origin).toString() : '#'
   );
 
   const PEOPLE_LINK_MARKER = '@@people@@';
@@ -654,48 +625,22 @@
       </div>
 
       <Field.Field id="share" class="scroll-mt-24">
-        <Field.Label class="justify-between">
-          <a href="#share" class="hover:underline">{$t('course.navItem.settings.link')}</a>
-          {#if courseApi.course?.slug}
-            <div class="flex items-center gap-1">
-              <IconButton
-                onclick={generateNewCourseLink}
-                loading={isGeneratingLink}
-                tooltip={$t('course.navItem.settings.generate_link')}
-              >
-                <RotateCcwIcon size={16} />
-              </IconButton>
-              <IconButton
-                href={courseLink}
-                target="_blank"
-                disabled={isGeneratingLink || !courseApi.course?.slug}
-                tooltip={$t('course.navItem.settings.open_link')}
-              >
-                <ArrowUpRightIcon size={16} />
-              </IconButton>
-            </div>
-          {/if}
-        </Field.Label>
-
-        {#if courseApi.course?.slug}
-          <div class="flex items-center justify-between rounded-md border p-1">
-            <p class="min-w-0 truncate text-sm">{courseLink}</p>
+        <Field.Label><a href="#share" class="hover:underline">{$t('course.navItem.settings.link')}</a></Field.Label>
+        <div class="flex items-center justify-between gap-2 rounded-lg border p-2">
+          <p class="min-w-0 truncate text-sm">{courseLink}</p>
+          <div class="flex shrink-0 gap-1">
             <IconButton
-              onclick={() => {
-                copyToClipboard(courseLink);
-              }}
-              disabled={isGeneratingLink}
-              tooltip={$t('course.navItem.settings.copy_link')}
+              href={courseLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              tooltip={$t('course.navItem.settings.open_link')}><ArrowUpRightIcon size={16} /></IconButton
             >
-              <Copy size={16} />
-            </IconButton>
+            <IconButton onclick={() => copyToClipboard(courseLink)} tooltip={$t('course.navItem.settings.copy_link')}
+              ><Copy size={16} /></IconButton
+            >
           </div>
-        {:else}
-          <Field.Description>{$t('course.navItem.settings.setup_landing_for_link')}</Field.Description>
-          <Button variant="secondary" href={landingPageHref} class="w-fit">
-            {$t('course.navItem.settings.setup_landing_page')}
-          </Button>
-        {/if}
+        </div>
+        <Field.Description>{$t('mp_learning.internal')}</Field.Description>
       </Field.Field>
 
       <Field.Field id="tags" class="scroll-mt-24">
@@ -797,9 +742,6 @@
                 </Select.Item>
                 <Select.Item value="COMPLIANCE" label={$t('course.navItem.settings.compliance')}>
                   {$t('course.navItem.settings.compliance')}
-                </Select.Item>
-                <Select.Item value="PUBLIC" label={$t('course.navItem.settings.public')}>
-                  {$t('course.navItem.settings.public')}
                 </Select.Item>
               </Select.Group>
             </Select.Content>

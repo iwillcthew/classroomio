@@ -1232,6 +1232,8 @@ interface GetExploreCoursesOptions {
   profileId: string;
   limit?: number;
   page?: number;
+  search?: string;
+  sort?: 'date_created' | 'last_updated_at' | 'published' | 'lessons';
 }
 
 export interface GetExploreCoursesResult {
@@ -1252,7 +1254,9 @@ export const getExploreCourses = async ({
   orgId,
   profileId,
   limit,
-  page = 1
+  page = 1,
+  search,
+  sort = 'date_created'
 }: GetExploreCoursesOptions): Promise<GetExploreCoursesResult> => {
   try {
     const whereCondition = and(
@@ -1261,6 +1265,7 @@ export const getExploreCourses = async ({
       eq(schema.course.isPublished, true),
       eq(schema.course.isTemplate, false),
       isNull(schema.groupmember.id),
+      search ? ilike(schema.course.title, `%${search.replace(/[\\%_]/g, '\\$&')}%`) : undefined,
       // Mirrors isSelfEnrollmentAllowed in @cio/utils: current key, then the
       // legacy allowNewStudent, then open. `->>` yields NULL for a JSON null,
       // so COALESCE falls through exactly as `??` does.
@@ -1278,6 +1283,13 @@ export const getExploreCourses = async ({
       )`.as('exercise_count')
     };
 
+    const sortColumn =
+      sort === 'lessons'
+        ? sql`COUNT(DISTINCT ${schema.lesson.id})`
+        : sort === 'last_updated_at'
+          ? sql`COALESCE(${schema.course.updatedAt}, ${schema.course.createdAt})`
+          : schema.course.createdAt;
+
     const baseSelect = db
       .select(courseSelect)
       .from(schema.course)
@@ -1289,7 +1301,7 @@ export const getExploreCourses = async ({
       )
       .where(whereCondition)
       .groupBy(schema.course.id, schema.group.id)
-      .orderBy(desc(schema.course.createdAt));
+      .orderBy(desc(sortColumn), asc(schema.course.id));
 
     const countSelect = db
       .select({ total: count(schema.course.id) })

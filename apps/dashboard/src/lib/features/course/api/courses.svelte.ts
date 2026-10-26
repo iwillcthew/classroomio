@@ -12,6 +12,7 @@ import type {
 } from '$features/course/types';
 
 import { SvelteSet } from 'svelte/reactivity';
+import type { LibraryQuery } from '$features/lms/utils/types';
 
 /**
  * API class for course operations
@@ -142,18 +143,19 @@ export class CoursesApi extends BaseApiWithErrors {
    * Fetches recommended courses (published courses user isn't enrolled in) for the current organization
    * Org ID is automatically added from currentOrg store
    */
-  async getRecommendedCourses(options?: { limit?: number; page?: number }) {
+  async getRecommendedCourses(options?: LibraryQuery, signal?: AbortSignal) {
     const query: Record<string, string> = {};
     if (options?.limit) query.limit = String(options.limit);
     if (options?.page) query.page = String(options.page);
+    if (options?.search) query.search = options.search;
+    if (options?.sort) query.sort = options.sort;
 
-    await this.execute<GetRecommendedCoursesRequest>({
-      requestFn: () =>
-        classroomio.organization.courses.recommended.$get({
-          query
-        }),
+    return this.execute<GetRecommendedCoursesRequest>({
+      requestFn: () => classroomio.organization.courses.recommended.$get({ query }, { init: { signal } }),
       logContext: 'fetching recommended courses',
       onSuccess: (response) => {
+        if (signal?.aborted) return;
+
         if (response.data) {
           this.recommendedCourses = response.data;
         }

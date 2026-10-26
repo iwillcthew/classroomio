@@ -47,7 +47,7 @@
         {#snippet child({ props })}
           <Button
             {...props}
-            variant="ghost"
+            variant="secondary"
             size="icon"
             class="relative"
             aria-label={$t('settings.tabs.notifications_tab')}

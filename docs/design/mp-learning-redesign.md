@@ -178,3 +178,40 @@ Header quản trị có nút "Không gian học tập" (sang `/lms`) thay cho "C
 | 4. Màn hình chính | Tổng quan học viên, thẻ khóa học + ảnh bìa facet, Khóa học của tôi, Thư viện, Tổng quan quản trị, danh sách khóa học, header khóa học | `features/lms/**`, `features/course/**`, `routes/(app)/**` |
 | 5. Gỡ dấu vết SaaS | Ẩn gói cước/nâng cấp/landing/tên miền/tín dụng AI khỏi điều hướng và màn hình; sửa thuật ngữ trong `vi.json` | nhiều file |
 | 6. Dọn tiếp | Thay màu cứng còn lại theo token trạng thái, thống nhất độ rộng trang khóa học/lớp | theo từng feature |
+
+## 6. Khảo sát và triển khai bổ sung — 25/10/2026
+
+### Bản đồ kiến trúc được đối chiếu
+
+| Khu vực | Vai trò trong MP Learning | Quyết định |
+| --- | --- | --- |
+| `apps/dashboard/src/routes`, `features/app`, `features/ui` | Khởi tạo phiên, tổ chức, phân quyền và điều hướng | Dùng chung khung sản phẩm; chuyển không gian học tập/quản trị bằng hành động rõ ràng trên sidebar. |
+| `features/lms`, `features/course` | Khóa được giao, thư viện, bài học, bài tập, chứng chỉ | Trang chủ ưu tiên hành động tiếp theo và hạn đào tạo, không dùng số ngày đăng nhập làm chỉ số chính. |
+| `features/audience`, `features/cohort`, `features/compliance` | Nhân viên, lớp/chương trình, đào tạo bắt buộc | Giữ các luồng giao khóa, nhập danh sách, báo cáo và đánh giá sẵn có; không dựng dữ liệu phòng ban hay KPI giả. |
+| `apps/api/src/routes/organization`, `services/organization.ts` | API khóa học nội bộ | Tìm kiếm, sắp xếp và phân trang thư viện phải thực hiện trước khi trả dữ liệu về trình duyệt. |
+| `packages/db/src/queries/course` | Truy vấn dữ liệu và quyền khám phá khóa học | Dùng cùng điều kiện lọc cho dữ liệu và tổng số; giữ yêu cầu thành viên tổ chức, trạng thái xuất bản và quyền tự ghi danh. |
+| `packages/utils/src/validation` | Hợp đồng request | Giới hạn tìm kiếm, xác thực số trang/kích thước nguyên và danh sách sort hợp lệ. |
+| `packages/ui`, `packages/storybook` | Hệ thống giao diện dùng chung | Giữ token MP, bổ sung ScrollToTop dùng chung có story; không tạo nút nổi riêng từng trang. |
+| `packages/core`, `apps/jobs`, `packages/email` | Nội dung, công việc nền và thư giao dịch | Tiếp tục dùng dịch vụ hiện hữu; không thay đổi dữ liệu lịch sử, cấu trúc hàng đợi hoặc cơ chế email trong đợt UI này. |
+| `hooks.server.ts`, `internal-routes`, API middleware, auth guard | Chặn public/marketing và kiểm soát nhân viên | Tiếp nối rào chắn hiện có; ngừng thêm landing page khóa học và đường dẫn claim thuê bao vào luồng sản phẩm. |
+
+### Các thay đổi bổ sung
+
+- Trang tổng quan học viên mới: bốn chỉ số có liên kết, việc học tiếp theo, tiến độ nội dung, cảnh báo khóa bắt buộc quá hạn, lịch trực tuyến, khóa khác đang học và gợi ý nội bộ. Dùng skeleton trước payload và thông báo lỗi có thử lại.
+- Ưu tiên khóa theo hạn hợp lệ, rồi theo tiến độ. Sửa trường hợp so sánh hạn vô hạn làm khóa không có hạn đứng trên khóa bắt buộc có hạn.
+- Khóa học cá nhân có ba tab Đang học / Đào tạo bắt buộc / Đã hoàn thành. Tab có URL, giữ khi điều hướng; tìm kiếm tiếng Việt không dấu và sắp xếp thực sự áp dụng lên dữ liệu. Chỉ mount nội dung tab đang dùng.
+- Thư viện tìm kiếm và sắp xếp trên máy chủ, debounce đầu vào, đặt lại trang khi đổi tiêu chí và hủy request cũ. Mỗi trang dùng instance API riêng để không ghi đè danh sách/số lượng của nhau.
+- Ảnh bìa dự phòng dùng sáu bảng màu với họa tiết MP, sinh ổn định từ tên khóa. Giữ nguyên ảnh do tác giả tải lên.
+- Tổng quan quản trị có khối điều phối đào tạo và hành động theo vai trò; khi không nhận được thống kê hiển thị dấu khuyết và thông báo lỗi thay vì bịa số 0.
+- Menu khóa học dùng icon tĩnh, chia nhóm, giới hạn chiều cao cây nội dung để vẫn tiếp cận được đánh giá/cài đặt. Nút thêm/thu gọn là control riêng, không lồng nút trong link.
+- Bỏ lựa chọn tạo/chuyển sang khóa công khai trong UI, bỏ liên kết landing page và kiểm tra payment-link khỏi màn cài đặt nội bộ. Liên kết chia sẻ dùng ID ổn định, yêu cầu đăng nhập; không còn xoay slug để chia sẻ.
+- Danh sách cấp tổ chức dùng tên Nhân viên; vai trò theo khóa học vẫn là Học viên.
+- Bổ sung bản dịch mới cho đủ 12 locale và kiểm tra placeholder `{count}`; tiếng Việt được biên soạn trực tiếp.
+
+### Cơ sở kiểm tra thiết kế
+
+Thiết kế chú trọng khả năng reflow, focus bàn phím và diện tích thao tác theo [WCAG 2.2](https://www.w3.org/TR/WCAG22/). Đây là tiêu chí thiết kế/kiểm tra, không phải tuyên bố đã được chứng nhận tuân thủ. Truy vấn tìm kiếm escape `%`, `_`, và backslash trước khi dùng ILIKE theo [tài liệu PostgreSQL](https://www.postgresql.org/docs/17/functions-matching.html).
+
+Giữ nguyên giấy phép MIT và nguồn gốc mã nguồn. Các package/cookie `@cio`/`classroomio` được giữ cho tương thích kỹ thuật; việc tách nhận diện sản phẩm không phải xóa nghĩa vụ giấy phép.
+
+Phát hiện thêm khi chạy production: mô-đun PostHog upstream vẫn khởi tạo và thử gọi đường dẫn `/ingest` ở chế độ self-hosted. Đã chặn khởi tạo, nhận diện và ghi sự kiện khi `PUBLIC_IS_SELFHOSTED=true`, đồng thời giữ nguyên cơ chế báo cáo học tập nội bộ.

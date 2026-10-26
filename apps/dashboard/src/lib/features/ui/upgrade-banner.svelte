@@ -1,6 +1,7 @@
 <script lang="ts">
   import { openUpgradeModalOver } from '$lib/utils/store/upgrade-modal';
   import { isFreePlan } from '$lib/utils/store/org';
+  import { PUBLIC_IS_SELFHOSTED } from '$env/static/public';
   import * as Item from '@cio/ui/base/item';
   import ChevronRightIcon from '@lucide/svelte/icons/chevron-right';
   import { PremiumIcon, HoverableItem } from '@cio/ui/custom/moving-icons';
@@ -16,7 +17,7 @@
 
   let { className = '', onClick = () => {}, visible, removeParams = [], ...restProps }: Props = $props();
 
-  const shouldShow = $derived(visible ?? $isFreePlan);
+  const shouldShow = $derived(PUBLIC_IS_SELFHOSTED !== 'true' && (visible ?? $isFreePlan));
 </script>
 
 {#if shouldShow}

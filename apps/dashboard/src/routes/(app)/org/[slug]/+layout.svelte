@@ -4,6 +4,8 @@
   import { resolve } from '$app/paths';
   import * as Sidebar from '@cio/ui/base/sidebar';
   import { Skeleton } from '@cio/ui/base/skeleton';
+  import { ScrollToTop } from '@cio/ui/custom/scroll-to-top';
+  import { t } from '$lib/utils/functions/translations';
   import { currentOrg } from '$lib/utils/store/org';
   import { isOrgStudent } from '$lib/utils/store/app';
   import { appInitApi } from '$features/app/init.svelte';
@@ -75,4 +77,5 @@
       {/if}
     </div>
   </Sidebar.Inset>
+  <ScrollToTop label={$t('common.scroll_to_top')} />
 </Sidebar.Provider>

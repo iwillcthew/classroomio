@@ -8,8 +8,10 @@ import { ZCourseType } from './course-type';
 import { ZLiveSessionReminderOffsets } from './live-session-reminder';
 
 export const ZGetRecommendedCourses = z.object({
-  limit: z.string().transform(Number).pipe(z.number().min(1).max(50)).optional(),
-  page: z.string().transform(Number).pipe(z.number().min(1)).optional()
+  limit: z.string().transform(Number).pipe(z.number().int().min(1).max(50)).optional(),
+  page: z.string().transform(Number).pipe(z.number().int().min(1)).optional(),
+  search: z.string().trim().max(200).optional(),
+  sort: z.enum(['date_created', 'last_updated_at', 'published', 'lessons']).optional()
 });
 export type TGetRecommendedCourses = z.infer<typeof ZGetRecommendedCourses>;
 

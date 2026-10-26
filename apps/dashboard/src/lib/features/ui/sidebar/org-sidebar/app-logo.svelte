@@ -3,6 +3,8 @@
   import { BRAND } from '$lib/utils/constants/brand';
   import { basePath } from '$lib/utils/store/app';
   import { t } from '$lib/utils/functions/translations';
+  import { currentOrgPath, isOrgTeamMember } from '$lib/utils/store/org';
+  import ArrowLeftRightIcon from '@lucide/svelte/icons/arrow-left-right';
 
   interface Props {
     context: 'admin' | 'learner';
@@ -35,4 +37,21 @@
       {/snippet}
     </Sidebar.MenuButton>
   </Sidebar.MenuItem>
+  {#if context === 'admin' || $isOrgTeamMember}
+    <Sidebar.MenuItem class="mt-3">
+      <Sidebar.MenuButton
+        tooltipContent={$t(context === 'admin' ? 'mp_learning.switch_to_learner' : 'mp_learning.switch_to_admin')}
+        class="border border-white/15 bg-white/5"
+      >
+        {#snippet child({ props })}
+          <a href={context === 'admin' ? '/lms' : `${$currentOrgPath}/dash`} {...props}>
+            <ArrowLeftRightIcon class="custom size-4" />
+            <span class="text-xs"
+              >{$t(context === 'admin' ? 'mp_learning.context_learner' : 'mp_learning.context_admin')}</span
+            >
+          </a>
+        {/snippet}
+      </Sidebar.MenuButton>
+    </Sidebar.MenuItem>
+  {/if}
 </Sidebar.Menu>

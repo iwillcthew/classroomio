@@ -1,99 +1,75 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-  import { browser } from '$app/environment';
+  import { onDestroy, untrack } from 'svelte';
   import { profile } from '$lib/utils/store/user';
   import { currentOrg } from '$lib/utils/store/org';
   import { t } from '$lib/utils/functions/translations';
   import { CoursesPage } from '$features/course/pages';
-  import { courseMetaDeta } from '$features/course/utils/store';
-  import { coursesApi } from '$features/course/api';
   import type { RecommendedCourses } from '$features/course/types';
-  import { CourseSortBy, DEFAULT_COURSE_SORT, parseCourseSortValue } from '$features/course/utils/constants';
+  import { CourseSortBy, DEFAULT_COURSE_SORT } from '$features/course/utils/constants';
+  import { DebouncedSearch } from '$lib/utils/functions/debounced-search.svelte';
+  import { LibraryApi } from '../api/library.svelte';
   import CoursePreviewModal from '$features/lms/components/course-preview-modal.svelte';
   import * as Pagination from '@cio/ui/base/pagination';
+  import { Button } from '@cio/ui/base/button';
 
   const EXPLORE_LIMIT = 12;
-
-  let searchValue = $state('');
+  const libraryApi = new LibraryApi();
   let sortKey = $state<CourseSortBy>(DEFAULT_COURSE_SORT);
   let selectedCourse = $state<RecommendedCourses[number] | null>(null);
   let previewOpen = $state(false);
   let currentPage = $state(1);
-
-  $effect(() => {
-    if (!browser) return;
-    void sortKey;
-    localStorage.setItem('classroomio_filter_course_key', sortKey);
-  });
-
-  const filteredExploreCourses: RecommendedCourses = $derived.by(() => {
-    const coursesFiltered = coursesApi.recommendedCourses.filter((course) => {
-      if (!searchValue || course.title.toLowerCase().includes(searchValue.toLowerCase())) {
-        return true;
-      }
-
-      return false;
-    });
-
-    if (sortKey === CourseSortBy.DateCreated) {
-      return coursesFiltered.sort(
-        (a, b) => new Date(a.createdAt ?? '').getTime() - new Date(b.createdAt ?? '').getTime()
-      );
-    } else if (sortKey === CourseSortBy.LastUpdatedAt) {
-      return coursesFiltered.sort((a, b) => {
-        const aUpdatedAt = new Date(a.updatedAt ?? a.createdAt ?? '').getTime();
-        const bUpdatedAt = new Date(b.updatedAt ?? b.createdAt ?? '').getTime();
-
-        return bUpdatedAt - aUpdatedAt;
-      });
-    } else if (sortKey === CourseSortBy.Published) {
-      return coursesFiltered.sort((a, b) => Number(b.isPublished) - Number(a.isPublished));
-    } else if (sortKey === CourseSortBy.Lessons) {
-      return coursesFiltered.sort((a, b) => (b.lessonCount ?? 0) - (a.lessonCount ?? 0));
-    }
-
-    return coursesFiltered;
-  });
-
-  const pagination = $derived(coursesApi.recommendedCoursesPagination);
-
-  function fetchPage(page: number) {
-    currentPage = page;
-    coursesApi.getRecommendedCourses({ limit: EXPLORE_LIMIT, page });
-  }
-
-  $effect(() => {
-    if (searchValue) {
+  const search = new DebouncedSearch({
+    onApply: () => {
       currentPage = 1;
     }
   });
-
-  onMount(() => {
-    const courseView = localStorage.getItem('courseView') as 'grid' | 'list' | null;
-
-    if (courseView) {
-      $courseMetaDeta.view = courseView;
-    }
-
-    sortKey = parseCourseSortValue(localStorage.getItem('classroomio_filter_course_key'));
-  });
+  const pagination = $derived(libraryApi.recommendedCoursesPagination);
 
   $effect(() => {
-    if (!$profile.id || !$currentOrg.id) return;
+    const organizationId = $currentOrg.id;
+    const profileId = $profile.id;
+    const searchValue = search.applied;
+    const pageNumber = currentPage;
+    const sort = sortKey;
+    if (!profileId || !organizationId) return;
 
-    coursesApi.getRecommendedCourses({ limit: EXPLORE_LIMIT, page: currentPage });
+    untrack(() => void libraryApi.loadLibrary({ limit: EXPLORE_LIMIT, page: pageNumber, search: searchValue, sort }));
+  });
+
+  function changeSort(value: CourseSortBy) {
+    sortKey = value;
+    currentPage = 1;
+  }
+
+  onDestroy(() => {
+    search.destroy();
+    libraryApi.cancel();
   });
 </script>
 
+{#if libraryApi.loadFailed}
+  <div role="alert" class="ui:bg-danger-soft ui:text-danger-foreground mb-4 rounded-xl p-4 text-sm">
+    {$t('mp_workspace.load_error')}
+  </div>
+  <Button
+    variant="outline"
+    size="sm"
+    onclick={() =>
+      libraryApi.loadLibrary({ limit: EXPLORE_LIMIT, page: currentPage, search: search.applied, sort: sortKey })}
+    >{$t('mp_workspace.retry')}</Button
+  >
+{/if}
+
 <CoursesPage
-  courses={filteredExploreCourses}
-  emptyTitle={$t('explore.empty_heading')}
-  emptyDescription={$t('explore.empty_description')}
+  courses={libraryApi.recommendedCourses}
+  emptyTitle={$t(search.applied ? 'mp_workspace.no_results' : 'explore.empty_heading')}
+  emptyDescription={$t(search.applied ? 'mp_workspace.adjust_search' : 'explore.empty_description')}
   isExplore={true}
   isLMS={true}
-  isLoading={coursesApi.isLoading}
-  bind:searchValue
-  bind:sortKey
+  isLoading={libraryApi.isLibraryLoading}
+  bind:searchValue={search.draft}
+  onSearchChange={(value) => search.input(value)}
+  bind:sortKey={() => sortKey, changeSort}
   onCardClick={(course) => {
     selectedCourse = course as RecommendedCourses[number];
     previewOpen = true;
@@ -105,35 +81,25 @@
     count={pagination.total}
     perPage={pagination.limit}
     page={currentPage}
-    onPageChange={fetchPage}
+    onPageChange={(pageNumber) => {
+      currentPage = pageNumber;
+    }}
     class="mt-6"
   >
     {#snippet children({ pages, currentPage: activePage })}
       <Pagination.Content>
-        <Pagination.Item>
-          <Pagination.PrevButton />
-        </Pagination.Item>
+        <Pagination.Item><Pagination.PrevButton /></Pagination.Item>
         {#each pages as pageItem (pageItem.key)}
-          {#if pageItem.type === 'ellipsis'}
-            <Pagination.Item>
-              <Pagination.Ellipsis />
-            </Pagination.Item>
-          {:else}
-            <Pagination.Item>
-              <Pagination.Link page={pageItem} isActive={activePage === pageItem.value}>
-                {pageItem.value}
-              </Pagination.Link>
-            </Pagination.Item>
-          {/if}
+          {#if pageItem.type === 'ellipsis'}<Pagination.Item><Pagination.Ellipsis /></Pagination.Item>
+          {:else}<Pagination.Item
+              ><Pagination.Link page={pageItem} isActive={activePage === pageItem.value}
+                >{pageItem.value}</Pagination.Link
+              ></Pagination.Item
+            >{/if}
         {/each}
-        <Pagination.Item>
-          <Pagination.NextButton />
-        </Pagination.Item>
+        <Pagination.Item><Pagination.NextButton /></Pagination.Item>
       </Pagination.Content>
     {/snippet}
   </Pagination.Root>
 {/if}
-
-{#if selectedCourse}
-  <CoursePreviewModal course={selectedCourse} bind:open={previewOpen} />
-{/if}
+{#if selectedCourse}<CoursePreviewModal course={selectedCourse} bind:open={previewOpen} />{/if}

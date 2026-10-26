@@ -29,6 +29,12 @@ export function getPublicCoursePageUrl(courseSlug: string, currentOrgDomain = ''
 }
 
 export function openCoursePreview({ courseId, courseSlug, currentOrgDomain = '' }: OpenCoursePreviewOptions) {
+  if (courseId && typeof window !== 'undefined') {
+    const coursePath = resolve(`/courses/${courseId}/lessons`, {});
+    window.open(coursePath, '_blank', 'noopener,noreferrer');
+    return true;
+  }
+
   if (!courseSlug) {
     snackbar.info('course.header.preview_missing_slug');
 

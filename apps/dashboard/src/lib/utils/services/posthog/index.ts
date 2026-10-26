@@ -1,11 +1,10 @@
 import { dev } from '$app/environment';
+import { PUBLIC_IS_SELFHOSTED } from '$env/static/public';
 import { licenseApi } from '$features/license/api/license.svelte';
 import posthog from 'posthog-js';
 
 const hasNoTracking = () => {
-  const noTracking = licenseApi.hasAccess('no-tracking');
-  console.log('license_no_tracking', noTracking);
-  return noTracking;
+  return PUBLIC_IS_SELFHOSTED === 'true' || licenseApi.hasAccess('no-tracking');
 };
 
 export const capturePosthogEvent = (event: string, properties?: Record<string, unknown>): void => {

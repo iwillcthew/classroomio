@@ -1,73 +1,51 @@
 <script lang="ts">
-  import { goto } from '$app/navigation';
+  import { untrack } from 'svelte';
   import { Badge } from '@cio/ui/base/badge';
   import { Button } from '@cio/ui/base/button';
   import { Progress } from '@cio/ui/base/progress';
   import { Skeleton } from '@cio/ui/base/skeleton';
   import { Empty } from '@cio/ui/custom/empty';
-  import { ActivityCard } from '$features/ui';
-  import SectionCard from '$features/ui/section-card.svelte';
   import ArrowRightIcon from '@lucide/svelte/icons/arrow-right';
+  import ArrowUpRightIcon from '@lucide/svelte/icons/arrow-up-right';
   import AwardIcon from '@lucide/svelte/icons/award';
   import BookOpenIcon from '@lucide/svelte/icons/book-open';
   import CalendarClockIcon from '@lucide/svelte/icons/calendar-clock';
+  import CheckCheckIcon from '@lucide/svelte/icons/check-check';
   import ChevronRightIcon from '@lucide/svelte/icons/chevron-right';
-  import FlameIcon from '@lucide/svelte/icons/flame';
   import LibraryBigIcon from '@lucide/svelte/icons/library-big';
+  import PlayIcon from '@lucide/svelte/icons/play';
   import ShieldCheckIcon from '@lucide/svelte/icons/shield-check';
-  import TargetIcon from '@lucide/svelte/icons/target';
-  import VideoIcon from '@lucide/svelte/icons/video';
+  import TriangleAlertIcon from '@lucide/svelte/icons/triangle-alert';
   import { t } from '$lib/utils/functions/translations';
   import { getIntlLocale } from '$lib/utils/functions/intl-locale';
-  import { classroomio } from '$lib/utils/services/api';
   import { currentOrg } from '$lib/utils/store/org';
   import { profile } from '$lib/utils/store/user';
-  import { coursesApi } from '$features/course/api';
+  import { LearningWorkspaceApi } from '../api/learning-workspace.svelte';
   import CourseCover from '$features/course/components/course-cover.svelte';
   import UpcomingSessionsCard from '$features/lms/components/upcoming-sessions-card.svelte';
   import CoursePreviewModal from '$features/lms/components/course-preview-modal.svelte';
+  import SectionCard from '$features/ui/section-card.svelte';
   import type { RecommendedCourses } from '$features/course/types';
   import {
     getStudentCourseComplianceDate,
     getStudentCourseComplianceStatusKey,
     getStudentCourseComplianceStatusVariant,
-    getStudentCourseProgressPercent,
-    isStudentCourseComplete
+    getStudentCourseProgressPercent
   } from '$features/course/utils/compliance-utils';
   import { getStudentCourseContinuePath } from '$features/course/utils/student-course-navigation';
+  import { getLearningSummary } from '../utils/learning-overview';
 
-  type EnrolledCourse = (typeof coursesApi.enrolledCourses)[number];
-
-  let loginStreak = $state<number | null>(null);
-  let hasLoadedLoginStreak = $state(false);
+  const learningApi = new LearningWorkspaceApi();
+  let loadedOrganization = $state('');
   let selectedCourse = $state<RecommendedCourses[number] | null>(null);
   let previewOpen = $state(false);
-
-  const dateFormatter = new Intl.DateTimeFormat(getIntlLocale(), { day: 'numeric', month: 'short', year: 'numeric' });
-
-  let totalCompleted = $derived(
-    coursesApi.enrolledCourses.reduce((acc, course) => acc + getCourseCompletedItems(course), 0)
-  );
-  let totalLessons = $derived(coursesApi.enrolledCourses.reduce((acc, course) => acc + getCourseTotalItems(course), 0));
-  let progressPercentage = $derived(totalLessons > 0 ? Math.round((totalCompleted / totalLessons) * 100) : 0);
-
-  let complianceCourses = $derived(coursesApi.enrolledCourses.filter((course) => course.type === 'COMPLIANCE'));
-  let completedComplianceCourses = $derived(complianceCourses.filter((course) => isStudentCourseComplete(course)));
-  let complianceScore = $derived(
-    complianceCourses.length > 0
-      ? Math.round((completedComplianceCourses.length / complianceCourses.length) * 100)
-      : null
-  );
-
-  let inProgressCourses = $derived(coursesApi.enrolledCourses.filter((course) => !isStudentCourseComplete(course)));
-  let prioritizedCourses = $derived.by(() => prioritizeCourses(inProgressCourses));
-  let heroCourse = $derived(prioritizedCourses[0] ?? null);
-  let otherCourses = $derived(prioritizedCourses.slice(1, 5));
-  let hasEnrolledCourses = $derived(coursesApi.enrolledCourses.length > 0);
-  let isInitialLoading = $derived(coursesApi.isLoading && coursesApi.enrolledCourses.length === 0);
-
-  let upcomingSessions = $derived(
-    coursesApi.enrolledCourses
+  const now = Date.now();
+  const summary = $derived(getLearningSummary(learningApi.enrolledCourses, now));
+  const heroCourse = $derived(summary.pending[0] ?? null);
+  const otherCourses = $derived(summary.pending.slice(1, 5));
+  const heroProgress = $derived(heroCourse ? getStudentCourseProgressPercent(heroCourse) : 0);
+  const upcomingSessions = $derived(
+    learningApi.enrolledCourses
       .filter((course) => course.type === 'LIVE_CLASS' && course.upcomingSession)
       .map((course) => ({
         lessonId: course.upcomingSession!.lessonId,
@@ -77,374 +55,408 @@
         lessonAt: course.upcomingSession!.lessonAt,
         timezone: course.upcomingSession!.sessionTimezone
       }))
-      .sort((a, b) => new Date(a.lessonAt).getTime() - new Date(b.lessonAt).getTime())
+      .sort(
+        (leftSession, rightSession) =>
+          new Date(leftSession.lessonAt).getTime() - new Date(rightSession.lessonAt).getTime()
+      )
   );
-
-  $effect(() => {
-    if (!$profile.id || !$currentOrg.id) return;
-
-    coursesApi.getEnrolledCourses();
-    coursesApi.getRecommendedCourses({ limit: 3 });
-  });
-
-  $effect(() => {
-    if (!$profile.id || hasLoadedLoginStreak) return;
-
-    hasLoadedLoginStreak = true;
-    loadLoginStreak();
-  });
-
-  function getCourseCompletedItems(course: EnrolledCourse) {
-    const exercisesCompleted =
-      'exercisesCompleted' in course && typeof course.exercisesCompleted === 'number' ? course.exercisesCompleted : 0;
-
-    return (course.progressRate || 0) + exercisesCompleted;
-  }
-
-  function getCourseTotalItems(course: EnrolledCourse) {
-    const exercises = 'exerciseCount' in course && typeof course.exerciseCount === 'number' ? course.exerciseCount : 0;
-
-    return (course.lessonCount || 0) + exercises;
-  }
-
-  function getDueTimestamp(course: EnrolledCourse) {
-    const complianceDate = getStudentCourseComplianceDate(course);
-
-    return complianceDate?.value ? new Date(complianceDate.value).getTime() : Number.POSITIVE_INFINITY;
-  }
-
-  function prioritizeCourses(courses: EnrolledCourse[]) {
-    return [...courses].sort((leftCourse, rightCourse) => {
-      const dueDifference = getDueTimestamp(leftCourse) - getDueTimestamp(rightCourse);
-
-      if (Number.isFinite(dueDifference) && dueDifference !== 0) {
-        return dueDifference;
-      }
-
-      return getStudentCourseProgressPercent(rightCourse) - getStudentCourseProgressPercent(leftCourse);
-    });
-  }
-
-  function formatComplianceDate(course: EnrolledCourse) {
-    const complianceDate = getStudentCourseComplianceDate(course);
-
-    if (!complianceDate?.value) return null;
-
-    return { label: $t(complianceDate.labelKey), value: dateFormatter.format(new Date(complianceDate.value)) };
-  }
-
-  async function loadLoginStreak() {
-    try {
-      const response = await classroomio.dash['login-streak'].$get();
-      const result = await response.json();
-
-      if (result.success) {
-        loginStreak = result.data.daysActive;
-      }
-    } catch (error) {
-      console.error('Failed to load login streak', error);
-      loginStreak = 0;
+  const metrics = $derived([
+    {
+      icon: BookOpenIcon,
+      value: learningApi.enrolledCourses.length,
+      label: 'mp_workspace.enrolled',
+      href: '/lms/mylearning',
+      tone: 'blue'
+    },
+    {
+      icon: PlayIcon,
+      value: summary.pending.length,
+      label: 'my_learning.progress',
+      href: '/lms/mylearning',
+      tone: 'cyan'
+    },
+    {
+      icon: CheckCheckIcon,
+      value: summary.completed.length,
+      label: 'my_learning.complete',
+      href: '/lms/mylearning?tab=completed',
+      tone: 'green'
+    },
+    {
+      icon: ShieldCheckIcon,
+      value: summary.mandatory.length,
+      label: 'mp_workspace.pending_mandatory',
+      href: '/lms/mylearning?tab=mandatory',
+      tone: 'amber'
     }
-  }
+  ]);
 
-  function gotoCourse(id: string | undefined) {
-    if (!id) return;
+  $effect(() => {
+    const organizationId = $currentOrg.id;
+    const profileId = $profile.id;
+    if (!organizationId || !profileId || loadedOrganization === organizationId) return;
 
-    goto(getStudentCourseContinuePath(id));
+    loadedOrganization = organizationId;
+    untrack(() => void learningApi.loadWorkspace());
+  });
+
+  function formatDate(value: string) {
+    return new Intl.DateTimeFormat(getIntlLocale(), { day: '2-digit', month: 'short' }).format(new Date(value));
   }
 </script>
 
-<div class="flex flex-col gap-5 pb-10">
-  {#if upcomingSessions.length}
-    <UpcomingSessionsCard sessions={upcomingSessions} />
-  {/if}
-
-  {#if isInitialLoading}
-    <Skeleton class="h-56 w-full rounded-2xl" />
-  {:else}
-    <section class="ui:bg-facet ui:shadow-raised relative overflow-hidden rounded-2xl text-white">
-      <svg
-        class="pointer-events-none absolute inset-y-0 right-0 h-full w-auto opacity-25"
-        viewBox="0 0 400 300"
-        aria-hidden="true"
+<div class="learning-workspace flex flex-col gap-6 pb-10" aria-busy={learningApi.isWorkspaceLoading}>
+  {#if learningApi.loadFailed}
+    <div
+      role="alert"
+      class="ui:bg-danger-soft ui:text-danger-foreground flex flex-wrap items-center justify-between gap-3 rounded-xl border p-4"
+    >
+      <p class="text-sm">{$t('mp_workspace.load_error')}</p>
+      <Button variant="outline" size="sm" onclick={() => learningApi.loadWorkspace()}>{$t('mp_workspace.retry')}</Button
       >
-        <path d="M200 -10 L280 -10 L180 310 L100 310 Z" fill="#ffffff" fill-opacity="0.35" />
-        <path d="M280 -10 L330 -10 L230 310 L180 310 Z" fill="#ffffff" fill-opacity="0.6" />
-        <path d="M330 -10 L410 -10 L410 40 L300 310 L230 310 Z" fill="#ffffff" fill-opacity="0.2" />
-      </svg>
-
-      <div class="relative grid gap-6 p-6 md:grid-cols-[minmax(0,1fr)_260px] md:p-8">
-        <div class="flex min-w-0 flex-col gap-5">
-          <div class="space-y-2">
-            <p class="text-[11px] font-semibold tracking-[0.1em] text-white/70 uppercase">
-              {heroCourse ? $t('dashboard.pick_up_where_you_left_off') : $t('dashboard.learning_awaits_you')}
-            </p>
-            <h2 class="line-clamp-2 text-2xl leading-tight font-semibold tracking-tight text-balance md:text-[28px]">
-              {heroCourse
-                ? heroCourse.title
-                : $t(hasEnrolledCourses ? 'lms_home.hero_all_done_title' : 'lms_home.hero_empty_title')}
-            </h2>
-            {#if heroCourse}
-              {@const dueInfo = formatComplianceDate(heroCourse)}
-              <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-white/80">
-                <span>
-                  {$t('dashboard.items_done', {
-                    completed: getCourseCompletedItems(heroCourse),
-                    total: getCourseTotalItems(heroCourse)
-                  })}
-                </span>
-                {#if heroCourse.type === 'COMPLIANCE'}
-                  <span class="flex items-center gap-1.5">
-                    <ShieldCheckIcon class="custom size-4" />{$t('lms_home.mandatory')}
-                  </span>
-                {/if}
-                {#if dueInfo}
-                  <span class="flex items-center gap-1.5">
-                    <CalendarClockIcon class="custom size-4" />{dueInfo.label}: {dueInfo.value}
-                  </span>
-                {/if}
-              </div>
-            {:else}
-              <p class="max-w-lg text-sm leading-relaxed text-white/80">
-                {$t(hasEnrolledCourses ? 'lms_home.hero_all_done_description' : 'lms_home.hero_empty_description')}
-              </p>
-            {/if}
-          </div>
-
-          {#if heroCourse}
-            {@const heroProgress = getStudentCourseProgressPercent(heroCourse)}
-            <div class="flex max-w-md items-center gap-3">
-              <div class="h-2 flex-1 overflow-hidden rounded-full bg-white/20">
-                <div
-                  class="h-full rounded-full bg-gradient-to-r from-white to-sky-200 transition-[width] duration-500"
-                  style:width={`${heroProgress}%`}
-                ></div>
-              </div>
-              <span class="text-sm font-semibold tabular-nums">{heroProgress}%</span>
-            </div>
-          {/if}
-
-          <div class="flex flex-wrap items-center gap-2">
-            {#if heroCourse}
-              <Button
-                class="ui:text-brand-navy bg-white shadow-sm hover:bg-white/90"
-                onclick={() => gotoCourse(heroCourse.id)}
-              >
-                {$t('dashboard.continue_learning')}
-                <ArrowRightIcon class="size-4" />
-              </Button>
-              {#if heroCourse.type === 'LIVE_CLASS' && heroCourse.upcomingSession?.callUrl}
-                <Button
-                  variant="ghost"
-                  href={heroCourse.upcomingSession.callUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  class="text-white hover:bg-white/10 hover:text-white"
-                >
-                  <VideoIcon class="size-4" />{$t('course.navItem.lessons.session.join')}
-                </Button>
-              {/if}
-            {:else}
-              <Button class="ui:text-brand-navy bg-white shadow-sm hover:bg-white/90" href="/lms/explore">
-                <LibraryBigIcon class="size-4" />
-                {$t('lms_home.open_library')}
-              </Button>
-            {/if}
-          </div>
-        </div>
-
-        {#if heroCourse}
-          <div class="hidden md:block">
-            <CourseCover
-              title={heroCourse.title}
-              src={heroCourse.bannerImage}
-              class="aspect-[4/3] w-full rounded-xl shadow-lg ring-1 ring-white/25"
-              initialsClass="text-4xl"
-            />
-          </div>
-        {/if}
-      </div>
-    </section>
+    </div>
   {/if}
 
-  <section class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-    <ActivityCard
-      activity={{
-        icon: TargetIcon,
-        title: $t('dashboard.progress'),
-        percentage: progressPercentage,
-        description: $t('dashboard.items_done', { completed: totalCompleted, total: totalLessons })
-      }}
-    />
-    <ActivityCard
-      activity={{
-        icon: ShieldCheckIcon,
-        title: $t('dashboard.compliance'),
-        percentage: complianceScore ?? '--',
-        description: $t('dashboard.compliance_met', {
-          completed: completedComplianceCourses.length,
-          total: complianceCourses.length
-        }),
-        hidePercentage: complianceScore === null
-      }}
-    />
-    <ActivityCard
-      activity={{
-        icon: FlameIcon,
-        title: $t('dashboard.streak'),
-        percentage: loginStreak ?? 0,
-        description: $t('dashboard.days_active'),
-        hidePercentage: true
-      }}
-    />
-  </section>
-
-  <div class="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
-    <SectionCard title={$t('dashboard.currently_learning')} bodyClass="px-2! pb-2!">
-      {#snippet action()}
-        <Button variant="ghost" size="sm" class="ui:text-primary" href="/lms/mylearning">
-          {$t('dashboard.view_more')}
-        </Button>
-      {/snippet}
-
-      {#if isInitialLoading}
-        <div class="space-y-2 px-3 pb-3">
-          {#each Array(3) as _, index (index)}
-            <Skeleton class="h-16 w-full rounded-lg" />
-          {/each}
-        </div>
-      {:else if otherCourses.length > 0}
-        <ul class="ui:divide-border divide-y">
-          {#each otherCourses as course (course.id)}
-            {@const courseProgress = getStudentCourseProgressPercent(course)}
-            <li>
-              <button
-                type="button"
-                class="group ui:hover:bg-muted/60 flex w-full items-center gap-4 rounded-lg px-3 py-3 text-left transition-colors"
-                onclick={() => gotoCourse(course.id)}
-              >
-                <CourseCover
-                  title={course.title}
-                  src={course.bannerImage}
-                  class="aspect-video w-24 shrink-0 rounded-md"
-                  initialsClass="text-sm bottom-1.5 left-2"
-                />
-                <div class="min-w-0 flex-1 space-y-2">
-                  <p class="line-clamp-1 text-sm font-medium">{course.title}</p>
-                  <div class="flex items-center gap-3">
-                    <Progress value={courseProgress} max={100} class="h-1.5 flex-1" />
-                    <span class="ui:text-muted-foreground w-9 text-right text-xs tabular-nums">{courseProgress}%</span>
-                  </div>
-                </div>
-                <ChevronRightIcon
-                  class="ui:text-muted-foreground size-4 shrink-0 transition-transform group-hover:translate-x-0.5"
-                />
-              </button>
-            </li>
-          {/each}
-        </ul>
-      {:else}
-        <Empty
-          title={heroCourse ? $t('lms_home.no_other_courses') : $t('dashboard.no_courses')}
-          description={heroCourse ? $t('lms_home.recommended_description') : $t('dashboard.start_course')}
-          icon={BookOpenIcon}
+  {#if !learningApi.loadFailed}
+    <section class="grid grid-cols-2 gap-3 lg:grid-cols-4" aria-label={$t('mp_workspace.learning_snapshot')}>
+      {#each metrics as metric (metric.label)}
+        <a
+          href={metric.href}
+          class="ui:bg-card ui:shadow-card ui:hover:border-primary/40 flex items-center gap-3 rounded-xl border p-4 transition-colors md:p-5"
         >
-          <Button variant="outline" size="sm" href="/lms/explore">{$t('lms_home.open_library')}</Button>
-        </Empty>
-      {/if}
-    </SectionCard>
+          <span class="metric-icon" data-tone={metric.tone}
+            ><metric.icon class="custom size-[18px]" strokeWidth={1.8} /></span
+          >
+          <span class="min-w-0">
+            {#if learningApi.isWorkspaceLoading}<Skeleton class="mb-1 h-7 w-10" />{:else}<span
+                class="block text-2xl leading-tight font-semibold tracking-tight tabular-nums">{metric.value}</span
+              >{/if}
+            <span class="ui:text-muted-foreground block text-xs leading-relaxed">{$t(metric.label)}</span>
+          </span>
+        </a>
+      {/each}
+    </section>
 
-    <SectionCard title={$t('lms_home.mandatory_title')} description={$t('lms_home.mandatory_description')}>
-      {#if isInitialLoading}
-        <div class="space-y-3">
-          {#each Array(3) as _, index (index)}
-            <Skeleton class="h-12 w-full rounded-lg" />
-          {/each}
+    {#if !learningApi.isWorkspaceLoading && summary.overdue.length > 0}
+      <a
+        href="/lms/mylearning?tab=mandatory"
+        class="ui:bg-warning-soft ui:text-warning-foreground flex items-center gap-3 rounded-xl border border-current/15 px-4 py-3 text-sm"
+      >
+        <TriangleAlertIcon class="custom size-5 shrink-0" /><span class="flex-1"
+          >{$t('mp_workspace.overdue_notice', { count: summary.overdue.length })}</span
+        ><ArrowRightIcon class="size-4 shrink-0" />
+      </a>
+    {/if}
+
+    <div class="grid gap-5 xl:grid-cols-[minmax(0,1fr)_300px]">
+      {#if learningApi.isWorkspaceLoading}
+        <Skeleton class="h-[300px] w-full rounded-2xl" /><Skeleton
+          class="hidden h-[300px] w-full rounded-2xl xl:block"
+        />
+      {:else}
+        <section class="learning-focus relative flex min-h-[300px] flex-col overflow-hidden rounded-2xl text-white">
+          <svg
+            class="focus-art pointer-events-none absolute right-0 bottom-0 h-full w-1/2"
+            viewBox="0 0 400 340"
+            fill="none"
+            aria-hidden="true"
+          >
+            <circle cx="310" cy="175" r="145" stroke="white" stroke-opacity=".12" /><circle
+              cx="310"
+              cy="175"
+              r="105"
+              stroke="white"
+              stroke-opacity=".12"
+            /><circle cx="310" cy="175" r="65" stroke="white" stroke-opacity=".12" />
+            <path d="m170 340 100-340h65L235 340z" fill="white" fill-opacity=".04" /><path
+              d="m235 340 100-340h30L265 340z"
+              fill="#65d5f5"
+              fill-opacity=".16"
+            /><circle cx="212" cy="68" r="7" fill="#65d5f5" /><circle
+              cx="371"
+              cy="217"
+              r="5"
+              fill="white"
+              fill-opacity=".65"
+            />
+          </svg>
+          <div class="relative flex flex-1 flex-col items-start gap-5 p-6 sm:p-8">
+            <span class="flex items-center gap-2 text-[11px] font-medium tracking-[.12em] text-white/75 uppercase"
+              ><span class="size-1.5 rounded-full bg-cyan-200"></span>{$t(
+                heroCourse ? 'mp_workspace.next_up' : 'mp_learning.eyebrow'
+              )}</span
+            >
+            <div class="max-w-lg space-y-3">
+              <h2 class="text-2xl leading-snug font-semibold tracking-tight text-balance sm:text-[28px]">
+                {heroCourse
+                  ? heroCourse.title
+                  : $t(
+                      learningApi.enrolledCourses.length ? 'lms_home.hero_all_done_title' : 'lms_home.hero_empty_title'
+                    )}
+              </h2>
+              {#if heroCourse}
+                {@const deadline = getStudentCourseComplianceDate(heroCourse)}
+                <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-white/80">
+                  <span class="inline-flex items-center gap-1.5"
+                    ><BookOpenIcon class="custom size-3.5" />{$t('lms_home.lesson_count', {
+                      count: heroCourse.lessonCount ?? 0
+                    })}</span
+                  >
+                  {#if heroCourse.type === 'COMPLIANCE'}<span class="inline-flex items-center gap-1.5"
+                      ><ShieldCheckIcon class="custom size-3.5" />{$t('lms_home.mandatory')}</span
+                    >{/if}
+                  {#if deadline}<span class="inline-flex items-center gap-1.5"
+                      ><CalendarClockIcon class="custom size-3.5" />{$t(deadline.labelKey)}: {formatDate(
+                        deadline.value
+                      )}</span
+                    >{/if}
+                </div>
+              {:else}
+                <p class="max-w-md text-sm leading-relaxed text-white/75">
+                  {$t(
+                    learningApi.enrolledCourses.length
+                      ? 'lms_home.hero_all_done_description'
+                      : 'lms_home.hero_empty_description'
+                  )}
+                </p>
+              {/if}
+            </div>
+            {#if heroCourse}
+              <div class="mt-auto flex w-full max-w-sm items-center gap-3 pt-1">
+                <div
+                  class="h-1.5 flex-1 overflow-hidden rounded-full bg-white/20"
+                  role="progressbar"
+                  aria-label={$t('dashboard.progress')}
+                  aria-valuenow={heroProgress}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                >
+                  <div class="h-full rounded-full bg-cyan-200" style:width={`${heroProgress}%`}></div>
+                </div>
+                <span class="text-xs font-medium tabular-nums">{heroProgress}%</span>
+              </div>
+              <Button
+                href={getStudentCourseContinuePath(heroCourse.id)}
+                class="ui:text-brand-navy ui:bg-white ui:hover:bg-white/90 gap-3"
+                testId="learning-continue"
+                ><PlayIcon class="size-4" />{$t('dashboard.continue_learning')}<ArrowRightIcon class="size-4" /></Button
+              >
+            {:else}
+              <Button href="/lms/explore" class="ui:text-brand-navy ui:bg-white ui:hover:bg-white/90 mt-auto gap-3"
+                ><LibraryBigIcon class="size-4" />{$t('lms_home.open_library')}<ArrowRightIcon class="size-4" /></Button
+              >
+            {/if}
+          </div>
+        </section>
+        <section class="ui:bg-card ui:shadow-card flex flex-col rounded-2xl border p-6">
+          <div class="flex items-center justify-between gap-3">
+            <h2 class="text-sm font-semibold">{$t('mp_workspace.your_journey')}</h2>
+            <AwardIcon class="ui:text-primary size-[18px]" />
+          </div>
+          <div class="relative mx-auto my-5 grid size-32 place-items-center">
+            <svg viewBox="0 0 120 120" class="absolute inset-0 size-full -rotate-90" aria-hidden="true"
+              ><circle cx="60" cy="60" r="52" fill="none" stroke="var(--muted)" stroke-width="7" /><circle
+                cx="60"
+                cy="60"
+                r="52"
+                fill="none"
+                stroke="var(--primary)"
+                stroke-width="7"
+                stroke-linecap="round"
+                stroke-dasharray={`${summary.progress * 3.267} 326.73`}
+              /></svg
+            >
+            <div class="text-center">
+              <span class="block text-[28px] leading-tight font-semibold tracking-tight tabular-nums"
+                >{summary.progress}%</span
+              ><span class="ui:text-muted-foreground text-[10px]">{$t('dashboard.completion')}</span>
+            </div>
+          </div>
+          <p class="ui:text-muted-foreground mb-5 text-center text-xs leading-relaxed">
+            {$t('dashboard.items_done', { completed: summary.completedItems, total: summary.totalItems })}
+          </p>
+          <a
+            href="/lms/certificates"
+            class="ui:border-border ui:text-primary mt-auto flex items-center justify-between gap-3 border-t pt-4 text-xs font-medium"
+            ><span>{$t('page_titles.certificates')}</span><ArrowUpRightIcon class="size-4" /></a
+          >
+        </section>
+      {/if}
+    </div>
+
+    {#if upcomingSessions.length}<UpcomingSessionsCard sessions={upcomingSessions} />{/if}
+
+    <div class="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_340px]">
+      <SectionCard title={$t('dashboard.currently_learning')} bodyClass="px-2! pb-2!">
+        {#snippet action()}<Button variant="ghost" size="sm" class="ui:text-primary" href="/lms/mylearning"
+            >{$t('dashboard.view_more')}<ArrowRightIcon class="size-3.5" /></Button
+          >{/snippet}
+        {#if learningApi.isWorkspaceLoading}
+          <div class="space-y-3 p-3">
+            {#each [0, 1, 2] as index (index)}<Skeleton class="h-20 w-full rounded-lg" />{/each}
+          </div>
+        {:else if otherCourses.length}
+          <ul class="ui:divide-border divide-y">
+            {#each otherCourses as course (course.id)}
+              {@const progress = getStudentCourseProgressPercent(course)}
+              <li>
+                <a
+                  href={getStudentCourseContinuePath(course.id)}
+                  class="group ui:hover:bg-muted/60 flex items-center gap-4 rounded-lg p-3 transition-colors"
+                >
+                  <CourseCover
+                    title={course.title}
+                    src={course.bannerImage}
+                    class="aspect-[4/3] w-20 shrink-0 rounded-lg"
+                    initialsClass="text-sm bottom-2 left-2"
+                  />
+                  <div class="min-w-0 flex-1 space-y-2">
+                    <p class="line-clamp-2 text-sm font-medium">{course.title}</p>
+                    <div class="flex items-center gap-3">
+                      <Progress value={progress} class="h-1.5 flex-1" /><span
+                        class="ui:text-muted-foreground text-xs tabular-nums">{progress}%</span
+                      >
+                    </div>
+                  </div>
+                  <ChevronRightIcon class="ui:text-muted-foreground size-4 shrink-0" />
+                </a>
+              </li>
+            {/each}
+          </ul>
+        {:else}
+          <Empty
+            class="py-5! md:p-6!"
+            title={$t(heroCourse ? 'lms_home.no_other_courses' : 'dashboard.no_courses')}
+            description={$t('lms_home.recommended_description')}
+            icon={BookOpenIcon}
+            ><Button variant="outline" size="sm" href="/lms/explore">{$t('lms_home.open_library')}</Button></Empty
+          >
+        {/if}
+      </SectionCard>
+      <SectionCard title={$t('lms_home.mandatory_title')} description={$t('lms_home.mandatory_description')}>
+        {#if learningApi.isWorkspaceLoading}
+          <div class="space-y-3">
+            {#each [0, 1, 2] as index (index)}<Skeleton class="h-14 w-full rounded-lg" />{/each}
+          </div>
+        {:else if summary.mandatory.length}
+          <ul class="space-y-3">
+            {#each summary.mandatory.slice(0, 4) as course (course.id)}
+              {@const statusKey = getStudentCourseComplianceStatusKey(course)}{@const deadline =
+                getStudentCourseComplianceDate(course)}
+              <li>
+                <a
+                  href={getStudentCourseContinuePath(course.id)}
+                  class="ui:hover:bg-muted/60 flex items-start gap-3 rounded-lg py-2 transition-colors"
+                >
+                  <span
+                    class="ui:bg-warning-soft ui:text-warning-foreground mt-0.5 grid size-8 shrink-0 place-items-center rounded-lg"
+                    ><ShieldCheckIcon class="custom size-4" /></span
+                  >
+                  <span class="min-w-0 flex-1 space-y-1.5"
+                    ><span class="line-clamp-2 block text-[13px] leading-relaxed font-medium">{course.title}</span
+                    >{#if deadline}<span class="ui:text-muted-foreground block text-xs"
+                        >{$t(deadline.labelKey)}: {formatDate(deadline.value)}</span
+                      >{/if}{#if statusKey}<Badge variant={getStudentCourseComplianceStatusVariant(course)}
+                        >{$t(statusKey)}</Badge
+                      >{/if}</span
+                  >
+                </a>
+              </li>
+            {/each}
+          </ul>
+          <Button variant="outline" size="sm" class="mt-4 w-full" href="/lms/mylearning?tab=mandatory"
+            >{$t('mp_workspace.view_mandatory')}<ArrowRightIcon class="size-3.5" /></Button
+          >
+        {:else}
+          <div
+            class="ui:bg-success-soft ui:text-success-foreground flex items-start gap-3 rounded-lg p-4 text-sm leading-relaxed"
+          >
+            <CheckCheckIcon class="custom mt-0.5 size-5 shrink-0" />
+            <p>{$t('lms_home.mandatory_empty')}</p>
+          </div>
+        {/if}
+      </SectionCard>
+    </div>
+
+    {#if learningApi.isWorkspaceLoading || learningApi.recommendedCourses.length}
+      <section class="space-y-4">
+        <div class="flex items-center justify-between gap-3">
+          <div class="space-y-1">
+            <p class="ui:text-primary text-[10px] font-semibold tracking-[.12em] uppercase">
+              {$t('mp_workspace.keep_growing')}
+            </p>
+            <h2 class="text-base font-semibold">{$t('dashboard.explore_more_courses')}</h2>
+          </div>
+          <Button variant="ghost" size="sm" class="ui:text-primary shrink-0" href="/lms/explore"
+            >{$t('dashboard.view_more')}<ArrowRightIcon class="size-3.5" /></Button
+          >
         </div>
-      {:else if complianceCourses.length > 0}
-        <ul class="flex flex-col gap-2">
-          {#each prioritizeCourses(complianceCourses) as course (course.id)}
-            {@const statusKey = getStudentCourseComplianceStatusKey(course)}
-            {@const dueInfo = formatComplianceDate(course)}
-            <li>
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {#if learningApi.isWorkspaceLoading}
+            {#each [0, 1, 2] as index (index)}<Skeleton class="h-56 w-full rounded-xl" />{/each}
+          {:else}
+            {#each learningApi.recommendedCourses as course (course.id)}
               <button
                 type="button"
-                class="ui:hover:border-primary/40 ui:hover:bg-muted/40 flex w-full items-start gap-3 rounded-lg border p-3 text-left transition-colors"
-                onclick={() => gotoCourse(course.id)}
+                class="group ui:bg-card ui:shadow-card ui:hover:border-primary/40 flex flex-col overflow-hidden rounded-xl border text-left transition-colors"
+                onclick={() => {
+                  selectedCourse = course;
+                  previewOpen = true;
+                }}
               >
-                <span class="ui:bg-accent ui:text-accent-foreground grid size-8 shrink-0 place-items-center rounded-lg">
-                  <ShieldCheckIcon class="custom size-4" />
-                </span>
-                <span class="min-w-0 flex-1 space-y-1">
-                  <span class="line-clamp-2 block text-sm leading-snug font-medium">{course.title}</span>
-                  {#if dueInfo}
-                    <span class="ui:text-muted-foreground block text-xs">{dueInfo.label}: {dueInfo.value}</span>
-                  {/if}
-                </span>
-                {#if statusKey}
-                  <Badge variant={getStudentCourseComplianceStatusVariant(course)} class="shrink-0">
-                    {$t(statusKey)}
-                  </Badge>
-                {/if}
+                <CourseCover title={course.title} src={course.bannerImage} class="aspect-[16/7] w-full" /><span
+                  class="flex flex-1 flex-col gap-3 p-4"
+                  ><span class="line-clamp-2 text-sm leading-relaxed font-semibold">{course.title}</span><span
+                    class="ui:text-muted-foreground mt-auto flex items-center justify-between text-xs"
+                    ><span>{$t('lms_home.lesson_count', { count: course.lessonCount ?? 0 })}</span><ArrowUpRightIcon
+                      class="ui:text-primary size-4"
+                    /></span
+                  ></span
+                >
               </button>
-            </li>
-          {/each}
-        </ul>
-      {:else}
-        <div class="ui:bg-success-soft ui:text-success-foreground flex items-start gap-3 rounded-lg p-4 text-sm">
-          <AwardIcon class="custom mt-0.5 size-4 shrink-0" />
-          <p>{$t('lms_home.mandatory_empty')}</p>
+            {/each}
+          {/if}
         </div>
-      {/if}
-    </SectionCard>
-  </div>
-
-  {#if coursesApi.isLoading || coursesApi.recommendedCourses.length > 0}
-    <section class="space-y-3">
-      <div class="flex items-end justify-between gap-4">
-        <div class="space-y-0.5">
-          <h2 class="text-[15px] font-semibold tracking-tight">{$t('dashboard.explore_more_courses')}</h2>
-          <p class="ui:text-muted-foreground text-[13px]">{$t('lms_home.recommended_description')}</p>
-        </div>
-        <Button variant="ghost" size="sm" class="ui:text-primary" href="/lms/explore">
-          {$t('dashboard.view_more')}
-        </Button>
-      </div>
-
-      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {#if coursesApi.isLoading && coursesApi.recommendedCourses.length === 0}
-          {#each Array(3) as _, index (index)}
-            <Skeleton class="h-56 w-full rounded-xl" />
-          {/each}
-        {:else}
-          {#each coursesApi.recommendedCourses as course (course.id)}
-            <button
-              type="button"
-              class="group ui:bg-card ui:shadow-card ui:hover:shadow-raised ui:hover:border-primary/40 flex flex-col overflow-hidden rounded-xl border text-left transition-[box-shadow,border-color]"
-              onclick={() => {
-                selectedCourse = course;
-                previewOpen = true;
-              }}
-            >
-              <CourseCover title={course.title} src={course.bannerImage} class="aspect-[16/8] w-full" />
-              <span class="flex flex-1 flex-col gap-1.5 p-4">
-                <span class="line-clamp-2 text-sm leading-snug font-semibold">{course.title}</span>
-                {#if course.description}
-                  <span class="ui:text-muted-foreground line-clamp-2 text-xs leading-relaxed">{course.description}</span
-                  >
-                {/if}
-                <span class="ui:text-muted-foreground mt-auto pt-2 text-xs">
-                  {$t('lms_home.lesson_count', { count: course.lessonCount ?? 0 })}
-                </span>
-              </span>
-            </button>
-          {/each}
-        {/if}
-      </div>
-    </section>
-  {/if}
-
-  {#if selectedCourse}
-    <CoursePreviewModal course={selectedCourse} bind:open={previewOpen} />
+      </section>
+    {/if}
   {/if}
 </div>
+{#if selectedCourse}<CoursePreviewModal course={selectedCourse} bind:open={previewOpen} />{/if}
+
+<style>
+  .learning-focus {
+    background: linear-gradient(115deg, #102d60, #164e9b);
+  }
+  .metric-icon {
+    display: grid;
+    width: 2.5rem;
+    height: 2.5rem;
+    flex-shrink: 0;
+    place-items: center;
+    border-radius: 0.75rem;
+    background: var(--info-soft);
+    color: var(--info-foreground);
+  }
+  .metric-icon[data-tone='cyan'] {
+    background: var(--accent);
+    color: var(--accent-foreground);
+  }
+  .metric-icon[data-tone='green'] {
+    background: var(--success-soft);
+    color: var(--success-foreground);
+  }
+  .metric-icon[data-tone='amber'] {
+    background: var(--warning-soft);
+    color: var(--warning-foreground);
+  }
+  .learning-workspace :is(a, button):focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 4px;
+  }
+  @media (max-width: 639px) {
+    .focus-art {
+      opacity: 0.5;
+      width: 70%;
+    }
+  }
+</style>

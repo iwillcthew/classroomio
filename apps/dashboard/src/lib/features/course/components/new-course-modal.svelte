@@ -38,13 +38,6 @@
       subtitle: $t('new_course_modal.compliance_subtitle'),
       type: 'COMPLIANCE' as TCourseType,
       isDisabled: false
-    },
-    {
-      id: 'public',
-      title: $t('new_course_modal.public_label'),
-      subtitle: $t('new_course_modal.public_subtitle'),
-      type: 'PUBLIC' as TCourseType,
-      isDisabled: false
     }
   ];
   const courseTypeOptionsForGroup = options.map((o) => ({

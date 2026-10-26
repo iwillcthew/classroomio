@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { ScrollToTop } from '@cio/ui/custom/scroll-to-top';
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import * as Sidebar from '@cio/ui/base/sidebar';
@@ -285,4 +286,8 @@
   </Sidebar.Inset>
 
   <SidePanelRail onWidthPreview={handleSidePanelWidthPreview} />
+  <ScrollToTop
+    label={$t('common.scroll_to_top')}
+    clearance={showContentAskAiBar || showMobileBottomNav ? 'mobile-nav' : 'default'}
+  />
 </Sidebar.Provider>

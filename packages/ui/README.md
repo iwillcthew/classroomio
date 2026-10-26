@@ -728,3 +728,20 @@ When adding a new component to this package, follow these steps:
 `PublicCourseSidebarSection.standalone` renders its items directly, without a section heading or collapse control. Group consecutive root lessons and exercises into one standalone entry, interleaved with section entries in course order. Standalone rows show the item type icon in the badge instead of a number, since numbers count position within a section. Standalone entries stay visible when `collapsibleSections` is enabled.
 
 `NumberBadge` renders its `children` snippet in place of `number`, for a badge that shows an icon.
+
+## Scroll to top
+
+`ScrollToTop` from `@cio/ui/custom/scroll-to-top` is mounted once in the learner, organization, and authenticated course shells. It stays hidden until the container overflows and the user scrolls one viewport; it hides below 0.8 viewports. The secondary icon button uses smooth scrolling and respects reduced motion.
+
+| Prop | Type | Default |
+| --- | --- | --- |
+| `label` | `string` (required accessible name) | Host translation |
+| `target` | `HTMLElement \| null` | Document |
+| `clearance` | `'default' \| 'mobile-nav' \| 'ask-ai'` | `'default'` |
+| `class` | `string` | — |
+
+```svelte
+<ScrollToTop label={$t('common.scroll_to_top')} clearance="mobile-nav" />
+```
+
+Storybook covers document scrolling, short content, a nested target, mobile navigation clearance, and AI toolbar clearance. Enable reduced motion in the operating system to verify instant scrolling.

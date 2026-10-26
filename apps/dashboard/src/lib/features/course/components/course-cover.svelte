@@ -10,11 +10,13 @@
 
   let { title, src, class: className = '', initialsClass = '' }: Props = $props();
 
-  const FACET_VARIANTS = [
-    'linear-gradient(118deg, #0e2259 0%, #13398f 45%, #1559c6 72%, #0ea5e0 100%)',
-    'linear-gradient(118deg, #0b2a5c 0%, #0b6cb5 55%, #0ea5e0 100%)',
-    'linear-gradient(118deg, #14254d 0%, #1247a3 50%, #5b8fe6 100%)',
-    'linear-gradient(118deg, #0e2259 0%, #0e7fb8 60%, #6cc9f2 100%)'
+  const COVER_PALETTES = [
+    { background: '#e6edfc', ink: '#173f86', accent: '#7da5ef' },
+    { background: '#e1f1ee', ink: '#16584e', accent: '#5fb5a4' },
+    { background: '#ede8f8', ink: '#51417e', accent: '#b19bdd' },
+    { background: '#f8eddd', ink: '#785125', accent: '#dfbb80' },
+    { background: '#e1eef5', ink: '#215571', accent: '#7ab8d5' },
+    { background: '#f5e6e4', ink: '#824d49', accent: '#d49b95' }
   ];
 
   function hashTitle(value: string) {
@@ -40,7 +42,7 @@
   }
 
   const hasImage = $derived(!!src?.trim());
-  const background = $derived(FACET_VARIANTS[hashTitle(title) % FACET_VARIANTS.length]);
+  const palette = $derived(COVER_PALETTES[hashTitle(title) % COVER_PALETTES.length]);
   const initials = $derived(getInitials(title));
 </script>
 
@@ -48,22 +50,23 @@
   {#if hasImage}
     <img {src} alt="" class="absolute inset-0 size-full object-cover" loading="lazy" />
   {:else}
-    <div class="absolute inset-0" style:background-image={background}></div>
+    <div class="absolute inset-0" style:background-color={palette.background}></div>
     <svg
       class="absolute inset-0 size-full"
       viewBox="0 0 160 90"
       preserveAspectRatio="xMidYMid slice"
       aria-hidden="true"
     >
-      <path d="M88 -4 L116 -4 L80 94 L52 94 Z" fill="#ffffff" fill-opacity="0.12" />
-      <path d="M116 -4 L136 -4 L100 94 L80 94 Z" fill="#ffffff" fill-opacity="0.2" />
-      <path d="M136 -4 L170 -4 L170 20 L122 94 L100 94 Z" fill="#ffffff" fill-opacity="0.07" />
+      <circle cx="142" cy="40" r="44" fill="none" stroke={palette.accent} stroke-width=".5" />
+      <circle cx="142" cy="40" r="30" fill="none" stroke={palette.accent} stroke-width=".5" />
+      <path d="M91 -10h29L85 100H56z" fill={palette.accent} fill-opacity=".38" />
+      <path d="M123 -10h13L101 100H88z" fill={palette.ink} fill-opacity=".13" />
+      <path d="M138 -10h30l-35 110h-30z" fill={palette.accent} fill-opacity=".22" />
+      <circle cx="112" cy="9" r="3" fill={palette.ink} fill-opacity=".45" />
     </svg>
     <span
-      class={cn(
-        'absolute bottom-3 left-3.5 text-2xl font-semibold tracking-tight text-white/95 drop-shadow-sm',
-        initialsClass
-      )}
+      class={cn('absolute bottom-3 left-3.5 text-2xl font-semibold tracking-tight', initialsClass)}
+      style:color={palette.ink}
     >
       {initials}
     </span>

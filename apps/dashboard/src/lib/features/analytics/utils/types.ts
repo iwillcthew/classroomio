@@ -19,3 +19,10 @@ export type PopularTypesData = PopularTypesSuccess['data'];
 export type TopCoursesData = TopCoursesSuccess['data'];
 
 export type AnalyticsRange = 7 | 30 | 90;
+
+export type LearningAnalyticsRequest = (typeof classroomio.dash)['learning-analytics']['$get'];
+export type LearningAnalyticsSuccess = Extract<InferResponseType<LearningAnalyticsRequest>, { success: true }>;
+export type LearningReport = LearningAnalyticsSuccess['data'];
+export type LearningReportCourse = LearningReport['snapshot']['courses'][number];
+export type LearningReportDay = LearningReport['activity']['daily'][number];
+export type LearningCourseFilter = 'all' | 'assigned' | 'overdue';

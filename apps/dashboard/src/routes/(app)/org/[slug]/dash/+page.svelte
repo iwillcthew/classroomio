@@ -9,6 +9,7 @@
   import UserPlusIcon from '@lucide/svelte/icons/user-plus';
   import UsersIcon from '@lucide/svelte/icons/users';
   import UsersRoundIcon from '@lucide/svelte/icons/users-round';
+  import ArrowUpRightIcon from '@lucide/svelte/icons/arrow-up-right';
   import { Skeleton } from '@cio/ui/base/skeleton';
 
   import { t } from '$lib/utils/functions/translations';
@@ -32,9 +33,9 @@
   const stats = $derived(data.stats);
   const loginActivity = $derived(data.loginActivity);
   const recentCertifications = $derived(stats?.recentCertifications || []);
-  const numberOfCourses = $derived(stats?.numberOfCourses || 0);
-  const totalCertificates = $derived(stats?.totalCertificates || 0);
-  const totalStudents = $derived(stats?.totalStudents || 0);
+  const numberOfCourses = $derived(stats?.numberOfCourses ?? '—');
+  const totalCertificates = $derived(stats?.totalCertificates ?? '—');
+  const totalStudents = $derived(stats?.totalStudents ?? '—');
   const topCourses = $derived(stats?.topCourses || []);
   const firstName = $derived($profile.fullname?.trim().split(/\s+/).at(-1) ?? '');
 
@@ -98,6 +99,44 @@
   </Page.Header>
   <Page.Body>
     {#snippet child()}
+      <section class="ui:bg-brand-navy relative overflow-hidden rounded-2xl p-6 text-white md:p-8">
+        <svg
+          class="pointer-events-none absolute inset-y-0 right-0 h-full w-72 opacity-20"
+          viewBox="0 0 280 180"
+          fill="none"
+          aria-hidden="true"
+          ><path d="M80 180 140 0h55l-60 180z" fill="#38bdf8" /><path
+            d="M145 180 205 0h30l-60 180z"
+            fill="white"
+          /><circle cx="245" cy="90" r="74" stroke="white" /></svg
+        >
+        <div class="relative flex flex-wrap items-center justify-between gap-6">
+          <div class="max-w-xl space-y-2">
+            <p class="text-[10px] font-medium tracking-[.14em] text-cyan-200 uppercase">
+              MP TRANSFORMATION · {$t('mp_learning.context_admin')}
+            </p>
+            <h2 class="text-xl leading-snug font-semibold tracking-tight sm:text-2xl">
+              {$t('mp_workspace.operations_title')}
+            </h2>
+            <p class="max-w-lg text-sm leading-relaxed text-white/70">{$t('mp_workspace.operations_description')}</p>
+          </div>
+          <Button
+            variant="secondary"
+            size="sm"
+            href={`${$currentOrgPath}/${$isOrgAdmin ? 'compliance' : 'courses'}`}
+            class="ui:bg-white ui:text-brand-navy ui:hover:bg-white/90 shrink-0"
+          >
+            <ShieldCheckIcon class="size-4" />{$t(
+              $isOrgAdmin ? 'mp_workspace.review_training' : 'dashboard.view_courses'
+            )}<ArrowUpRightIcon class="size-4" />
+          </Button>
+        </div>
+      </section>
+      {#if !stats}
+        <p role="alert" class="ui:bg-warning-soft ui:text-warning-foreground rounded-xl p-4 text-sm">
+          {$t('mp_workspace.load_error')}
+        </p>
+      {/if}
       <div class="grid w-full grid-cols-1 gap-4 sm:grid-cols-3">
         <ActivityCard
           activity={{

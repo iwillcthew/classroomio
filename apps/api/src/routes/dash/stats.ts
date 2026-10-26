@@ -1,4 +1,5 @@
 import { Hono } from '@api/utils/hono';
+import { learningAnalyticsRouter } from './learning-analytics';
 import {
   ZDashAnalyticsRange,
   ZDashComplianceOverview,
@@ -24,6 +25,7 @@ import {
 } from '@api/services/analytics';
 
 export const dashAnalyticsRouter = new Hono()
+  .route('/', learningAnalyticsRouter)
   .post('/track', zValidator('json', ZIngestBatch), async (c) => {
     try {
       const batch = c.req.valid('json');

@@ -6,6 +6,8 @@ describe('internal LMS routes', () => {
     '/org/mp/landingpage',
     '/org/mp/landingpage/edit',
     '/org/mp/settings/billing',
+    '/courses/internal-course/landingpage',
+    '/claim/old-subscription',
     '/widgets/test',
     '/pages/example'
   ])('retires %s', (pathname) => {
