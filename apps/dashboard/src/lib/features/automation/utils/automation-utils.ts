@@ -9,6 +9,7 @@ const PUBLIC_API_BASE_URL = `${API_SERVER_URL}/public-api/v1`;
 export const MCP_DOCS_URL = `${API_SERVER_URL}/docs`;
 export const PUBLIC_API_DOCS_URL = `${API_SERVER_URL}/docs`;
 export const WEBHOOKS_DOCS_URL = `${API_SERVER_URL}/docs`;
+export const WEBHOOKS_VERIFY_SIGNATURE_DOCS_URL = `${WEBHOOKS_DOCS_URL}#verify-the-signature`;
 
 function getServerPath() {
   return 'npx -y @classroomio/mcp';
@@ -138,6 +139,7 @@ export function getOpenCodeSnippet(secret: string | null) {
       "environment": {
         "CLASSROOMIO_API_URL": "${API_SERVER_URL}",
         "CLASSROOMIO_API_KEY": "${apiKey}"
+
       }
     }
   }

@@ -28,12 +28,18 @@ import {
 import type { TUpdateLessonWatchProgress } from '@cio/utils/validation/lesson';
 import { skipActiveReminderDeliveriesForLesson, touchCourseUpdatedAt } from '@cio/db/queries/course';
 import { deleteAssetUsagesByTarget } from '@cio/db/queries/assets';
-import { db } from '@cio/db/drizzle';
+import { db, type DbOrTxClient } from '@cio/db/drizzle';
 import { enrichLessonWithPresignedUrls } from '../../utils/lesson-media';
 import { resolveWatchEnforcedAssetIds } from '../../utils/lesson-watch-enforcement';
 import { resolveItemSlug } from '../course/slug';
 import { claimItemOrder } from '../course/root-order';
 import { emitCourseWebhookEvent } from '../webhook/emit';
+import { captureCourseEvent } from '../posthog';
+
+export type LessonWriteOptions = {
+  actorProfileId?: string | null;
+  persistRelated?: (lesson: TLesson, client: DbOrTxClient) => Promise<void>;
+};
 
 /**
  * Creates a new lesson
@@ -41,7 +47,11 @@ import { emitCourseWebhookEvent } from '../webhook/emit';
  * @param data Lesson creation data
  * @returns Created lesson
  */
-export async function createLesson(courseId: string, data: TLessonCreate): Promise<TLesson> {
+export async function createLesson(
+  courseId: string,
+  data: TLessonCreate,
+  options: LessonWriteOptions = {}
+): Promise<TLesson> {
   try {
     const slug = await resolveItemSlug({
       courseId,
@@ -58,13 +68,30 @@ export async function createLesson(courseId: string, data: TLessonCreate): Promi
 
     const [lesson] = await db.transaction(async (tx) => {
       const order = await claimItemOrder(courseId, { sectionId: data.sectionId }, data.order, null, tx);
-      return createLessons([{ ...lessonData, order }], tx);
+      const lessons = await createLessons([{ ...lessonData, order }], tx);
+      const createdLesson = lessons[0];
+
+      if (createdLesson && options.persistRelated) {
+        await options.persistRelated(createdLesson, tx);
+      }
+
+      return lessons;
     });
     if (!lesson) {
       throw new AppError('Failed to create lesson', ErrorCodes.INTERNAL_ERROR, 500);
     }
 
     await touchCourseUpdatedAt(courseId);
+
+    if (data.lessonAt) {
+      await emitCourseWebhookEvent(courseId, 'lesson.session.scheduled', {
+        lessonId: lesson.id,
+        startsAt: lesson.lessonAt,
+        previousStartsAt: null,
+        callUrl: lesson.callUrl,
+        actorProfileId: options.actorProfileId ?? null
+      });
+    }
 
     return lesson;
   } catch (error) {
@@ -122,7 +149,11 @@ function hasSessionMoved(
  * @param data Partial lesson update data
  * @returns Updated lesson
  */
-export async function updateLessonService(lessonId: string, data: TLessonUpdate): Promise<TLesson> {
+export async function updateLessonService(
+  lessonId: string,
+  data: TLessonUpdate,
+  options: LessonWriteOptions = {}
+): Promise<TLesson> {
   try {
     const payload: TLessonUpdate = { ...data };
     const touchesSession = payload.lessonAt !== undefined || payload.callUrl !== undefined;
@@ -147,12 +178,22 @@ export async function updateLessonService(lessonId: string, data: TLessonUpdate)
 
     const sectionId = payload.sectionId === undefined ? existing?.sectionId : payload.sectionId;
     const orderCourseId = payload.order !== undefined ? existing?.courseId : null;
-    const updated = orderCourseId
-      ? await db.transaction(async (tx) => {
-          payload.order = await claimItemOrder(orderCourseId, { sectionId }, payload.order, lessonId, tx);
-          return updateLesson(lessonId, payload, tx);
-        })
-      : await updateLesson(lessonId, payload);
+    const updated =
+      orderCourseId || options.persistRelated
+        ? await db.transaction(async (tx) => {
+            if (orderCourseId) {
+              payload.order = await claimItemOrder(orderCourseId, { sectionId }, payload.order, lessonId, tx);
+            }
+
+            const updatedLesson = await updateLesson(lessonId, payload, tx);
+
+            if (updatedLesson && options.persistRelated) {
+              await options.persistRelated(updatedLesson, tx);
+            }
+
+            return updatedLesson;
+          })
+        : await updateLesson(lessonId, payload);
     if (!updated) {
       throw new AppError('Failed to update lesson', ErrorCodes.INTERNAL_ERROR, 500);
     }
@@ -163,6 +204,16 @@ export async function updateLessonService(lessonId: string, data: TLessonUpdate)
 
     if (existing && hasSessionMoved(existing, updated)) {
       await skipActiveReminderDeliveriesForLesson(lessonId, 'lesson_rescheduled');
+
+      if (updated.courseId) {
+        await emitCourseWebhookEvent(updated.courseId, 'lesson.session.scheduled', {
+          lessonId,
+          startsAt: updated.lessonAt,
+          previousStartsAt: existing.lessonAt,
+          callUrl: updated.callUrl,
+          actorProfileId: options.actorProfileId ?? null
+        });
+      }
     }
 
     return updated;
@@ -459,7 +510,25 @@ export async function getLessonCompletionService(lessonId: string, profileId: st
  * @param isComplete Completion status
  * @returns Completion record
  */
-export async function upsertLessonCompletionService(lessonId: string, profileId: string, isComplete: boolean) {
+function captureLessonCompleted(
+  courseId: string,
+  lessonId: string,
+  profileId: string,
+  completionMethod: 'manual' | 'video_watch' | 'admin'
+) {
+  captureCourseEvent(courseId, {
+    event: 'lesson_completed',
+    distinctId: profileId,
+    properties: { lesson_id: lessonId, completion_method: completionMethod }
+  });
+}
+
+export async function upsertLessonCompletionService(
+  lessonId: string,
+  profileId: string,
+  isComplete: boolean,
+  completionMethod: 'manual' | 'admin' = 'manual'
+) {
   try {
     const lesson = await getLessonById(lessonId);
     if (!lesson) {
@@ -480,9 +549,14 @@ export async function upsertLessonCompletionService(lessonId: string, profileId:
       isComplete
     };
 
+    const previous = isComplete ? await getLessonCompletion(lessonId, profileId) : null;
     const completion = await upsertLessonCompletion(completionData);
 
     await emitCourseWebhookEvent(lesson.courseId, 'lesson.completion.updated', { lessonId, profileId, isComplete });
+
+    if (isComplete && !previous?.isComplete) {
+      captureLessonCompleted(lesson.courseId, lessonId, profileId, completionMethod);
+    }
 
     return completion;
   } catch (error) {
@@ -706,6 +780,7 @@ export async function updateLessonWatchProgressService(
         profileId,
         isComplete: true
       });
+      captureLessonCompleted(lesson.courseId, lessonId, profileId, 'video_watch');
     }
 
     if (!aggregate) {

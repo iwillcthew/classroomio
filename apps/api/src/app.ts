@@ -47,7 +47,7 @@ import { signupGuard } from '@api/middlewares/signup-guard';
 import { internalLearning } from '@api/middlewares/internal-learning';
 import { ssoDiscoveryRouter } from '@api/routes/sso/discovery';
 import { unsplashRouter } from '@api/routes/unsplash/unsplash';
-import { v1Router } from '@api/routes/v1';
+import { publicApiRouter } from '@api/routes/public-api';
 
 // Create Hono app with chaining for RPC support
 export const app = new Hono()
@@ -253,7 +253,6 @@ export const app = new Hono()
   .route('/invite', inviteRouter)
   .route('/org-site/course', publicCourseRouter)
   .route('/org-site/og', orgSiteOgRouter)
-  .route('/public-api/v1', v1Router)
   .route('/cohort', cohortRouter)
   .route('/unsplash', unsplashRouter)
   .route('/widgets', publicWidgetsRouter)
@@ -272,6 +271,8 @@ export const app = new Hono()
 
     return c.json({ error: 'Internal Server Error' }, 500);
   });
+
+app.route('/public-api', publicApiRouter);
 
 // Dev-only BullMQ dashboard at /admin/queues. Mounted after the typed RPC
 // chain so it doesn't pollute the client type.
