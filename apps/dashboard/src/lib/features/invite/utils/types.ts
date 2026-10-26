@@ -7,10 +7,6 @@ export type PendingOrgInviteItem = PendingOrgInvites[number];
 
 export type AcceptOrgInviteRequest = (typeof classroomio.invite.organization)[':inviteId']['accept-by-id']['$post'];
 
-export type AcceptOrgInviteByTokenRequest = (typeof classroomio.invite.organization)[':token']['accept']['$post'];
-
-export type InviteSessionUser = Pick<NonNullable<App.Locals['user']>, 'id' | 'email'>;
-
 /**
  * Minimum an invite needs for the accept modal. Structural on purpose: both the
  * account-scoped notification list and the org-scoped tenant-site flow satisfy it.

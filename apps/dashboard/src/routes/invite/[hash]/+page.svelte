@@ -6,9 +6,8 @@
   import { AuthUI } from '$features/ui';
   import { currentOrg, mergeAccountOrgFromServer } from '$lib/utils/store/org';
   import { setTheme } from '$lib/utils/functions/theme';
-  import { authClient } from '$lib/utils/services/auth/client';
-  import { OrganizationInviteApi } from '$features/invite/api/organization-invite.svelte';
-  import { buildInviteAuthParams, getInviteAuthState } from '$features/invite/utils/invite-auth-utils';
+  import { classroomio } from '$lib/utils/services/api';
+  import { profile } from '$lib/utils/store/user';
   import { snackbar } from '$features/ui/snackbar/store';
   import { page } from '$app/state';
   import { t } from '$lib/utils/functions/translations';
@@ -16,23 +15,29 @@
 
   let { data } = $props();
 
-  const inviteApi = new OrganizationInviteApi();
-  const session = authClient.useSession();
-  const sessionUser = $derived($session.isPending ? data.locals?.user : $session.data?.user);
-  const inviteAuth = $derived(getInviteAuthState(sessionUser, data.invite?.invite?.email));
-  const loading = $derived(inviteApi.isLoading);
+  let loading = $state(false);
 
   const inviteStatus = $derived(data.invite?.invite?.status ?? 'INVALID');
-  const isInviteEmailMismatch = $derived(inviteAuth.isEmailMismatch);
+  const isInviteEmailMismatch = $derived(
+    Boolean(
+      $profile.email &&
+        data.invite?.invite?.email &&
+        $profile.email.toLowerCase() !== data.invite.invite.email.toLowerCase()
+    )
+  );
   const canJoinOrganization = $derived(inviteStatus === 'ACTIVE' && !isInviteEmailMismatch);
-  const isAlreadyJoined = $derived(inviteStatus === 'ACCEPTED' && !isInviteEmailMismatch);
+  const isAlreadyJoined = $derived(inviteStatus === 'ACCEPTED');
 
   const orgSlug = $derived(data.currentOrg?.siteName ?? data.invite.organization.siteName ?? '');
 
-  const loginParams = $derived(
-    buildInviteAuthParams(page.url.pathname + page.url.search, data.invite?.invite?.email || '')
-  );
-  const loginUrl = $derived(resolve(`/login?${loginParams}`, {}));
+  function buildInviteAuthParams(pathname: string, email: string): string {
+    const parts: string[] = [];
+    if (pathname) parts.push(`redirect=${encodeURIComponent(pathname)}`);
+    if (email) parts.push(`email=${encodeURIComponent(email)}`);
+    return parts.join('&');
+  }
+
+  const loginParams = $derived(buildInviteAuthParams(page.url?.pathname || '', data.invite?.invite?.email || ''));
 
   const orgName = $derived(data.invite?.organization?.name ?? '');
   const inviteRoleId = $derived(data.invite?.invite?.roleId ?? 0);
@@ -63,8 +68,9 @@
       return;
     }
 
-    if (!inviteAuth.isAuthenticated) {
-      return goto(resolve(`/signup?${loginParams}`, {}));
+    if (!$profile.id || !$profile.email) {
+      const qs = buildInviteAuthParams(page.url?.pathname || '', data.invite?.invite?.email || '');
+      return goto(resolve(`/signup?${qs}`, {}));
     }
 
     if (isInviteEmailMismatch) {
@@ -72,7 +78,29 @@
       return;
     }
 
-    await inviteApi.accept(data.token);
+    loading = true;
+
+    try {
+      const response = await classroomio.invite.organization[':token'].accept.$post({
+        param: { token: data.token }
+      });
+      const result = await response.json();
+
+      if (!result.success || !result.data) {
+        const failed = result as { error?: string; message?: string };
+        snackbar.error(failed.error ?? failed.message ?? t.get('invite.organization.messages.join_failed'));
+        return;
+      }
+
+      snackbar.success('invite.organization.messages.joined');
+
+      window.location.href = result.data.redirectTo || '/org';
+    } catch (error) {
+      console.error('Failed to accept organization invite', error);
+      snackbar.error('invite.organization.messages.join_failed');
+    } finally {
+      loading = false;
+    }
   }
 
   function handleNavigateAfterJoined() {
@@ -133,15 +161,9 @@
         {$t('invite.organization.accept_button')}
       </Button>
     {/if}
-    {#if isInviteEmailMismatch}
-      <Button type="button" variant="secondary" disabled={loading} onclick={() => inviteApi.switchAccount(loginUrl)}>
-        {$t('verify_email_modal.switch_account')}
-      </Button>
-    {:else if !inviteAuth.isAuthenticated}
-      <p class="ui:text-muted-foreground text-center text-sm">
-        {$t('login.already_have_account')}
-        <a class="ui:text-primary hover:underline" href={resolve(`/login?${loginParams}`, {})}> {$t('login.login')}</a>
-      </p>
-    {/if}
+    <p class="ui:text-muted-foreground text-center text-sm">
+      {$t('login.already_have_account')}
+      <a class="ui:text-primary hover:underline" href={resolve(`/login?${loginParams}`, {})}> {$t('login.login')}</a>
+    </p>
   </div>
 </AuthUI>
