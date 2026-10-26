@@ -1,6 +1,8 @@
 import { db, type DbOrTxClient } from '@db/drizzle';
 import { sql } from 'drizzle-orm';
 import { submissionMeetsCompletionPolicySql } from '../course/progression';
+import { workforceMemberFilter, workforceMemberSearch } from '../workforce/filters';
+import type { TWorkforceMemberFilters } from '@cio/utils/validation/organization';
 
 export type LearningCourseReport = {
   id: string;
@@ -44,7 +46,12 @@ export type LearningActivity = {
   daily: Array<{ date: string; lessons: number; submissions: number }>;
 };
 
-function learningPopulation(orgId: string) {
+function learningPopulation(orgId: string, filters: TWorkforceMemberFilters) {
+  const employeeScope = workforceMemberFilter(sql`p.id`, filters);
+  const employeeSearch = filters.search ? workforceMemberSearch(sql`p.id`, filters.search) : sql`true`;
+  const nameSearch = filters.search
+    ? sql`p.fullname ilike ${`%${filters.search}%`} or p.email ilike ${`%${filters.search}%`}`
+    : sql`true`;
   return sql`
     active_courses AS (
       SELECT c.id, c.title, c.type, c.is_published, c.group_id
@@ -55,6 +62,7 @@ function learningPopulation(orgId: string) {
       SELECT p.id AS profile_id, COALESCE(p.fullname, p.username, '') AS fullname, p.avatar_url
       FROM organizationmember om JOIN profile p ON p.id = om.profile_id
       WHERE om.organization_id = ${orgId} AND om.role_id = 3 AND om.status = 'ACTIVE'
+        AND ${employeeScope} AND (${employeeSearch} OR ${nameSearch})
     ),
     enrollments AS (
       SELECT gm.id AS member_id, gm.profile_id, ac.id AS course_id, ac.type
@@ -66,9 +74,13 @@ function learningPopulation(orgId: string) {
   `;
 }
 
-export async function getLearningAnalyticsSnapshot(orgId: string, dbClient: DbOrTxClient = db) {
+export async function getLearningAnalyticsSnapshot(
+  orgId: string,
+  dbClient: DbOrTxClient = db,
+  filters: TWorkforceMemberFilters = {}
+) {
   const completionPolicy = submissionMeetsCompletionPolicySql('exercise', 'submission');
-  const population = learningPopulation(orgId);
+  const population = learningPopulation(orgId, filters);
   const rows = await dbClient.execute<LearningSnapshot>(sql`
     WITH ${population},
     course_exercises AS (
@@ -165,8 +177,13 @@ export async function getLearningAnalyticsSnapshot(orgId: string, dbClient: DbOr
   return snapshot;
 }
 
-export async function getLearningAnalyticsActivity(orgId: string, days: number, dbClient: DbOrTxClient = db) {
-  const population = learningPopulation(orgId);
+export async function getLearningAnalyticsActivity(
+  orgId: string,
+  days: number,
+  dbClient: DbOrTxClient = db,
+  filters: TWorkforceMemberFilters = {}
+) {
+  const population = learningPopulation(orgId, filters);
   const rows = await dbClient.execute<LearningActivity>(sql`
     WITH ${population},
     boundaries AS (

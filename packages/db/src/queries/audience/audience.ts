@@ -3,6 +3,7 @@ import { and, desc, eq, ilike, or, sql } from 'drizzle-orm';
 
 import { ROLE } from '@cio/utils/constants';
 import { db } from '@db/drizzle';
+import { workforceMemberSearch } from '@db/queries/workforce/filters';
 
 export interface TSearchOrgAudienceMember {
   memberId: number;
@@ -42,7 +43,8 @@ export async function searchOrgAudience(
           or(
             ilike(schema.profile.fullname, searchValue),
             ilike(schema.profile.email, searchValue),
-            ilike(schema.organizationmember.email, searchValue)
+            ilike(schema.organizationmember.email, searchValue),
+            workforceMemberSearch(schema.profile.id, search)
           )
         )
       )

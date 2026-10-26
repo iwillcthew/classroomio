@@ -7,6 +7,7 @@
   import UsersIcon from '@lucide/svelte/icons/users';
   import { t } from '$lib/utils/functions/translations';
   import type { ComplianceLearnerRow } from '../utils/types';
+  import PersonnelScope from '$features/workforce/components/personnel-scope.svelte';
 
   interface Props {
     rows: ComplianceLearnerRow[];
@@ -15,7 +16,14 @@
 
   let { rows, statusFilter = 'all' }: Props = $props();
 
-  const filtered = $derived(statusFilter === 'all' ? rows : rows.filter((row) => row.status === statusFilter));
+  let matchingProfileIds = $state<string[] | null>(null);
+  const filtered = $derived(
+    rows.filter(
+      (row) =>
+        (statusFilter === 'all' || row.status === statusFilter) &&
+        (matchingProfileIds === null || (row.profileId && matchingProfileIds.includes(row.profileId)))
+    )
+  );
 
   const statusTone: Record<ComplianceLearnerRow['status'], string> = {
     compliant: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300',
@@ -48,6 +56,7 @@
     </Card.Description>
   </Card.Header>
   <Card.Content>
+    <PersonnelScope onScopeChange={(profileIds) => (matchingProfileIds = profileIds)} />
     {#if filtered.length === 0}
       <Empty icon={UsersIcon} title={$t('compliance.learners.empty')} />
     {:else}

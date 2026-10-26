@@ -45,6 +45,8 @@ export type OrganizationAudienceCertificate = 'earned' | 'not_earned';
 export type OrganizationAudienceActivityWindow = '7d' | '30d' | '90d' | '180d' | 'never';
 
 export type OrganizationAudienceQuery = {
+  unitId?: string;
+  jobTitleId?: string;
   page: number;
   limit: number;
   search?: string;

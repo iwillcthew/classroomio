@@ -48,9 +48,16 @@ import { internalLearning } from '@api/middlewares/internal-learning';
 import { ssoDiscoveryRouter } from '@api/routes/sso/discovery';
 import { unsplashRouter } from '@api/routes/unsplash/unsplash';
 import { v1Router } from '@api/routes/v1';
+import { workforceRouter } from '@api/routes/workforce';
+import { workforceProfileAccess } from '@cio/db/queries/workforce';
+import { rewriteEmployeeAuthRequest } from '@api/utils/employee-auth-request';
+import type { Schema } from 'hono';
+import type { HonoBase } from 'hono/hono-base';
+import type { MergeSchemaPath } from 'hono/types';
+import type { AuthSession } from '@api/types/auth';
 
 // Create Hono app with chaining for RPC support
-export const app = new Hono()
+const coreApp = new Hono()
   .use('*', internalLearning)
   // Middleware
   .use('*', logger())
@@ -84,7 +91,7 @@ export const app = new Hono()
       console.error('auth.api.getSession error:', error);
     }
 
-    if (!session) {
+    if (!session || !(await workforceProfileAccess(session.user.id))) {
       c.set('user', null);
       c.set('session', null);
       c.set('orgRoles', {});
@@ -169,6 +176,7 @@ export const app = new Hono()
       }
     }
 
+    request = await rewriteEmployeeAuthRequest(request);
     const response = await auth.handler(request);
 
     // Outbound: if the OAuth callback redirected to
@@ -275,4 +283,15 @@ export const app = new Hono()
 
 // Dev-only BullMQ dashboard at /admin/queues. Mounted after the typed RPC
 // chain so it doesn't pollute the client type.
+type AppSchema<T> =
+  T extends HonoBase<infer Environment, infer Routes extends Schema, infer BasePath, infer CurrentPath>
+    ? Routes
+    : never;
+type CoreSchema = AppSchema<typeof coreApp>;
+type WorkforceSchema = MergeSchemaPath<AppSchema<typeof workforceRouter>, '/workforce'>;
+export const app: HonoBase<AuthSession, CoreSchema | WorkforceSchema, '/', '/session'> = coreApp.route(
+  '/workforce',
+  workforceRouter
+);
+
 mountQueueDashboard(app);

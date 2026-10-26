@@ -1,4 +1,5 @@
 import * as schema from '@db/schema';
+import { workforceMemberFilter, workforceMemberSearch } from '@db/queries/workforce/filters';
 
 import { and, asc, count, desc, eq, ilike, inArray, isNotNull, or, sql, type SQL, type SQLWrapper } from 'drizzle-orm';
 
@@ -587,6 +588,8 @@ export async function getCohortMembers(
 }
 
 export type PaginatedCohortPeopleOptions = {
+  unitId?: string;
+  jobTitleId?: string;
   page: number;
   limit: number;
   search?: string;
@@ -666,6 +669,7 @@ export async function getPaginatedCohortPeople(
 ): Promise<PaginatedCohortPeopleResult> {
   try {
     const conditions = [eq(schema.cohortMember.cohortId, cohortId)];
+    conditions.push(workforceMemberFilter(schema.profile.id, options));
 
     if (options.roleId !== undefined) {
       conditions.push(eq(schema.cohortMember.roleId, options.roleId));
@@ -687,7 +691,8 @@ export async function getPaginatedCohortPeople(
         or(
           ilike(schema.profile.fullname, term),
           ilike(schema.profile.email, term),
-          ilike(schema.cohortMember.email, term)
+          ilike(schema.cohortMember.email, term),
+          workforceMemberSearch(schema.profile.id, options.search)
         )!
       );
     }

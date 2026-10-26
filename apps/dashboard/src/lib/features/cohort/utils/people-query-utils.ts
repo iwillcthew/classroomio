@@ -19,6 +19,8 @@ export const DEFAULT_COHORT_PEOPLE_QUERY: ListCohortPeopleQuery = {
 };
 
 const OWNED_PARAMS = [
+  'unitId',
+  'jobTitleId',
   'page',
   'limit',
   'search',
@@ -44,6 +46,8 @@ export function getCohortPeopleQueryFromSearchParams(searchParams: URLSearchPara
         ? Math.min(Math.max(Math.floor(limit), 1), 100)
         : DEFAULT_COHORT_PEOPLE_QUERY.limit,
     search: searchParams.get('search')?.trim() || undefined,
+    unitId: searchParams.get('unitId') || undefined,
+    jobTitleId: searchParams.get('jobTitleId') || undefined,
     roleId: Number.isInteger(roleId) && roleId > 0 ? roleId : undefined,
     sortBy: readEnum(searchParams.get('sortBy'), SORT_BY_VALUES) ?? DEFAULT_COHORT_PEOPLE_QUERY.sortBy,
     sortOrder: readEnum(searchParams.get('sortOrder'), SORT_ORDER_VALUES) ?? DEFAULT_COHORT_PEOPLE_QUERY.sortOrder,
@@ -70,6 +74,8 @@ export function getCohortPeopleSearchParams(
     searchParams.set('sortOrder', query.sortOrder);
   }
   if (query.search) searchParams.set('search', query.search);
+  if (query.unitId) searchParams.set('unitId', query.unitId);
+  if (query.jobTitleId) searchParams.set('jobTitleId', query.jobTitleId);
   if (query.roleId !== undefined) searchParams.set('roleId', String(query.roleId));
   if (query.membership) searchParams.set('membership', query.membership);
   if (query.lastLoginBefore) searchParams.set('lastLoginBefore', query.lastLoginBefore);
@@ -87,7 +93,7 @@ const VIEW_FILTERS: Record<CohortPeopleView, Partial<ListCohortPeopleQuery>> = {
 
 export const COHORT_PEOPLE_VIEWS = Object.keys(VIEW_FILTERS) as CohortPeopleView[];
 
-const VIEW_MATCHED_KEYS = ['membership', 'lastLoginBefore', 'roleId'] as const;
+const VIEW_MATCHED_KEYS = ['unitId', 'jobTitleId', 'membership', 'lastLoginBefore', 'roleId'] as const;
 
 export function applyCohortPeopleView(
   view: CohortPeopleView,

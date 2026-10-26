@@ -24,6 +24,8 @@ export const AudienceCertificate = z.enum(['earned', 'not_earned']);
 export const AudienceActivityWindow = z.enum(['7d', '30d', '90d', '180d', 'never']);
 
 export const ZGetAudienceQuery = z.object({
+  unitId: z.string().uuid().optional(),
+  jobTitleId: z.string().uuid().optional(),
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(100).default(20),
   search: z.string().trim().optional(),

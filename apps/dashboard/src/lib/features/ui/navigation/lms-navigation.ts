@@ -46,6 +46,12 @@ export interface NavItemConfig {
 
 export const baseNavConfig: NavItemConfig[] = [
   {
+    titleKey: 'workforce.title',
+    path: '/workforce',
+    icon: UsersRoundIcon,
+    matchPattern: '^/lms/workforce(/.*)?$'
+  },
+  {
     titleKey: 'lms_navigation.home',
     path: '',
     icon: HouseIcon,

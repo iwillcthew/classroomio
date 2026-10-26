@@ -24,6 +24,7 @@
   import { UserAvatar } from '@cio/ui/custom/user-avatar';
   import MarkExerciseModal from '$features/course/components/exercise/mark-exercise-modal.svelte';
   import SubmissionFilterBar from '$features/course/components/submissions/submission-filter-bar.svelte';
+  import PersonnelScope from '$features/workforce/components/personnel-scope.svelte';
   import { STATUS } from '$features/course/components/exercise/constants';
 
   interface Props {
@@ -39,6 +40,7 @@
   let submissionIdData = $state<Record<string, SubmissionIdData>>({});
   let isGradeWithAI = $state(false);
   let isSaving = $state(false);
+  let matchingProfileIds = $state<string[] | null>(null);
   let selectedStudentIds = new SvelteSet<string>(parseIdParam(page.url.searchParams.get('students')));
   let selectedExerciseIds = new SvelteSet<string>(parseIdParam(page.url.searchParams.get('exercises')));
 
@@ -136,7 +138,8 @@
   function matchesBoardItem(item: SubmissionItem): boolean {
     const studentId = item.student?.id ? String(item.student.id) : '';
     const exerciseId = item.exercise?.id ? String(item.exercise.id) : '';
-    return matchesBoardFilters({ studentId, exerciseId }, selectedStudentIds, selectedExerciseIds);
+    const matchesPersonnel = matchingProfileIds === null || matchingProfileIds.includes(studentId);
+    return matchesPersonnel && matchesBoardFilters({ studentId, exerciseId }, selectedStudentIds, selectedExerciseIds);
   }
 
   function countOptions(
@@ -371,6 +374,8 @@
   onExerciseIdsChange={(ids) => replaceSelectedIds(selectedExerciseIds, ids)}
   onReset={resetFilters}
 />
+
+<PersonnelScope {courseId} onScopeChange={(profileIds) => (matchingProfileIds = profileIds)} />
 
 <div class="flex items-center overflow-x-scroll">
   {#each visibleSections as { id, title, items }, idx (id)}

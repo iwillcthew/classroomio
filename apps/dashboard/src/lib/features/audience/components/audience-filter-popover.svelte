@@ -1,4 +1,5 @@
 <script lang="ts">
+  import PersonnelFilters from '$features/workforce/components/personnel-filters.svelte';
   import { Button } from '@cio/ui/base/button';
   import { Checkbox } from '@cio/ui/base/checkbox';
   import { SortPopover } from '$features/ui';
@@ -106,6 +107,8 @@
     onFilterChange({ [key]: query[key] === value ? undefined : value } as Partial<OrganizationAudienceQuery>);
   }
 </script>
+
+<PersonnelFilters unitId={query.unitId} jobTitleId={query.jobTitleId} {onFilterChange} />
 
 <SortPopover
   {sortOptions}

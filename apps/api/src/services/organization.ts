@@ -182,6 +182,8 @@ export async function getOrgAudience(
         page: audienceResult.page,
         limit: audienceResult.limit,
         search: query.search,
+        unitId: query.unitId,
+        jobTitleId: query.jobTitleId,
         sortBy: query.sortBy,
         sortOrder: query.sortOrder,
         status: query.status,

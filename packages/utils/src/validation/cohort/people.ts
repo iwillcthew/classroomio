@@ -30,6 +30,8 @@ export const COHORT_PEOPLE_WINDOW_DAYS: Record<Exclude<TCohortPeopleActivityWind
 };
 
 export const ZCohortPeopleQuery = z.object({
+  unitId: z.string().uuid().optional(),
+  jobTitleId: z.string().uuid().optional(),
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(100).default(20),
   search: z.string().trim().max(200).optional(),

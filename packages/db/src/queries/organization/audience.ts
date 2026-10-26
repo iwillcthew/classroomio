@@ -1,4 +1,5 @@
 import * as schema from '@db/schema';
+import { workforceMemberFilter, workforceMemberSearch } from '@db/queries/workforce/filters';
 
 import { and, asc, count, desc, eq, ilike, inArray, ne, or, sql } from 'drizzle-orm';
 import type { SQL } from 'drizzle-orm';
@@ -18,6 +19,8 @@ import type {
 } from '@cio/utils/validation/organization';
 
 export type GetOrganizationAudienceOptions = {
+  unitId?: string;
+  jobTitleId?: string;
   page?: number;
   limit?: number;
   search?: string;
@@ -301,6 +304,7 @@ export function buildAudienceWhereClause(
   }
 
   const conditions: SQL[] = [
+    workforceMemberFilter(schema.profile.id, options),
     eq(schema.organizationmember.organizationId, orgId),
     eq(schema.organizationmember.roleId, ROLE.STUDENT),
     eq(schema.organizationmember.status, status)
@@ -312,7 +316,8 @@ export function buildAudienceWhereClause(
       or(
         ilike(schema.profile.fullname, searchValue),
         ilike(schema.profile.email, searchValue),
-        ilike(schema.organizationmember.email, searchValue)
+        ilike(schema.organizationmember.email, searchValue),
+        workforceMemberSearch(schema.profile.id, search)
       )!
     );
   }
