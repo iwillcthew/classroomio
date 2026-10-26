@@ -1,7 +1,6 @@
 <script lang="ts">
   import { goto } from '$app/navigation';
   import { page } from '$app/state';
-  import { Badge } from '@cio/ui/base/badge';
   import * as UnderlineTabs from '@cio/ui/custom/underline-tabs';
   import { currentOrgPath } from '$lib/utils/store/org';
   import { t } from '$lib/utils/functions/translations';
@@ -12,15 +11,14 @@
   const tabs = [
     { value: 'mcp', href: '/automation/mcp', label: 'automation.tabs.mcp' },
     { value: 'api', href: '/automation/api', label: 'automation.tabs.api' },
-    { value: 'zapier', href: '/automation/zapier', label: 'automation.tabs.zapier' },
-    { value: 'webhooks', href: '/automation/webhooks', label: 'automation.tabs.webhooks', isNew: true }
+    { value: 'webhooks', href: '/automation/webhooks', label: 'automation.tabs.webhooks' }
   ] as const;
 
   function getCurrentTab(pathname: string) {
     if (pathname.endsWith('/automation/mcp')) return 'mcp';
     if (pathname.endsWith('/automation/api')) return 'api';
-    if (pathname.endsWith('/automation/zapier')) return 'zapier';
     if (pathname.endsWith('/automation/webhooks')) return 'webhooks';
+
     return 'mcp';
   }
 
@@ -29,6 +27,7 @@
   function handleTabChange(value: string) {
     const nextTab = tabs.find((tab) => tab.value === value);
     if (!nextTab || value === currentTab) return;
+
     goto($currentOrgPath + nextTab.href);
   }
 </script>
@@ -40,11 +39,6 @@
         {#each tabs as tab}
           <UnderlineTabs.Trigger value={tab.value}>
             {$t(tab.label)}
-            {#if 'isNew' in tab}
-              <Badge class="ui:text-primary ui:bg-primary/10 ui:border-transparent"
-                >{$t('automation.tabs.new_badge')}</Badge
-              >
-            {/if}
           </UnderlineTabs.Trigger>
         {/each}
       </UnderlineTabs.List>

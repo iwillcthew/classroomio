@@ -189,7 +189,6 @@ export const baseNavConfig: NavItemConfig[] = [
     nestedRoutes: [
       { path: 'mcp', titleKey: 'automation.tabs.mcp' },
       { path: 'api', titleKey: 'automation.tabs.api' },
-      { path: 'zapier', titleKey: 'automation.tabs.zapier' },
       { path: 'webhooks', titleKey: 'automation.tabs.webhooks' }
     ]
   },
