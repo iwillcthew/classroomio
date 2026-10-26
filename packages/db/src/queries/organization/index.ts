@@ -8,3 +8,4 @@ export * from './automation-key';
 export * from './automation-usage';
 export * from './student-email-template';
 export * from './early-adopter-claim';
+export * from './employees';

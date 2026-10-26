@@ -12,6 +12,8 @@ import {
 import { betterAuth } from 'better-auth/minimal';
 import { createProfileHook } from './auth/hooks/create-profile';
 import { enforceInternalRegistration } from './auth/hooks/internal-registration';
+import { canEmployeeSignIn } from './queries/organization/employees';
+import { APIError } from 'better-auth/api';
 import { customSession } from 'better-auth/plugins/custom-session';
 import { db } from '@db/drizzle';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
@@ -97,7 +99,7 @@ export const auth: ReturnType<typeof betterAuth> = betterAuth({
     expiresIn: 60 * 60 * 24 * 30, // 30 days
     updateAge: 60 * 60 * 24, // 1 day (every 1 day the session expiration is updated)
     cookieCache: {
-      enabled: true,
+      enabled: false,
       maxAge: 60 * 60 // 1 hour
     }
   },
@@ -119,6 +121,10 @@ export const auth: ReturnType<typeof betterAuth> = betterAuth({
     },
     session: {
       create: {
+        before: async (session) => {
+          const allowed = await canEmployeeSignIn(session.userId);
+          if (!allowed) throw new APIError('FORBIDDEN', { message: 'Account access is disabled' });
+        },
         after: async (session) => {
           await trackLoginHook(session);
           await syncProfileEmailVerificationFromAuthUser(session.userId);

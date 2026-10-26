@@ -78,7 +78,7 @@
       return;
     }
 
-    const validationRes = authValidation(fields, { skipPassword: true });
+    const validationRes = authValidation(fields, { skipPassword: true, allowEmployeeCode: true });
     console.log('validationRes', validationRes);
 
     if (Object.keys(validationRes).length) {
@@ -156,15 +156,15 @@
 >
   <div class="flex flex-col gap-6">
     <Field.Field>
-      <Field.Label for="email">{$t('login.email')}</Field.Label>
+      <Field.Label for="email">{$t('employees.login_identity')}</Field.Label>
       <Field.Content>
         <Input
           id="email"
-          type="email"
+          type="text"
           bind:value={fields.email}
           data-testid="auth-login-email"
           oninput={handleEmailChange}
-          placeholder="you@domain.com"
+          placeholder={$t('employees.login_placeholder')}
           disabled={loading || isEmailPrefilled}
           readonly={isEmailPrefilled}
           autofocus
@@ -192,10 +192,10 @@
             bind:value={fields.password}
             data-testid="auth-login-password"
             placeholder="************"
-            showPasswordTooltip={$t('auth.password.show')}
-            hidePasswordTooltip={$t('auth.password.hide')}
-            showPasswordAriaLabel={$t('auth.password.show')}
-            hidePasswordAriaLabel={$t('auth.password.hide')}
+            showPasswordTooltip={$t('employees.show_password')}
+            hidePasswordTooltip={$t('employees.hide_password')}
+            showPasswordAriaLabel={$t('employees.show_password')}
+            hidePasswordAriaLabel={$t('employees.hide_password')}
             disabled={loading}
             aria-invalid={errors.password ? 'true' : undefined}
             autocomplete="current-password"

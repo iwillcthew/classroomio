@@ -1,4 +1,5 @@
 import { APIError } from 'better-auth/api';
+import { getEmployeeByIdentity } from '@db/queries/organization/employees';
 import {
   checkEmailExistsInOrg,
   getFirstOrganization,
@@ -7,6 +8,11 @@ import {
 
 export async function enforceInternalRegistration(user: { email: string }) {
   const email = user.email.trim().toLowerCase();
+  const managedEmployee = await getEmployeeByIdentity(email);
+  if (managedEmployee) {
+    throw new APIError('FORBIDDEN', { message: 'Vui lòng sử dụng thư kích hoạt tài khoản do HR gửi.' });
+  }
+
   const approvedEmails = (process.env.LMS_ALLOWED_EMAILS ?? '')
     .split(',')
     .map((entry) => entry.trim().toLowerCase())

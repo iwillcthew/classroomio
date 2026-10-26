@@ -145,10 +145,10 @@ export const baseNavConfig: NavItemConfig[] = [
   },
   {
     group: 'people',
-    titleKey: 'org_navigation.audience',
-    path: '/audience',
+    titleKey: 'employees.title',
+    path: '/employees',
     icon: ContactRoundIcon,
-    matchPattern: '^/org/[^/]+/audience(/.*)?$'
+    matchPattern: '^/org/[^/]+/employees(/.*)?$'
   },
   {
     group: 'people',

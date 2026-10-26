@@ -4,6 +4,18 @@
   import { t } from '$lib/utils/functions/translations';
   import { page } from '$app/state';
   import { getLmsNavigationItems } from '$features/ui/navigation/lms-navigation';
+  import { employeesApi } from '$features/employees/api/employees.svelte';
+  import { untrack } from 'svelte';
+  import UsersRoundIcon from '@lucide/svelte/icons/users-round';
+
+  $effect(() => {
+    const orgId = $currentOrg.id;
+    if (!orgId) return;
+
+    untrack(() => {
+      void employeesApi.loadAccess(orgId);
+    });
+  });
 
   const items = $derived(
     getLmsNavigationItems($currentOrg, $t, page.url.pathname).filter((item) => !item.hideFromSidebar)
@@ -28,5 +40,16 @@
         </Sidebar.MenuButton>
       </Sidebar.MenuItem>
     {/each}
+    {#if employeesApi.access?.canManage || employeesApi.access?.role === 'MANAGER'}
+      <Sidebar.MenuItem>
+        <Sidebar.MenuButton tooltipContent={$t('employees.title')} isActive={page.url.pathname === '/lms/employees'}>
+          {#snippet child({ props })}
+            <a href="/lms/employees" {...props} data-testid="employee-navigation"
+              ><UsersRoundIcon size={17} /><span>{$t('employees.title')}</span></a
+            >
+          {/snippet}
+        </Sidebar.MenuButton>
+      </Sidebar.MenuItem>
+    {/if}
   </Sidebar.Menu>
 </Sidebar.Group>

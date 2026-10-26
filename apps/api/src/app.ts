@@ -15,6 +15,8 @@ import {
 import { Hono } from '@api/utils/hono';
 import { ErrorCodes, handlePublicApiError } from '@api/utils/errors';
 import { accountRouter } from '@api/routes/account';
+import { employeesRouter } from '@api/routes/employees';
+import { resolveEmployeeSignInRequest } from '@api/utils/employee-sign-in';
 import { agentRouter } from '@api/routes/agent';
 import { auth } from '@cio/db/auth';
 import { communityRouter } from '@api/routes/community';
@@ -169,6 +171,7 @@ export const app = new Hono()
       }
     }
 
+    request = await resolveEmployeeSignInRequest(request);
     const response = await auth.handler(request);
 
     // Outbound: if the OAuth callback redirected to
@@ -236,6 +239,7 @@ export const app = new Hono()
   })
   .route('/onboarding', onboardingRouter)
   .route('/account', accountRouter)
+  .route('/employees', employeesRouter)
   .route('/course', courseRouter)
   .route('/domain', domainRouter)
   .route('/hls', hlsRouter)

@@ -178,10 +178,7 @@
           <Card.Footer class="flex-col gap-2 border-t pt-6">
             <p class="ui:text-muted-foreground text-center text-sm">
               {#if isLogin}
-                {$t('mp_learning.invitation_hint')}
-                <a class="ui:text-primary hover:underline" href="/signup{page.url.search}"
-                  >{$t('mp_learning.activate')}</a
-                >
+                {$t('employees.contact_hr')}
               {:else}
                 {$t('login.already_have_account')}
                 <a class="ui:text-primary hover:underline" href="/login{page.url.search}">{$t('login.login')}</a>

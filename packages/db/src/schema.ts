@@ -103,6 +103,89 @@ export const organizationMemberEventType = pgEnum('ORGANIZATION_MEMBER_EVENT_TYP
   'REMOVED'
 ]);
 
+export const employee = pgTable(
+  'employee',
+  {
+    id: uuid().defaultRandom().primaryKey(),
+    organizationId: uuid('organization_id')
+      .notNull()
+      .references(() => organization.id),
+    memberId: bigint('member_id', { mode: 'number' })
+      .notNull()
+      .unique()
+      .references(() => organizationmember.id),
+    employeeCode: varchar('employee_code', { length: 50 }).notNull(),
+    fullname: text().notNull(),
+    email: text().notNull(),
+    department: text().notNull().default(''),
+    jobTitle: text('job_title').notNull().default(''),
+    managerId: uuid('manager_id').references((): AnyPgColumn => employee.id),
+    role: varchar({ length: 20 }).notNull().default('EMPLOYEE'),
+    status: varchar({ length: 20 }).notNull().default('DRAFT'),
+    startDate: date('start_date'),
+    leftAt: timestamp('left_at', { withTimezone: true, mode: 'string' }),
+    activatedAt: timestamp('activated_at', { withTimezone: true, mode: 'string' }),
+    invitationSentAt: timestamp('invitation_sent_at', { withTimezone: true, mode: 'string' }),
+    createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' }).defaultNow().notNull()
+  },
+  (table) => [
+    uniqueIndex('employee_org_code_unique').on(table.organizationId, table.employeeCode),
+    uniqueIndex('employee_org_email_unique').on(table.organizationId, table.email),
+    index('employee_manager_idx').on(table.organizationId, table.managerId),
+    check('employee_role_check', sql`${table.role} IN ('EMPLOYEE','MANAGER','HR','TUTOR','ADMIN')`),
+    check('employee_status_check', sql`${table.status} IN ('DRAFT','INVITED','ACTIVE','SUSPENDED','LEFT')`),
+    check('employee_code_normalized', sql`${table.employeeCode} = upper(${table.employeeCode})`),
+    check('employee_email_normalized', sql`${table.email} = lower(${table.email})`)
+  ]
+);
+
+export const employeeActivation = pgTable('employee_activation', {
+  id: uuid().defaultRandom().primaryKey(),
+  employeeId: uuid('employee_id')
+    .notNull()
+    .references(() => employee.id),
+  tokenHash: text('token_hash').notNull().unique(),
+  expiresAt: timestamp('expires_at', { withTimezone: true, mode: 'string' }).notNull(),
+  usedAt: timestamp('used_at', { withTimezone: true, mode: 'string' })
+});
+
+export const employeeCourse = pgTable(
+  'employee_course',
+  {
+    employeeId: uuid('employee_id')
+      .notNull()
+      .references(() => employee.id),
+    courseId: uuid('course_id')
+      .notNull()
+      .references(() => course.id, { onDelete: 'cascade' })
+  },
+  (table) => [primaryKey({ columns: [table.employeeId, table.courseId] })]
+);
+
+export const employeeCohort = pgTable(
+  'employee_cohort',
+  {
+    employeeId: uuid('employee_id')
+      .notNull()
+      .references(() => employee.id),
+    cohortId: uuid('cohort_id')
+      .notNull()
+      .references(() => cohort.id, { onDelete: 'cascade' })
+  },
+  (table) => [primaryKey({ columns: [table.employeeId, table.cohortId] })]
+);
+
+export const employeeAudit = pgTable('employee_audit', {
+  id: uuid().defaultRandom().primaryKey(),
+  employeeId: uuid('employee_id')
+    .notNull()
+    .references(() => employee.id),
+  actorId: uuid('actor_id').references(() => profile.id),
+  action: text().notNull(),
+  reason: text().notNull().default(''),
+  createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' }).defaultNow().notNull()
+});
+
 export const user = pgTable('user', {
   id: uuid()
     .default(sql`gen_random_uuid()`)

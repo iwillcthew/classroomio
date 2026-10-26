@@ -1,0 +1,63 @@
+# Quản lý tài khoản nhân viên MP Learning
+
+## Cấp tài khoản
+
+Quản trị mở **Nhân viên** trong khu vực quản trị. HR/L&D và quản lý bộ phận mở **Nhân viên** trong khu vực học tập. HR/L&D quản lý nhân viên thông thường và quản lý bộ phận; chỉ quản trị hệ thống được cấp hoặc thay đổi quyền HR/L&D, giảng viên và quản trị.
+
+Chọn **Thêm nhân viên**, nhập mã nhân viên, họ tên, email, phòng ban, chức danh, ngày vào làm và quản lý trực tiếp. Chọn khóa học/chương trình nếu cần. **Lưu nháp** không gửi email. **Tạo và gửi kích hoạt** cấp hồ sơ và gửi liên kết để nhân viên tự đặt mật khẩu.
+
+Mã nhân viên được chuẩn hóa thành chữ hoa, có tối đa 50 ký tự: chữ Latin, số, dấu chấm, gạch ngang hoặc gạch dưới. Mã nhân viên và email không thay đổi qua biểu mẫu sửa hồ sơ. Tài khoản cũ tiếp tục đăng nhập bằng email. Có thể thêm hồ sơ nhân viên cho thành viên cũ với cùng email và vai trò; việc này không thay mật khẩu hiện có.
+
+Email vẫn bắt buộc để xác nhận chủ tài khoản, kích hoạt và khôi phục mật khẩu. Không tạo email giả cho nhân viên chưa có hộp thư.
+
+## Kích hoạt và đăng nhập
+
+Nhân viên mở thư kích hoạt, kiểm tra tên/mã được hiển thị, đặt mật khẩu và đăng nhập bằng **mã nhân viên hoặc email**. Nếu email đã có tài khoản, bước kích hoạt giữ mật khẩu cũ. Quên mật khẩu vẫn dùng địa chỉ email đã đăng ký.
+
+Liên kết kích hoạt có hiệu lực 48 giờ, dùng một lần và chỉ lưu bản băm SHA-256 trong cơ sở dữ liệu. Gửi lại sẽ vô hiệu hóa liên kết trước. Tạm khóa/nghỉ việc cũng vô hiệu hóa các liên kết đang chờ. Tài khoản do HR quản lý phải dùng luồng kích hoạt, không đăng ký lại qua `/signup`.
+
+Cấu hình SMTP theo [hướng dẫn triển khai](./mp-deployment.md). Khi gửi email lỗi, hồ sơ vẫn được lưu; giao diện thông báo riêng kết quả gửi để HR kiểm tra cấu hình và gửi lại. Không coi tài khoản đã tạo là email đã được gửi.
+
+## Nhập danh sách
+
+Nhập `.csv` hoặc `.xlsx`, tối đa 1.000 dòng và 5 MB. Các cột bắt buộc: `employeeCode`, `fullname`, `email`. Cột tùy chọn: `department`, `jobTitle`, `startDate` theo `YYYY-MM-DD`, `managerCode` là mã của quản lý đã hoạt động. Mã có số 0 ở đầu cần được lưu dưới dạng văn bản trong Excel.
+
+Tài khoản nhập nhận vai trò Nhân viên. Các quyền cao hơn được cấp riêng bởi người đủ thẩm quyền. Có thể chọn khóa học/chương trình chung và gửi kích hoạt hoặc lưu nháp cho cả đợt.
+
+Chạy **Kiểm tra danh sách** trước khi xác nhận. Dòng sai định dạng, trùng mã/email, quản lý không hợp lệ hoặc không có quyền sẽ có kết quả riêng. Khi xác nhận, trình duyệt xử lý từng nhóm nhỏ và hiển thị kết quả từng dòng; giữ trang mở đến khi hoàn tất. Nếu kết nối bị ngắt, kiểm tra danh sách và kết quả đã nhận trước khi thử lại. Nhập lại không ghi đè hay tạo trùng người đã có. Có thể tải các dòng lỗi để sửa.
+
+## Phân quyền và vòng đời
+
+| Vai trò | Phạm vi |
+| --- | --- |
+| Quản trị hệ thống | Quản lý toàn tổ chức, cấu hình và cấp quyền cao |
+| HR/L&D | Tạo/sửa, giao đào tạo và quản lý vòng đời nhân viên thông thường/quản lý bộ phận |
+| Quản lý bộ phận | Chỉ xem danh sách và kết quả của nhân viên có quan hệ quản lý trực tiếp |
+| Giảng viên | Giữ quyền quản lý khóa học được phân công; không có quyền quản trị nhân viên |
+| Nhân viên | Học tập trong phạm vi được giao |
+
+Trạng thái tài khoản gồm **Chưa gửi kích hoạt**, **Chờ kích hoạt**, **Đang hoạt động**, **Tạm khóa**, **Đã nghỉ việc**. Khôi phục tài khoản chưa kích hoạt không bỏ qua việc xác nhận email. Người dùng không được tự khóa hoặc tự thay vai trò; phải duy trì ít nhất một quản trị hoạt động.
+
+Tạm khóa/nghỉ việc thu hồi các phiên trong database. Cookie cache của Better Auth bị tắt để phiên đã thu hồi không tiếp tục xác thực từ cache. Kiểm tra trạng thái khi tạo phiên cũng áp dụng cho các phương thức đăng nhập cũ.
+
+Khóa tài khoản giữ lại bài nộp, kết quả học, chứng chỉ và lịch sử thao tác. Lịch sử ghi người thực hiện, thời điểm và lý do thay trạng thái. Phòng ban/chức danh/quản lý phục vụ quản trị nội bộ; chưa có đồng bộ với phần mềm nhân sự bên ngoài hoặc SSO trong thay đổi này.
+
+## Giao đào tạo và báo cáo
+
+Khóa học và cohort được lưu bằng quan hệ tới dữ liệu gốc. Việc kích hoạt liên kết hồ sơ, ghi danh và chuẩn bị bản ghi đào tạo bắt buộc cùng một transaction. Nếu ghi danh thất bại, không để lại tài khoản tạo dở hay làm mất liên kết kích hoạt. Giao thêm khóa học cho người đã kích hoạt có hiệu lực ngay. Bỏ chọn không thu hồi ghi danh đã có hoặc xóa lịch sử; việc thu hồi quyền khóa học dùng chức năng quản lý khóa học hiện hành.
+
+Chi tiết nhân viên hiển thị trạng thái học và thời điểm hoàn thành. Khóa thường tính theo tiến độ hiện có; khóa đào tạo bắt buộc dùng chu kỳ mới nhất. Xuất danh sách áp dụng bộ lọc và phạm vi quyền đang có, bao gồm phạm vi nhân viên trực tiếp của quản lý.
+
+## Nâng cấp và kiểm tra
+
+Áp dụng migration `0043_employee_accounts` theo luồng triển khai hiện hành trước khi chạy API mới. Migration bổ sung bảng, không tạo sẵn mã nhân viên hoặc sửa tài khoản đang có. Kiểm tra `when` của journal cao hơn mọi migration trên nhánh main và không đặt trong tương lai.
+
+Module có nội dung tiếng Việt/Anh. Các locale khác có đầy đủ khóa và tái sử dụng bản dịch sẵn có, dùng tiếng Anh dự phòng cho copy mới khi dịch vụ dịch chưa được cấu hình.
+
+Kiểm thử tích hợp chỉ chạy khi đặt `EMPLOYEE_TEST_DATABASE_URL` trỏ tới database riêng có tên kết thúc `_test`, đã áp dụng schema/migration. Không dùng database đang phục vụ người dùng để chạy fixture:
+
+```sh
+pnpm --filter @cio/api exec vitest run src/__tests__/employee-accounts.integration.test.ts
+```
+
+Trước khi vận hành với dữ liệu thật, kiểm tra nhận thư qua SMTP thật và luồng HR tạo → nhân viên kích hoạt → đăng nhập bằng mã → học → HR khóa → phiên cũ bị từ chối.
