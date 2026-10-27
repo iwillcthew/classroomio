@@ -1,11 +1,9 @@
 <script lang="ts">
-  import * as Avatar from '@cio/ui/base/avatar';
   import * as Sidebar from '@cio/ui/base/sidebar';
   import { Skeleton } from '@cio/ui/base/skeleton';
   import { PercentRingProgress } from '@cio/ui/custom/percent-ring-progress';
   import { resolve } from '$app/paths';
-  import { currentOrg } from '$lib/utils/store/org';
-  import { shortenName } from '$lib/utils/functions/string';
+  import { BRAND } from '$lib/utils/constants/brand';
   import { courseApi } from '$features/course/api';
   import { getNavItemRoute } from '$features/course/utils/functions';
   import { getCourseProgress } from '$features/course/utils/content';
@@ -28,7 +26,7 @@
 <Sidebar.Menu>
   <Sidebar.MenuItem>
     <Sidebar.MenuButton
-      size={showProgressRing ? 'lg' : 'sm'}
+      size="lg"
       class="ui:data-[state=open]:bg-sidebar-accent ui:data-[state=open]:text-sidebar-accent-foreground"
     >
       {#snippet child({ props })}
@@ -48,18 +46,17 @@
                 })}
               </span>
             </div>
-          {:else if $currentOrg.name}
-            <Avatar.Root class="flex size-6! items-center justify-center rounded-md!">
-              <Avatar.Image src={$currentOrg.avatarUrl} alt={$currentOrg.name} />
-              <Avatar.Fallback class="rounded-md! text-xs">{shortenName($currentOrg.name)}</Avatar.Fallback>
-            </Avatar.Root>
+          {:else}
+            <span
+              class="grid size-9 shrink-0 place-items-center rounded-lg bg-white shadow-[0_1px_0_rgb(255_255_255/40%)_inset,0_4px_12px_-4px_rgb(0_0_0/45%)] group-data-[collapsible=icon]:size-8"
+            >
+              <img src={BRAND.mark} alt="" class="size-7 object-contain group-data-[collapsible=icon]:size-6" />
+            </span>
             {#if courseTitle}
-              <span class="truncate text-sm font-medium">{courseTitle}</span>
+              <span class="min-w-0 flex-1 truncate text-sm font-medium">{courseTitle}</span>
             {:else}
               <Skeleton class="h-4 w-24" />
             {/if}
-          {:else}
-            <Skeleton class="h-4 w-24" />
           {/if}
         </a>
       {/snippet}
