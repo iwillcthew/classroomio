@@ -3,7 +3,9 @@ export const AGENT_MODEL_IDS = [
   'gemini-3.5-flash-lite',
   'gemini-3.8-flash',
   'gpt-5.4-mini',
-  'claude-sonnet-3-5',
+  'claude-opus-5-5',
+  'claude-sonnet-5-5',
+  'claude-haiku-5-5',
   'kimi-k2.6'
 ] as const;
 
@@ -57,12 +59,28 @@ export const AGENT_MODELS: Record<AgentModelId, AgentModelDescriptor> = {
     costTier: 'low',
     contextWindow: 400_000
   },
-  'claude-sonnet-3-5': {
+  'claude-opus-5-5': {
     provider: 'anthropic',
-    label: 'Claude Sonnet 4.6',
-    backendModelId: 'claude-sonnet-4-6',
+    label: 'Claude Opus 5.5',
+    backendModelId: 'claude-opus-5-5',
     isFree: false,
     costTier: 'high',
+    contextWindow: 1_000_000
+  },
+  'claude-sonnet-5-5': {
+    provider: 'anthropic',
+    label: 'Claude Sonnet 5.5',
+    backendModelId: 'claude-sonnet-5-5',
+    isFree: false,
+    costTier: 'high',
+    contextWindow: 1_000_000
+  },
+  'claude-haiku-5-5': {
+    provider: 'anthropic',
+    label: 'Claude Haiku 5.5',
+    backendModelId: 'claude-haiku-5-5',
+    isFree: false,
+    costTier: 'low',
     contextWindow: 1_000_000
   },
   'kimi-k2.6': {
@@ -81,7 +99,9 @@ export const UI_PICKER_MODEL_IDS = [
   'gemini-3.5-flash-lite',
   'gemini-3.8-flash',
   'gpt-5.4-mini',
-  'claude-sonnet-3-5'
+  'claude-opus-5-5',
+  'claude-sonnet-5-5',
+  'claude-haiku-5-5'
 ] as const satisfies readonly AgentModelId[];
 
 export const DEFAULT_PICKER_MODEL_ID: AgentModelId = 'gemini-3.1-flash-lite';

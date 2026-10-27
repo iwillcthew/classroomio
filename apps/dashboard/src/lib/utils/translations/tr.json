@@ -1270,7 +1270,7 @@
     "ai_credits": {
       "sub_title": "AI kredileri",
       "page_subtitle": "AI asistanı kullanımını, ekip tüketimini ve AI kredi paketlerini satın almayı takip edin.",
-      "cost_note": "Kredi kullanımı şu şekilde ağırlıklandırılır: modeli maliyeti. Gemini 3.1 Flash Lite, jeton başına 1 kredi birimi olarak sayılır. GPT-5.4 Mini ve Kimi K2.6 jeton başına 4 kat sayılır. Claude Sonnet 4.6, daha yüksek API maliyetini yansıtacak şekilde token başına 11 kat olarak sayılır.",
+      "cost_note": "Kredi kullanımı şu şekilde ağırlıklandırılır: modeli maliyeti. Gemini 3.1 Flash Lite, jeton başına 1 kredi birimi olarak sayılır. GPT-5.4 Mini ve Kimi K2.6 jeton başına 4 kat sayılır. Claude Sonnet 5.5, daha yüksek API maliyetini yansıtacak şekilde token başına 7.2 kat olarak sayılır.",
       "included": {
         "title": "Dahil olan kullanımınız",
         "subtitle": "Planınıza dahil olan aylık AI kredileri.",

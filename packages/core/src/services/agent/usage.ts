@@ -42,6 +42,9 @@ const MODEL_COST_MULTIPLIER: Record<string, number> = {
   'gemini-2.5-flash': 1.5,
   'gpt-5.4-mini': 4,
   'claude-sonnet-4-6': 11,
+  'claude-opus-5-5': 14.4,
+  'claude-sonnet-5-5': 7.2,
+  'claude-haiku-5-5': 0.36,
   'claude-haiku-4-5-20251001': 1.5,
   'kimi-k2.6': 1,
   // Non-LLM spend: billed as a flat charge via `recordFlatCostUnits`, so the
@@ -50,7 +53,9 @@ const MODEL_COST_MULTIPLIER: Record<string, number> = {
 };
 
 function computeCostUnits(promptTokens: number, completionTokens: number, model: string): number {
-  const multiplier = MODEL_COST_MULTIPLIER[model] ?? 1;
+  const baseMultiplier = MODEL_COST_MULTIPLIER[model] ?? 1;
+  const hasLongHaikuPrompt = model === 'claude-haiku-5-5' && promptTokens > 100_000;
+  const multiplier = hasLongHaikuPrompt ? baseMultiplier * 5 : baseMultiplier;
   // Google discounts Gemini 3.8 Flash by 50% through December 31, 2026 (https://ai.google.dev/gemini-api/docs/pricing).
   const hasFlashDiscount = model === 'gemini-3.8-flash' && Date.now() < Date.UTC(2027, 0, 1);
   const effectiveMultiplier = hasFlashDiscount ? multiplier / 2 : multiplier;
