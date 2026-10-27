@@ -244,6 +244,8 @@ export function getStudentEmailSampleValues(locale: EmailLocale, organizationNam
   return {
     ...localizedSamples[locale],
     org_name: organizationName,
+    employee_name: localizedSamples[locale].student_name,
+    employee_code: 'MP001',
     session_time: formatDate('2026-10-10T10:00:00.000Z', true),
     when: relativeTime.format(2, 'day'),
     expires_at: formatDate('2026-10-31T00:00:00.000Z')

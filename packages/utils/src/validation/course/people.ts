@@ -85,6 +85,14 @@ export const ZAddCourseMembers = z.array(
 );
 export type TAddCourseMembers = z.infer<typeof ZAddCourseMembers>;
 
+export const ZAvailableCourseEmployees = z.object({ search: z.string().trim().max(200).optional() });
+export const ZCourseEnrollmentOptions = z.object({
+  sendEmail: z
+    .enum(['true', 'false'])
+    .default('true')
+    .transform((value) => value === 'true')
+});
+
 export const ZUpdateCourseMember = z
   .object({
     roleId: ZCourseRoleId.optional(),

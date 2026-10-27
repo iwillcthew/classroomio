@@ -1,199 +1,101 @@
 <script lang="ts">
-  import { untrack } from 'svelte';
+  import { onDestroy, untrack } from 'svelte';
+  import { SvelteSet } from 'svelte/reactivity';
   import { page } from '$app/state';
   import { goto } from '$app/navigation';
   import { resolve } from '$app/paths';
   import * as Dialog from '@cio/ui/base/dialog';
   import * as UnderlineTabs from '@cio/ui/custom/underline-tabs';
   import { Button } from '@cio/ui/base/button';
-  import { ROLE } from '@cio/utils/constants';
-  import { t } from '$lib/utils/functions/translations';
+  import { CheckboxField } from '@cio/ui/custom/checkbox-field';
+  import { MultiSelectList } from '@cio/ui/custom/multi-select-list';
+  import { DebouncedSearch } from '$lib/utils/functions/debounced-search.svelte';
+  import { currentOrg, currentOrgPath, isOrgAdmin } from '$lib/utils/store/org';
   import { courseApi } from '$features/course/api';
-  import { currentOrg, isOrgAdmin, isStudentLimitReached } from '$lib/utils/store/org';
-  import { peopleApi } from '$features/course/api';
-  import { orgApi } from '$features/org/api/org.svelte';
-  import { DEFAULT_ORG_AUDIENCE_QUERY } from '$features/org/utils/audience-query-utils';
-  import { profile } from '$lib/utils/store/user';
-  import type { OrgTeamMember } from '$lib/utils/types/org';
-  import type { OrgStudent, Tutor } from '$features/people/utils/types';
-  import { buildResourceInviteLink } from '$features/people/utils/invite-link-utils';
-  import {
-    TutorSelectSection,
-    ExistingStudentsSection,
-    BulkEmailSection,
-    InviteLinkSection
-  } from '$features/people/components';
-  import { UpgradeBanner } from '$features/ui';
+  import { PeopleApi } from '$features/course/api/people.svelte';
+  import { t } from '$lib/utils/functions/translations';
+  import { ROLE } from '@cio/utils/constants';
 
-  interface Props {
-    /** Called after the course roster changes so the caller can refresh its list. */
-    onMembersChanged?: () => void;
-  }
-
-  let { onMembersChanged }: Props = $props();
-
-  let tutors = $state<Tutor[]>([]);
-  let selectedIds = $state<string[]>([]);
-  let courseId = $derived(courseApi.course?.id ?? '');
-  const addPeopleParm = $derived(new URLSearchParams(page.url.search).get('add'));
-  const isOpen = $derived(addPeopleParm === 'true');
-
-  const selectedTutors = $derived(tutors.filter((t) => selectedIds.includes(t.id.toString())));
-  const INVITE_MODAL = 'course.navItem.people.invite_modal';
-
-  let isLoadingStudents = $state(false);
-  let activeTab = $state<'tutors' | 'students' | 'link'>('students');
-  const availableStudents = $derived.by(() => getAvailableStudents(orgApi.audience, courseApi.group.people));
-  const inviteLink = $derived(buildResourceInviteLink(peopleApi.inviteLink?.token, $currentOrg));
-
-  function getTutors(team: OrgTeamMember[]) {
-    const existingTutors = courseApi?.group?.tutors || [];
-    return team
-      .filter((teamMember) => teamMember.verified)
-      .filter((teamMember) => !existingTutors.some((t) => t.id === teamMember.profileId))
-      .map((teamMember) => ({
-        id: teamMember.id,
-        text: teamMember.fullname,
-        profileId: teamMember.profileId,
-        email: teamMember.email
-      }));
-  }
-
-  function getAvailableStudents(students: OrgStudent[], courseMembers: typeof courseApi.group.people) {
-    const enrolledStudentIds = new Set(
-      courseMembers
-        .filter((member) => Number(member.roleId) === ROLE.STUDENT)
-        .map((member) => member.profileId)
-        .filter((profileId): profileId is string => Boolean(profileId))
-    );
-
-    return students.filter((student) => {
-      if (!student.profileId) {
-        return false;
-      }
-      return !enrolledStudentIds.has(student.profileId);
-    });
-  }
-
-  function setTutors(orgId: string | undefined) {
-    if (!orgId || !$isOrgAdmin) return;
-    untrack(async () => {
-      await orgApi.getOrgTeam();
-      if (orgApi.error) {
-        console.error('Error fetching teams', orgApi.error);
-        return;
-      }
-      tutors = getTutors(orgApi.teamMembers);
-    });
-  }
-
-  function loadStudents(orgId: string | undefined) {
-    if (!orgId || !$isOrgAdmin) return;
-
-    untrack(async () => {
-      isLoadingStudents = true;
-      try {
-        await orgApi.getOrgAudience(orgId, DEFAULT_ORG_AUDIENCE_QUERY, { abortPrevious: true });
-      } finally {
-        isLoadingStudents = false;
-      }
-    });
-  }
-
-  async function handleStudentSearch(value: string) {
-    const orgId = $currentOrg.id;
-    if (!orgId || !$isOrgAdmin) {
-      return;
+  let { onMembersChanged }: { onMembersChanged?: () => void } = $props();
+  const peopleApi = new PeopleApi();
+  const selectedIds = new SvelteSet<string>();
+  const search = new DebouncedSearch({
+    onApply: (value) => {
+      void peopleApi.listAvailableEmployees(courseId, value);
     }
-
-    isLoadingStudents = true;
-
-    try {
-      await orgApi.getOrgAudience(
-        orgId,
-        {
-          ...DEFAULT_ORG_AUDIENCE_QUERY,
-          search: value.trim() || undefined
-        },
-        { abortPrevious: true }
-      );
-    } finally {
-      isLoadingStudents = false;
-    }
-  }
-
-  async function assignExistingStudents(profileIds: string[], sendEmail: boolean) {
-    const result = await orgApi.assignAudienceToCourses({
-      profileIds,
-      courseIds: [courseId],
-      sendEmail
-    });
-
-    if (!result) {
-      return;
-    }
-
-    await courseApi.refreshCourse(courseId, $profile.id);
-    onMembersChanged?.();
-  }
-
-  async function inviteNewStudents(recipientCsv: string, sendEmail: boolean) {
-    const response = await orgApi.importAudienceMembers({
-      recipientCsv,
-      courseIds: [courseId],
-      sendEmail
-    });
-
-    if (!response) {
-      return;
-    }
-
-    await courseApi.refreshCourse(courseId, $profile.id);
-    onMembersChanged?.();
-  }
-
-  async function generateInviteLink() {
-    await peopleApi.generateInviteLink(courseId);
-  }
-
-  async function toggleInviteLink(isRevoked: boolean) {
-    await peopleApi.toggleInviteLink(courseId, isRevoked);
-  }
-
-  async function onSubmit() {
-    if (!selectedTutors.length) {
-      goto(resolve(page.url.pathname, {}));
-      return;
-    }
-    const members = selectedTutors.map((tutor) => ({
-      profileId: tutor.profileId,
-      roleId: ROLE.TUTOR,
-      email: tutor.email,
-      name: tutor.text
-    }));
-    await peopleApi.add(courseId, members);
-    if (peopleApi.success) {
-      onMembersChanged?.();
-      goto(resolve(page.url.pathname, {}));
-    }
-  }
+  });
+  const courseId = $derived(courseApi.course?.id ?? '');
+  const isOpen = $derived(page.url.searchParams.get('add') === 'true');
+  let activeTab = $state('students');
+  let sendEmail = $state(true);
+  let loadedContext = '';
+  const availableEmployees = $derived(peopleApi.availableEmployees);
+  const items = $derived(
+    (availableEmployees ?? [])
+      .filter((employee) => activeTab === 'students' || ['ADMIN', 'TUTOR'].includes(employee.role))
+      .flatMap((employee) =>
+        employee.profileId
+          ? [
+              {
+                id: employee.profileId,
+                label: employee.name,
+                description: `${employee.employeeCode} · ${employee.email}`
+              }
+            ]
+          : []
+      )
+  );
 
   function closeModal() {
+    search.reset();
     goto(resolve(page.url.pathname, {}));
   }
 
-  $effect(() => {
-    setTutors($currentOrg.id);
-  });
+  function changeTab(value: string) {
+    activeTab = value;
+    selectedIds.clear();
+    search.reset();
+    void peopleApi.listAvailableEmployees(courseId);
+  }
+
+  function toggleEmployee(profileId: string) {
+    if (selectedIds.has(profileId)) {
+      selectedIds.delete(profileId);
+      return;
+    }
+
+    selectedIds.add(profileId);
+  }
+
+  async function assignEmployees() {
+    const roleId = activeTab === 'tutors' ? ROLE.TUTOR : ROLE.STUDENT;
+    const members = [...selectedIds].map((profileId) => ({ profileId, roleId }));
+    const response = await peopleApi.add(courseId, members, sendEmail);
+    if (!response) return;
+
+    selectedIds.clear();
+    onMembersChanged?.();
+    closeModal();
+  }
 
   $effect(() => {
-    if (!isOpen || !courseId) return;
+    const context = isOpen && courseId && $currentOrg.id ? `${courseId}:${$currentOrg.id}` : '';
+    if (context === loadedContext) return;
+
+    loadedContext = context;
+    if (!context) return;
+
     untrack(() => {
       activeTab = 'students';
-      void loadStudents($currentOrg.id);
-      void peopleApi.getInviteLink(courseId);
+      search.reset();
+      sendEmail = true;
+      selectedIds.clear();
+      peopleApi.availableEmployees = null;
+      void peopleApi.listAvailableEmployees(courseId);
     });
   });
+
+  onDestroy(() => search.destroy());
 </script>
 
 <Dialog.Root
@@ -204,79 +106,48 @@
 >
   <Dialog.Content class="max-h-[80vh] w-[96vw] max-w-3xl! overflow-y-auto">
     <Dialog.Header>
-      <Dialog.Title>{$t('course.navItem.people.invite_modal.title')}</Dialog.Title>
+      <Dialog.Title>{$t('course.employee_enrollment.title')}</Dialog.Title>
+      <Dialog.Description>{$t('course.employee_enrollment.description')}</Dialog.Description>
     </Dialog.Header>
-
-    <UnderlineTabs.Root bind:value={activeTab}>
-      <UnderlineTabs.List class="flex flex-wrap">
+    <UnderlineTabs.Root value={activeTab} onValueChange={changeTab}>
+      <UnderlineTabs.List>
+        <UnderlineTabs.Trigger value="students">{$t('course.employee_enrollment.learners')}</UnderlineTabs.Trigger>
         {#if $isOrgAdmin}
-          <UnderlineTabs.Trigger value="tutors">
-            {$t(`${INVITE_MODAL}.invite`)}
-          </UnderlineTabs.Trigger>
+          <UnderlineTabs.Trigger value="tutors">{$t('course.employee_enrollment.instructors')}</UnderlineTabs.Trigger>
         {/if}
-        <UnderlineTabs.Trigger value="students">
-          {$t(`${INVITE_MODAL}.invite_students`)}
-        </UnderlineTabs.Trigger>
-        <UnderlineTabs.Trigger value="link">
-          {$t('invite_link.tab_label')}
-        </UnderlineTabs.Trigger>
       </UnderlineTabs.List>
-
-      {#if $isOrgAdmin}
-        <UnderlineTabs.Content value="tutors">
-          <div class="space-y-3">
-            <TutorSelectSection
-              {tutors}
-              bind:selectedIds
-              isLoading={orgApi.isLoading}
-              helperHref={`/org/${$currentOrg.siteName}/settings/teams`}
-            />
-
-            <div class="mt-5 flex flex-row-reverse items-center gap-2">
-              <Button variant="secondary" type="button" onclick={onSubmit} loading={peopleApi.isLoading}>
-                {$t(`${INVITE_MODAL}.finish`)}
-              </Button>
-            </div>
-          </div>
-        </UnderlineTabs.Content>
-      {/if}
-
-      <UnderlineTabs.Content value="students">
-        <div class="space-y-6">
-          {#if $isOrgAdmin}
-            <ExistingStudentsSection
-              students={availableStudents}
-              isLoading={isLoadingStudents}
-              onSearchValueChange={handleStudentSearch}
-              onAssign={assignExistingStudents}
-            />
-          {/if}
-
-          {#if $isStudentLimitReached}
-            <UpgradeBanner removeParams={['add']}>{$t(`${INVITE_MODAL}.student_limit_reached`)}</UpgradeBanner>
-          {/if}
-
-          <BulkEmailSection onInvite={inviteNewStudents} disabled={$isStudentLimitReached} />
-        </div>
-      </UnderlineTabs.Content>
-
-      <UnderlineTabs.Content value="link">
-        <div class="space-y-6">
-          <InviteLinkSection
-            link={inviteLink}
-            isRevoked={peopleApi.inviteLink?.isRevoked ?? false}
-            isLoading={peopleApi.isLoading}
-            joinCount={peopleApi.inviteLink?.joinCount}
-            descriptionKey="invite_link.course_description"
-            onGenerate={generateInviteLink}
-            onToggle={toggleInviteLink}
-          />
-
-          {#if $isStudentLimitReached}
-            <UpgradeBanner removeParams={['add']}>{$t(`${INVITE_MODAL}.student_limit_reached`)}</UpgradeBanner>
-          {/if}
-        </div>
-      </UnderlineTabs.Content>
     </UnderlineTabs.Root>
+    <MultiSelectList
+      {items}
+      isLoading={!availableEmployees || peopleApi.isLoading}
+      isSelected={(id) => selectedIds.has(id)}
+      onToggle={toggleEmployee}
+      bind:searchValue={search.draft}
+      onSearchValueChange={(value) => search.input(value)}
+      searchPlaceholder={$t('course.employee_enrollment.search')}
+      emptyMessage={$t('course.employee_enrollment.empty')}
+      namePrefix="course-employee"
+      listClass="max-h-64"
+    />
+    <p class="ui:text-muted-foreground text-sm">
+      {$t('course.employee_enrollment.manage_hint')}
+      <a class="ui:text-primary underline" href={`${$currentOrgPath}/employees`}>{$t('employees.title')}</a>
+    </p>
+    <CheckboxField
+      name="notify-course-employees"
+      label={$t('course.employee_enrollment.notify')}
+      bind:checked={sendEmail}
+    />
+    <Dialog.Footer>
+      <Button size="sm" variant="outline" onclick={closeModal}>{$t('common.cancel')}</Button>
+      <Button
+        size="sm"
+        onclick={assignEmployees}
+        loading={peopleApi.isLoading}
+        disabled={!selectedIds.size || peopleApi.isLoading}
+      >
+        {$t('course.employee_enrollment.assign', { count: selectedIds.size })}
+      </Button>
+    </Dialog.Footer>
   </Dialog.Content>
 </Dialog.Root>

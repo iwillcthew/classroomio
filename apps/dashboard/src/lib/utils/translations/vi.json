@@ -613,13 +613,13 @@
     },
     "emails": {
       "page_title": "Mẫu email",
-      "language_note": "Email gửi học viên dùng ngôn ngữ bắt buộc của tổ chức. Nếu chưa đặt ngôn ngữ bắt buộc, email sẽ dùng tiếng Anh.",
-      "heading": "Mẫu email cho học viên",
-      "description": "Tùy chỉnh email mà học viên nhận được. Email gửi quản trị viên và giảng viên luôn dùng tiếng Anh.",
-      "paid_plan_note": "Tính năng dịch và tùy chỉnh email học viên chưa được bật. Liên hệ quản trị viên.",
+      "language_note": "Email nhân viên sử dụng ngôn ngữ bắt buộc của tổ chức. Nếu chưa đặt ngôn ngữ bắt buộc, email được gửi bằng tiếng Anh.",
+      "heading": "Mẫu email cho nhân viên",
+      "description": "Tùy chỉnh email kích hoạt tài khoản, cấp quyền khóa học và các thông báo học tập. Nội dung đã lưu được dùng khi gửi email cho nhân viên.",
+      "paid_plan_note": "Tùy chỉnh nội dung và ngôn ngữ email nhân viên.",
       "sending_in": "Gửi bằng",
       "change": "Đổi",
-      "template_navigation": "Các loại email cho học viên",
+      "template_navigation": "Loại email nhân viên",
       "edited": "Đã sửa",
       "insert": "Chèn",
       "link_chip": "Liên kết",
@@ -644,7 +644,9 @@
         "status": "Trạng thái",
         "score": "Điểm",
         "lesson_title": "Tên bài học",
-        "post_content": "Nội dung bài đăng"
+        "post_content": "Nội dung bài đăng",
+        "employee_name": "Tên nhân viên",
+        "employee_code": "Mã nhân viên"
       },
       "edit": "Chỉnh sửa",
       "preview": "Xem trước",
@@ -659,15 +661,15 @@
       },
       "test_sent": "Đã đưa email thử vào hàng đợi gửi",
       "groups": {
-        "enrollment": "Ghi danh",
+        "enrollment": "Tài khoản và ghi danh",
         "learning": "Học tập",
         "live_sessions": "Buổi học trực tuyến",
-        "updates_billing": "Cập nhật & thanh toán"
+        "updates_billing": "Cập nhật"
       },
       "descriptions": {
         "studentCourseInvite": "Gửi khi bạn mời ai đó tham gia khóa học.",
         "studentOrgInvite": "Gửi khi bạn mời ai đó vào tổ chức.",
-        "studentCourseWelcome": "Gửi khi học viên được cấp quyền truy cập khóa học.",
+        "studentCourseWelcome": "Gửi khi thêm nhân viên hiện có vào khóa học và bật tùy chọn thông báo qua email.",
         "studentCohortWelcome": "Gửi khi học viên được cấp quyền truy cập lớp đào tạo.",
         "quizAssigned": "Gửi khi học viên được giao bài tập.",
         "submissionGraded": "Gửi khi bài nộp của học viên được chấm.",
@@ -676,7 +678,8 @@
         "sessionReminder": "Gửi trước buổi học trực tuyến đã lên lịch.",
         "sessionUpdated": "Gửi khi thông tin buổi học trực tuyến thay đổi.",
         "newsfeedPost": "Gửi khi có bài đăng mới trong khóa học.",
-        "studentProvePayment": "Gửi khi học viên cần cung cấp chứng từ thanh toán."
+        "studentProvePayment": "Gửi khi học viên cần cung cấp chứng từ thanh toán.",
+        "employeeActivation": "Gửi khi cấp hoặc gửi lại liên kết kích hoạt tại tab Nhân viên. Liên kết dùng một lần và hết hạn sau 48 giờ."
       },
       "template": "Email",
       "language": "Ngôn ngữ",
@@ -693,7 +696,7 @@
       "reset": "Khôi phục mặc định đã dịch",
       "templates": {
         "studentCourseInvite": "Lời mời tham gia khóa học",
-        "studentCourseWelcome": "Chào mừng vào khóa học",
+        "studentCourseWelcome": "Cấp quyền truy cập khóa học",
         "studentCourseCompletion": "Hoàn thành khóa học",
         "studentOrgInvite": "Lời mời tham gia tổ chức",
         "studentCohortWelcome": "Chào mừng vào lớp đào tạo",
@@ -703,7 +706,8 @@
         "sessionReminder": "Nhắc lịch buổi học trực tuyến",
         "sessionUpdated": "Buổi học trực tuyến đã cập nhật",
         "submissionGraded": "Bài nộp đã được chấm",
-        "newsfeedPost": "Bài đăng trên bảng tin khóa học"
+        "newsfeedPost": "Bài đăng trên bảng tin khóa học",
+        "employeeActivation": "Kích hoạt tài khoản nhân viên"
       }
     },
     "profile": {
@@ -4499,6 +4503,17 @@
       "header": "Không có quyền truy cập",
       "body": "Rất tiếc, bạn không có quyền truy cập khóa học này.",
       "button": "Về trang chủ"
+    },
+    "employee_enrollment": {
+      "title": "Thêm nhân viên vào khóa học",
+      "description": "Chỉ có thể thêm nhân viên đã có tài khoản đang hoạt động.",
+      "learners": "Thêm học viên",
+      "instructors": "Thêm giảng viên",
+      "search": "Tìm theo mã nhân viên, tên hoặc email",
+      "empty": "Không có nhân viên phù hợp. Nhân viên có thể đã được ghi danh hoặc tài khoản chưa hoạt động.",
+      "manage_hint": "Tạo và kích hoạt tài khoản mới tại tab Nhân viên.",
+      "notify": "Gửi email thông báo quyền truy cập khóa học",
+      "assign": "Cấp quyền truy cập ({count})"
     }
   },
   "community": {

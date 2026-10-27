@@ -613,13 +613,13 @@
     },
     "emails": {
       "page_title": "Modelli di posta elettronica",
-      "language_note": "Le email degli studenti utilizzano il linguaggio imposto dalla tua organizzazione. Quando non viene applicato, le e-mail utilizzano l'inglese.",
-      "heading": "Modelli di posta elettronica per studenti",
-      "description": "Personalizza le e-mail ricevute dagli studenti. Le e-mail del personale vengono sempre inviate in inglese.",
-      "paid_plan_note": "Aggiorna il tuo piano per tradurre e personalizzare le email degli studenti.",
+      "language_note": "Employee emails use the organization’s enforced language. Otherwise, emails are sent in English.",
+      "heading": "Employee email templates",
+      "description": "Customize account activation, course access and learning notifications. Saved templates are used when emailing employees.",
+      "paid_plan_note": "Customize employee email content and language.",
       "sending_in": "Invio",
       "change": "Modifica",
-      "template_navigation": "Tipi di email degli studenti",
+      "template_navigation": "Employee email types",
       "edited": "Modificato",
       "insert": "Inserire",
       "link_chip": "Collegamento",
@@ -644,7 +644,9 @@
         "status": "Stato",
         "score": "Punto",
         "lesson_title": "Titolo della lezione",
-        "post_content": "Pubblica contenuti"
+        "post_content": "Pubblica contenuti",
+        "employee_name": "Employee name",
+        "employee_code": "Employee code"
       },
       "edit": "Modificare",
       "preview": "Anteprima",
@@ -659,15 +661,15 @@
       },
       "test_sent": "Testare la posta elettronica in coda per la consegna",
       "groups": {
-        "enrollment": "Iscrizione",
+        "enrollment": "Accounts and enrollment",
         "learning": "Apprendimento",
         "live_sessions": "Sessioni dal vivo",
-        "updates_billing": "Aggiornamenti e fatturazione"
+        "updates_billing": "Updates"
       },
       "descriptions": {
         "studentCourseInvite": "Inviato quando inviti qualcuno a un corso.",
         "studentOrgInvite": "Inviato quando inviti qualcuno nella tua organizzazione.",
-        "studentCourseWelcome": "Inviato quando uno studente riceve l'accesso a un corso.",
+        "studentCourseWelcome": "Sent when an existing employee is added to a course with email notifications enabled.",
         "studentCohortWelcome": "Inviato quando uno studente riceve l'accesso a una coorte.",
         "quizAssigned": "Inviato quando un quiz viene assegnato a uno studente.",
         "submissionGraded": "Inviato quando viene esaminato l'esercizio inviato da uno studente.",
@@ -676,7 +678,8 @@
         "sessionReminder": "Inviato prima di una sessione live programmata.",
         "sessionUpdated": "Inviato quando cambiano i dettagli della sessione live.",
         "newsfeedPost": "Inviato quando viene pubblicato un nuovo post sul corso.",
-        "studentProvePayment": "Inviato quando uno studente deve fornire una prova di pagamento."
+        "studentProvePayment": "Inviato quando uno studente deve fornire una prova di pagamento.",
+        "employeeActivation": "Sent when an activation link is issued or resent from Employees. Links are single use and expire after 48 hours."
       },
       "template": "E-mail",
       "language": "Lingua",
@@ -693,7 +696,7 @@
       "reset": "Ripristina le impostazioni predefinite tradotte",
       "templates": {
         "studentCourseInvite": "Invito al corso",
-        "studentCourseWelcome": "Benvenuto al corso",
+        "studentCourseWelcome": "Course access granted",
         "studentCourseCompletion": "Completamento del corso",
         "studentOrgInvite": "Invito organizzativo",
         "studentCohortWelcome": "Benvenuta coorte",
@@ -703,7 +706,8 @@
         "sessionReminder": "Promemoria della sessione dal vivo",
         "sessionUpdated": "Sessione live aggiornata",
         "submissionGraded": "Presentazione classificata",
-        "newsfeedPost": "Post nel feed di notizie del corso"
+        "newsfeedPost": "Post nel feed di notizie del corso",
+        "employeeActivation": "Employee account activation"
       }
     },
     "profile": {
@@ -4470,6 +4474,17 @@
       "header": "Nessuna autorizzazione",
       "body": "Sfortunatamente non hai accesso a questo corso.",
       "button": "Vai a casa"
+    },
+    "employee_enrollment": {
+      "title": "Add employees to the course",
+      "description": "Only existing active employees can be added to this course.",
+      "learners": "Add learners",
+      "instructors": "Add instructors",
+      "search": "Search by employee code, name or email",
+      "empty": "No eligible employees found. They may already be enrolled or their accounts are not active.",
+      "manage_hint": "Create and activate new accounts in the Employees tab.",
+      "notify": "Send a course access notification by email",
+      "assign": "Grant access ({count})"
     }
   },
   "community": {

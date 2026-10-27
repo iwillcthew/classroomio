@@ -10,7 +10,7 @@ describe('early adopter emails', () => {
     const html = earlyAdopterReadyEmail.template.render({ claimUrl });
 
     expect(html).toContain(`href="${claimUrl}"`);
-    expect(html).toContain('We received your payment');
+    expect(html).toContain('Your MP Learning workspace is ready.');
   });
 
   it('renders the claim link in the reminder email', () => {

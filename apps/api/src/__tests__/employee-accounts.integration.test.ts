@@ -3,7 +3,12 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vites
 
 vi.mock('@cio/email', async (importOriginal) => {
   const original = await importOriginal<typeof import('@cio/email')>();
-  return { ...original, deliverEmail: vi.fn(async () => [{ success: true }]) };
+  return { ...original, sendEmail: vi.fn(async () => [{ success: true }]) };
+});
+
+vi.mock('@api/services/jobs', async (importOriginal) => {
+  const original = await importOriginal<typeof import('@api/services/jobs')>();
+  return { ...original, enqueueTransactionalEmail: vi.fn(async () => ({ jobIds: ['test-email'] })) };
 });
 
 const testDatabaseUrl = process.env.EMPLOYEE_TEST_DATABASE_URL;
@@ -75,8 +80,8 @@ integration('employee accounts on an isolated PostgreSQL database', () => {
   }, 30000);
 
   beforeEach(() => {
-    vi.mocked(mail.deliverEmail).mockClear();
-    vi.mocked(mail.deliverEmail).mockResolvedValue([{ success: true }] as never);
+    vi.mocked(mail.sendEmail).mockClear();
+    vi.mocked(mail.sendEmail).mockResolvedValue([{ success: true }] as never);
   });
 
   async function draft(overrides: Partial<Parameters<typeof services.createEmployee>[2]> = {}) {
@@ -100,8 +105,9 @@ integration('employee accounts on an isolated PostgreSQL database', () => {
   }
 
   function activationToken() {
-    const calls = vi.mocked(mail.deliverEmail).mock.calls;
-    const content = calls[calls.length - 1][0][0].content;
+    const calls = vi.mocked(mail.sendEmail).mock.calls;
+    const config = calls[calls.length - 1][1];
+    const content = (config.fields as { activationUrl: string }).activationUrl;
     const match = content.match(/token=([a-f0-9]{64})/);
     if (!match) throw new Error('Missing activation token in test email');
 
@@ -119,7 +125,7 @@ integration('employee accounts on an isolated PostgreSQL database', () => {
   it('creates a draft without credentials or an email, and prevents privilege escalation', async () => {
     const created = await draft();
     expect(created.employee.status).toBe('DRAFT');
-    expect(mail.deliverEmail).not.toHaveBeenCalled();
+    expect(mail.sendEmail).not.toHaveBeenCalled();
     const identity = await queries.findEmployeeAccount(created.employee.email, organizationId);
     expect(identity.account).toBeNull();
     expect(identity.member?.status).toBe('DEACTIVATED');
@@ -250,7 +256,7 @@ integration('employee accounts on an isolated PostgreSQL database', () => {
   });
 
   it('reports mail failure honestly and keeps invalid import rows separate', async () => {
-    vi.mocked(mail.deliverEmail).mockResolvedValue([{ success: false }] as never);
+    vi.mocked(mail.sendEmail).mockResolvedValue([{ success: false }] as never);
     const created = await draft({ sendActivation: true });
     expect(created.delivery?.sent).toBe(false);
     expect((await queries.findEmployee(organizationId, created.employee.id))?.status).toBe('DRAFT');
@@ -332,6 +338,209 @@ integration('employee accounts on an isolated PostgreSQL database', () => {
       canManage: false
     });
     expect(created.employee.employeeCode).toBeTruthy();
+  });
+
+  async function courseFixture() {
+    const groupId = randomUUID();
+    const courseId = randomUUID();
+    await database.db.insert(database.group).values({ id: groupId, name: 'Course enrollment', organizationId });
+    await database.db
+      .insert(database.course)
+      .values({ id: courseId, title: 'Employee training', description: 'Integration course', groupId });
+    return { groupId, courseId };
+  }
+
+  it('uses the saved activation template and enforced language for actual delivery', async () => {
+    await database.db.execute(
+      database.sql`update organization set settings = '{"language":{"enforced":true,"locale":"vi"}}'::jsonb where id = ${organizationId}`
+    );
+    await queries.upsertOrganizationStudentEmailTemplate({
+      organizationId,
+      emailId: 'employeeActivation',
+      locale: 'vi',
+      content: '<p>Chào {{employee_name}}: {{employee_code}}</p>',
+      subject: 'Kích hoạt {{employee_code}}'
+    });
+    const created = await draft({ sendActivation: true });
+    const config = vi.mocked(mail.sendEmail).mock.calls.at(-1)!;
+    expect(config[0]).toBe('employeeActivation');
+    expect(config[1]).toMatchObject({
+      locale: 'vi',
+      contentOverride: '<p>Chào {{employee_name}}: {{employee_code}}</p>',
+      subjectOverride: 'Kích hoạt {{employee_code}}',
+      fields: { employeeCode: created.employee.employeeCode, employeeName: created.employee.fullname }
+    });
+    expect(await services.previewEmployeeActivation(activationToken())).toMatchObject({
+      employeeCode: created.employee.employeeCode
+    });
+  });
+
+  it('enrolls only existing active employees and searches by employee code', async () => {
+    const courses = await import('@api/services/course/employees');
+    const jobs = await import('@api/services/jobs');
+    const fixture = await courseFixture();
+    const staff = await activateDraft();
+    const available = await courses.listAvailableCourseEmployees(fixture.courseId, staff.employeeCode);
+    expect(available.map((row) => row.profileId)).toEqual([staff.profileId]);
+    vi.mocked(jobs.enqueueTransactionalEmail).mockClear();
+    const members = [{ profileId: staff.profileId, roleId: 3 as const, email: 'forged@example.com' }];
+    const added = await courses.enrollExistingCourseEmployees(fixture.courseId, administratorId, members);
+    expect(added).toHaveLength(1);
+    expect(added[0].email).toBe(staff.email);
+    expect(jobs.enqueueTransactionalEmail).toHaveBeenCalledWith(
+      'studentCourseWelcome',
+      expect.objectContaining({ to: staff.email, fields: expect.objectContaining({ courseName: 'Employee training' }) })
+    );
+    expect(await courses.listAvailableCourseEmployees(fixture.courseId, staff.employeeCode)).toEqual([]);
+    expect(await courses.enrollExistingCourseEmployees(fixture.courseId, administratorId, members, false)).toEqual([]);
+    expect(jobs.enqueueTransactionalEmail).toHaveBeenCalledTimes(1);
+    const assignments = await queries.getEmployeeAssignments(staff.id);
+    expect(assignments.courseIds).toContain(fixture.courseId);
+    const { deleteCourseMember } = await import('@cio/db/queries/course/people');
+    await deleteCourseMember(fixture.courseId, added[0].id);
+    expect((await queries.getEmployeeAssignments(staff.id)).courseIds).not.toContain(fixture.courseId);
+  });
+
+  it('rejects unknown, unmanaged and suspended accounts before writing any member of a batch', async () => {
+    const courses = await import('@api/services/course/employees');
+    const fixture = await courseFixture();
+    const staff = await activateDraft();
+    await expect(
+      courses.enrollExistingCourseEmployees(
+        fixture.courseId,
+        administratorId,
+        [{ roleId: 3, email: 'new-person@example.com' }],
+        false
+      )
+    ).rejects.toThrow('Select existing employees');
+    await expect(
+      courses.enrollExistingCourseEmployees(
+        fixture.courseId,
+        administratorId,
+        [
+          { profileId: staff.profileId, roleId: 3 },
+          { profileId: administratorId, roleId: 3 }
+        ],
+        false
+      )
+    ).rejects.toThrow('Only active employees');
+    expect(
+      (await courses.listAvailableCourseEmployees(fixture.courseId, staff.employeeCode)).map((row) => row.profileId)
+    ).toEqual([staff.profileId]);
+    await database.db.insert(database.organizationmember).values({
+      organizationId: otherOrgId,
+      profileId: administratorId,
+      email: `${administratorId}@example.com`,
+      roleId: 1,
+      verified: true
+    });
+    const foreign = await services.createEmployee(otherOrgId, administratorId, {
+      employeeCode: `FOREIGN-${organizationId.slice(0, 6)}`,
+      fullname: 'Foreign Employee',
+      email: `foreign-${organizationId}@example.com`,
+      role: 'EMPLOYEE',
+      department: '',
+      jobTitle: '',
+      managerId: null,
+      startDate: '',
+      courseIds: [],
+      cohortIds: [],
+      sendActivation: true
+    });
+    await services.activateEmployee(activationToken(), 'Employee-password-2026');
+    const foreignIdentity = await queries.findEmployeeAccount(foreign.employee.email, otherOrgId);
+    await expect(
+      courses.enrollExistingCourseEmployees(
+        fixture.courseId,
+        administratorId,
+        [{ profileId: foreignIdentity.member!.profileId!, roleId: 3 }],
+        false
+      )
+    ).rejects.toThrow('Only active employees');
+    await services.setEmployeeStatus(organizationId, administratorId, staff.id, 'SUSPENDED', 'Integration suspension');
+    await expect(
+      courses.enrollExistingCourseEmployees(
+        fixture.courseId,
+        administratorId,
+        [{ profileId: staff.profileId, roleId: 3 }],
+        false
+      )
+    ).rejects.toThrow('Only active employees');
+    expect(await courses.listAvailableCourseEmployees(fixture.courseId, staff.employeeCode)).toEqual([]);
+    const [count] = await database.db.execute(
+      database.sql`select count(*)::int as total from groupmember where group_id = ${fixture.groupId}`
+    );
+    expect(count.total).toBe(0);
+  });
+
+  it('keeps instructor assignment restricted to organization administrators', async () => {
+    const courses = await import('@api/services/course/employees');
+    const fixture = await courseFixture();
+    const tutor = await activateDraft({ role: 'TUTOR' });
+    const secondTutor = await activateDraft({ role: 'TUTOR' });
+    const learner = await activateDraft();
+    await courses.enrollExistingCourseEmployees(
+      fixture.courseId,
+      administratorId,
+      [{ profileId: tutor.profileId, roleId: 2 }],
+      false
+    );
+    await expect(
+      courses.enrollExistingCourseEmployees(
+        fixture.courseId,
+        tutor.profileId,
+        [{ profileId: secondTutor.profileId, roleId: 2 }],
+        false
+      )
+    ).rejects.toThrow('Only administrators');
+    await expect(
+      courses.enrollExistingCourseEmployees(
+        fixture.courseId,
+        administratorId,
+        [{ profileId: learner.profileId, roleId: 2 }],
+        false
+      )
+    ).rejects.toThrow('instructor role');
+    const added = await courses.enrollExistingCourseEmployees(
+      fixture.courseId,
+      tutor.profileId,
+      [{ profileId: learner.profileId, roleId: 3 }],
+      false
+    );
+    expect(added[0].profileId).toBe(learner.profileId);
+  });
+
+  it('rejects old course share links at creation, preview and acceptance', async () => {
+    const fixture = await courseFixture();
+    const links = await import('@api/services/invite-link/invite-link');
+    const { createInviteLink } = await import('@cio/db/queries/invite-link');
+    const { generateInviteToken, hashInviteToken } = await import('@api/utils/invite-token');
+    const token = generateInviteToken();
+    const tokenHash = hashInviteToken(token);
+    await createInviteLink({
+      organizationId,
+      courseId: fixture.courseId,
+      resourceType: 'COURSE',
+      roleId: 3,
+      token,
+      tokenHash,
+      createdByProfileId: administratorId
+    });
+    await expect(
+      links.getOrCreateInviteLink({
+        organizationId,
+        target: { resourceType: 'COURSE', resourceId: fixture.courseId },
+        createdByProfileId: administratorId
+      })
+    ).rejects.toThrow('Add existing employees');
+    await expect(links.previewInviteLink(token)).rejects.toThrow('Add existing employees');
+    await expect(
+      links.acceptInviteLink(token, { id: administratorId, email: `${administratorId}@example.com` })
+    ).rejects.toThrow('Add existing employees');
+    const [count] = await database.db.execute(
+      database.sql`select count(*)::int as total from groupmember where group_id = ${fixture.groupId}`
+    );
+    expect(count.total).toBe(0);
   });
 
   afterAll(async () => {

@@ -3,6 +3,26 @@ import { describe, expect, it } from 'vitest';
 import { studentCourseWelcomeEmail } from '../src/emails/student-course-welcome';
 
 describe('studentCourseWelcomeEmail', () => {
+  it('uses the saved organization template before a legacy course welcome message', () => {
+    const fields = {
+      orgName: 'MP Transformation',
+      courseName: 'Digital Skills',
+      loginUrl: 'https://example.com/course',
+      customMessage: '<p>Legacy message</p>',
+      branding: {}
+    };
+    const rendered = studentCourseWelcomeEmail.template.render(fields, {
+      locale: 'vi',
+      contentOverride: '<p>{{org_name}} assigned {{course_name}}</p>'
+    });
+    expect(rendered).toContain('MP Transformation assigned Digital Skills');
+    expect(rendered).not.toContain('Legacy message');
+    expect(rendered).toContain('href="https://example.com/course"');
+    const subject = studentCourseWelcomeEmail.template.subject;
+    expect(typeof subject === 'function' && subject(fields, { subjectOverride: '{{org_name}}: {{course_name}}' })).toBe(
+      'MP Transformation: Digital Skills'
+    );
+  });
   it('includes the course name in the subject', () => {
     const resolveSubject = studentCourseWelcomeEmail.template.subject;
 

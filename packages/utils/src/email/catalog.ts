@@ -3,6 +3,11 @@ import type { EmailLocale, StudentEmailLocaleCopy } from './index';
 const en: StudentEmailLocaleCopy = {
   footer: { rightsReserved: 'All rights reserved.', website: 'Website', terms: 'Terms', privacy: 'Privacy' },
   templates: {
+    employeeActivation: {
+      subject: 'Activate your MP Learning account',
+      body: '<p>Hello {{employee_name}},</p><p>Your account at {{org_name}} is ready. Your employee code is <strong>{{employee_code}}</strong>.</p><p>Activate your account to set a password. This link expires at {{expires_at}}.</p>',
+      cta: 'Activate account'
+    },
     studentCourseInvite: {
       subject: 'You are invited to join a course',
       body: '<p>Hi there,</p><p>You have been invited to join <strong>{{course_name}}</strong> on {{org_name}}.</p><p>This invitation expires at <strong>{{expires_at}}</strong>.</p>',
@@ -74,6 +79,11 @@ const fr: StudentEmailLocaleCopy = {
     privacy: 'Confidentialité'
   },
   templates: {
+    employeeActivation: {
+      subject: 'Activez votre compte MP Learning',
+      body: '<p>Bonjour {{employee_name}},</p><p>Votre compte chez {{org_name}} est prêt. Votre code employé est <strong>{{employee_code}}</strong>.</p><p>Activez votre compte pour définir un mot de passe. Ce lien expire le {{expires_at}}.</p>',
+      cta: 'Activer le compte'
+    },
     studentCourseInvite: {
       subject: 'Vous êtes invité à rejoindre un cours',
       body: '<p>Bonjour,</p><p>Vous êtes invité à rejoindre <strong>{{course_name}}</strong> sur {{org_name}}.</p><p>Cette invitation expire le <strong>{{expires_at}}</strong>.</p>',
@@ -145,6 +155,11 @@ const de: StudentEmailLocaleCopy = {
     privacy: 'Datenschutz'
   },
   templates: {
+    employeeActivation: {
+      subject: 'Aktivieren Sie Ihr MP Learning-Konto',
+      body: '<p>Hallo {{employee_name}},</p><p>Ihr Konto bei {{org_name}} ist bereit. Ihre Mitarbeiternummer lautet <strong>{{employee_code}}</strong>.</p><p>Aktivieren Sie Ihr Konto, um ein Passwort festzulegen. Dieser Link läuft am {{expires_at}} ab.</p>',
+      cta: 'Konto aktivieren'
+    },
     studentCourseInvite: {
       subject: 'Sie wurden zu einem Kurs eingeladen',
       body: '<p>Hallo,</p><p>Sie wurden eingeladen, <strong>{{course_name}}</strong> bei {{org_name}} beizutreten.</p><p>Diese Einladung läuft am <strong>{{expires_at}}</strong> ab.</p>',
@@ -216,6 +231,11 @@ const es: StudentEmailLocaleCopy = {
     privacy: 'Privacidad'
   },
   templates: {
+    employeeActivation: {
+      subject: 'Activa tu cuenta de MP Learning',
+      body: '<p>Hola {{employee_name}},</p><p>Tu cuenta en {{org_name}} está lista. Tu código de empleado es <strong>{{employee_code}}</strong>.</p><p>Activa tu cuenta para establecer una contraseña. Este enlace caduca el {{expires_at}}.</p>',
+      cta: 'Activar cuenta'
+    },
     studentCourseInvite: {
       subject: 'Te han invitado a unirte a un curso',
       body: '<p>Hola,</p><p>Te han invitado a unirte a <strong>{{course_name}}</strong> en {{org_name}}.</p><p>Esta invitación vence el <strong>{{expires_at}}</strong>.</p>',
@@ -282,6 +302,11 @@ const es: StudentEmailLocaleCopy = {
 const pt: StudentEmailLocaleCopy = {
   footer: { rightsReserved: 'Todos os direitos reservados.', website: 'Site', terms: 'Termos', privacy: 'Privacidade' },
   templates: {
+    employeeActivation: {
+      subject: 'Ative sua conta MP Learning',
+      body: '<p>Olá {{employee_name}},</p><p>Sua conta em {{org_name}} está pronta. Seu código de funcionário é <strong>{{employee_code}}</strong>.</p><p>Ative sua conta para definir uma senha. Este link expira em {{expires_at}}.</p>',
+      cta: 'Ativar conta'
+    },
     studentCourseInvite: {
       subject: 'Você foi convidado para participar de um curso',
       body: '<p>Olá,</p><p>Você foi convidado para participar de <strong>{{course_name}}</strong> na {{org_name}}.</p><p>Este convite expira em <strong>{{expires_at}}</strong>.</p>',
@@ -348,6 +373,11 @@ const pt: StudentEmailLocaleCopy = {
 const hi: StudentEmailLocaleCopy = {
   footer: { rightsReserved: 'सर्वाधिकार सुरक्षित।', website: 'वेबसाइट', terms: 'शर्तें', privacy: 'गोपनीयता' },
   templates: {
+    employeeActivation: {
+      subject: 'अपना MP Learning खाता सक्रिय करें',
+      body: '<p>नमस्ते {{employee_name}},</p><p>{{org_name}} पर आपका खाता तैयार है। आपका कर्मचारी कोड <strong>{{employee_code}}</strong> है।</p><p>पासवर्ड सेट करने के लिए अपना खाता सक्रिय करें। यह लिंक {{expires_at}} को समाप्त होगा।</p>',
+      cta: 'खाता सक्रिय करें'
+    },
     studentCourseInvite: {
       subject: 'आपको एक कोर्स में शामिल होने के लिए आमंत्रित किया गया है',
       body: '<p>नमस्ते,</p><p>आपको {{org_name}} पर <strong>{{course_name}}</strong> में शामिल होने के लिए आमंत्रित किया गया है।</p><p>यह आमंत्रण <strong>{{expires_at}}</strong> को समाप्त होगा।</p>',
@@ -419,6 +449,11 @@ const vi: StudentEmailLocaleCopy = {
     privacy: 'Quyền riêng tư'
   },
   templates: {
+    employeeActivation: {
+      subject: 'Kích hoạt tài khoản MP Learning',
+      body: '<p>Xin chào {{employee_name}},</p><p>Bạn đã được cấp tài khoản tại {{org_name}}. Mã nhân viên của bạn là <strong>{{employee_code}}</strong>.</p><p>Kích hoạt tài khoản để đặt mật khẩu. Liên kết hết hạn vào {{expires_at}}.</p>',
+      cta: 'Kích hoạt tài khoản'
+    },
     studentCourseInvite: {
       subject: 'Bạn được mời tham gia một khóa học',
       body: '<p>Xin chào,</p><p>Bạn được mời tham gia <strong>{{course_name}}</strong> tại {{org_name}}.</p><p>Lời mời này hết hạn vào <strong>{{expires_at}}</strong>.</p>',
@@ -485,6 +520,11 @@ const vi: StudentEmailLocaleCopy = {
 const ru: StudentEmailLocaleCopy = {
   footer: { rightsReserved: 'Все права защищены.', website: 'Сайт', terms: 'Условия', privacy: 'Конфиденциальность' },
   templates: {
+    employeeActivation: {
+      subject: 'Активируйте учётную запись MP Learning',
+      body: '<p>Здравствуйте, {{employee_name}}!</p><p>Ваша учётная запись в {{org_name}} готова. Ваш код сотрудника: <strong>{{employee_code}}</strong>.</p><p>Активируйте учётную запись, чтобы установить пароль. Ссылка действительна до {{expires_at}}.</p>',
+      cta: 'Активировать'
+    },
     studentCourseInvite: {
       subject: 'Вас пригласили на курс',
       body: '<p>Здравствуйте!</p><p>Вас пригласили на курс <strong>{{course_name}}</strong> в {{org_name}}.</p><p>Приглашение действительно до <strong>{{expires_at}}</strong>.</p>',
@@ -551,6 +591,11 @@ const ru: StudentEmailLocaleCopy = {
 const pl: StudentEmailLocaleCopy = {
   footer: { rightsReserved: 'Wszelkie prawa zastrzeżone.', website: 'Strona', terms: 'Warunki', privacy: 'Prywatność' },
   templates: {
+    employeeActivation: {
+      subject: 'Aktywuj konto MP Learning',
+      body: '<p>Witaj {{employee_name}},</p><p>Twoje konto w {{org_name}} jest gotowe. Twój kod pracownika to <strong>{{employee_code}}</strong>.</p><p>Aktywuj konto, aby ustawić hasło. Link wygasa {{expires_at}}.</p>',
+      cta: 'Aktywuj konto'
+    },
     studentCourseInvite: {
       subject: 'Zaproszono Cię do kursu',
       body: '<p>Cześć,</p><p>Zaproszono Cię do kursu <strong>{{course_name}}</strong> w {{org_name}}.</p><p>Zaproszenie wygasa <strong>{{expires_at}}</strong>.</p>',
@@ -622,6 +667,11 @@ const da: StudentEmailLocaleCopy = {
     privacy: 'Privatliv'
   },
   templates: {
+    employeeActivation: {
+      subject: 'Aktivér din MP Learning-konto',
+      body: '<p>Hej {{employee_name}},</p><p>Din konto hos {{org_name}} er klar. Din medarbejderkode er <strong>{{employee_code}}</strong>.</p><p>Aktivér din konto for at oprette en adgangskode. Linket udløber {{expires_at}}.</p>',
+      cta: 'Aktivér konto'
+    },
     studentCourseInvite: {
       subject: 'Du er inviteret til et kursus',
       body: '<p>Hej,</p><p>Du er inviteret til <strong>{{course_name}}</strong> hos {{org_name}}.</p><p>Invitationen udløber <strong>{{expires_at}}</strong>.</p>',
@@ -688,6 +738,11 @@ const da: StudentEmailLocaleCopy = {
 const it: StudentEmailLocaleCopy = {
   footer: { rightsReserved: 'Tutti i diritti riservati.', website: 'Sito web', terms: 'Termini', privacy: 'Privacy' },
   templates: {
+    employeeActivation: {
+      subject: 'Attiva il tuo account MP Learning',
+      body: '<p>Ciao {{employee_name}},</p><p>Il tuo account presso {{org_name}} è pronto. Il tuo codice dipendente è <strong>{{employee_code}}</strong>.</p><p>Attiva il tuo account per impostare una password. Questo link scade il {{expires_at}}.</p>',
+      cta: 'Attiva account'
+    },
     studentCourseInvite: {
       subject: 'Sei invitato a iscriverti a un corso',
       body: '<p>Ciao,</p><p>Sei stato invitato a iscriverti a <strong>{{course_name}}</strong> su {{org_name}}.</p><p>Questo invito scade il <strong>{{expires_at}}</strong>.</p>',
@@ -754,6 +809,11 @@ const it: StudentEmailLocaleCopy = {
 const tr: StudentEmailLocaleCopy = {
   footer: { rightsReserved: 'Tüm hakları saklıdır.', website: 'Web sitesi', terms: 'Koşullar', privacy: 'Gizlilik' },
   templates: {
+    employeeActivation: {
+      subject: 'MP Learning hesabınızı etkinleştirin',
+      body: '<p>Merhaba {{employee_name}},</p><p>{{org_name}} hesabınız hazır. Çalışan kodunuz <strong>{{employee_code}}</strong>.</p><p>Parola belirlemek için hesabınızı etkinleştirin. Bağlantının son kullanma tarihi: {{expires_at}}.</p>',
+      cta: 'Hesabı etkinleştir'
+    },
     studentCourseInvite: {
       subject: 'Bir kursa katılmaya davet edildiniz',
       body: '<p>Merhaba,</p><p>{{org_name}} bünyesindeki <strong>{{course_name}}</strong> kursuna davet edildiniz.</p><p>Bu davet <strong>{{expires_at}}</strong> tarihinde sona erer.</p>',

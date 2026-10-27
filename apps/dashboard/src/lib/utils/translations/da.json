@@ -3142,6 +3142,17 @@
       "description": "Du er ved at se, hvad en studerende vil se, når de tilmelder sig dette kursus",
       "copy_link": "Kopiér link",
       "go_to_lms": "Gå til LMS"
+    },
+    "employee_enrollment": {
+      "title": "Add employees to the course",
+      "description": "Only existing active employees can be added to this course.",
+      "learners": "Add learners",
+      "instructors": "Add instructors",
+      "search": "Search by employee code, name or email",
+      "empty": "No eligible employees found. They may already be enrolled or their accounts are not active.",
+      "manage_hint": "Create and activate new accounts in the Employees tab.",
+      "notify": "Send a course access notification by email",
+      "assign": "Grant access ({count})"
     }
   },
   "courses": {
@@ -4468,13 +4479,13 @@
     },
     "emails": {
       "page_title": "Email skabeloner",
-      "language_note": "Elev-e-mails bruger din organisations håndhævede sprog. Når det ikke håndhæves, bruger e-mails engelsk.",
-      "heading": "Student e-mail skabeloner",
-      "description": "Tilpas de e-mails, eleverne modtager. Personalets e-mails sendes altid på engelsk.",
-      "paid_plan_note": "Opgrader din plan for at oversætte og tilpasse studerendes e-mails.",
+      "language_note": "Employee emails use the organization’s enforced language. Otherwise, emails are sent in English.",
+      "heading": "Employee email templates",
+      "description": "Customize account activation, course access and learning notifications. Saved templates are used when emailing employees.",
+      "paid_plan_note": "Customize employee email content and language.",
       "sending_in": "Sender ind",
       "change": "Skift",
-      "template_navigation": "Typer af studerendes e-mail",
+      "template_navigation": "Employee email types",
       "edited": "Redigeret",
       "insert": "Indsæt",
       "link_chip": "Link",
@@ -4498,7 +4509,7 @@
       "reset": "Nulstil til oversat standard",
       "templates": {
         "studentCourseInvite": "Kursusinvitation",
-        "studentCourseWelcome": "Kursus velkommen",
+        "studentCourseWelcome": "Course access granted",
         "studentCourseCompletion": "Kursusafslutning",
         "studentOrgInvite": "Organisation invitation",
         "studentCohortWelcome": "Kohorte velkommen",
@@ -4508,12 +4519,13 @@
         "sessionReminder": "Live session påmindelse",
         "sessionUpdated": "Live session opdateret",
         "submissionGraded": "Indsendelse bedømt",
-        "newsfeedPost": "Kursus nyhedsfeed indlæg"
+        "newsfeedPost": "Kursus nyhedsfeed indlæg",
+        "employeeActivation": "Employee account activation"
       },
       "descriptions": {
         "studentCourseInvite": "Sendes, når du inviterer nogen til et kursus.",
         "studentOrgInvite": "Sendes, når du inviterer nogen til din organisation.",
-        "studentCourseWelcome": "Sendes når en elev får adgang til et kursus.",
+        "studentCourseWelcome": "Sent when an existing employee is added to a course with email notifications enabled.",
         "studentCohortWelcome": "Sendes når en elev får adgang til en kohorte.",
         "quizAssigned": "Sendes når en quiz er tildelt en elev.",
         "submissionGraded": "Sendes når en elevs øvelsesindlevering gennemgås.",
@@ -4522,13 +4534,14 @@
         "sessionReminder": "Sendt før en planlagt live-session.",
         "sessionUpdated": "Sendes, når detaljerne i livesessionen ændres.",
         "newsfeedPost": "Sendes når et nyt kursusopslag er offentliggjort.",
-        "studentProvePayment": "Sendes, når en elev skal fremlægge betalingsbevis."
+        "studentProvePayment": "Sendes, når en elev skal fremlægge betalingsbevis.",
+        "employeeActivation": "Sent when an activation link is issued or resent from Employees. Links are single use and expire after 48 hours."
       },
       "groups": {
-        "enrollment": "Tilmelding",
+        "enrollment": "Accounts and enrollment",
         "learning": "Læring",
         "live_sessions": "Live sessioner",
-        "updates_billing": "Opdateringer og fakturering"
+        "updates_billing": "Updates"
       },
       "variables": {
         "organization": "Organisation",
@@ -4551,7 +4564,9 @@
         "status": "Status",
         "score": "Score",
         "lesson_title": "Lektionens titel",
-        "post_content": "Post indhold"
+        "post_content": "Post indhold",
+        "employee_name": "Employee name",
+        "employee_code": "Employee code"
       },
       "test_dialog": {
         "title": "Send en test-e-mail",

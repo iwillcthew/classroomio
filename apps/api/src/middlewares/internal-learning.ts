@@ -13,8 +13,19 @@ export const internalLearning: MiddlewareHandler = async (context, next) => {
     /^\/organization\/(plan|plans|setup|early-adopter)(\/|$)/.test(pathname) ||
     /^\/(?:public-api\/)?v1\/organization\/landing-page(\/|$)/.test(pathname);
   const organizationCreation = /^\/organization\/?$/.test(pathname) && ['POST', 'DELETE'].includes(context.req.method);
+  const courseInvitations =
+    /^\/course\/[^/]+\/invites(?:\/|$)/.test(pathname) ||
+    /^\/(?:public-api\/)?v1\/courses\/[^/]+\/invites(?:\/|$)/.test(pathname) ||
+    /^\/invite\/student(?:\/|$)/.test(pathname);
 
-  if (retiredEndpoint || publicCatalog || publicSales || retiredManagement || organizationCreation) {
+  if (
+    retiredEndpoint ||
+    publicCatalog ||
+    publicSales ||
+    retiredManagement ||
+    organizationCreation ||
+    courseInvitations
+  ) {
     return context.json({ success: false, error: 'Not found' }, 404);
   }
 

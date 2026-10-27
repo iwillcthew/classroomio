@@ -12,7 +12,7 @@ vi.mock('@api/services/organization/student-email-templates', () => ({
 }));
 
 import { ROLE } from '@cio/utils/constants';
-import { STUDENT_EMAIL_CATALOG, STUDENT_EMAIL_IDS } from '@cio/utils/email';
+import { STUDENT_EMAIL_CATALOG, EMPLOYEE_EMAIL_IDS } from '@cio/utils/email';
 import { getOrganizationMemberRoleId } from '@cio/db/queries/organization';
 import {
   listStudentEmailTemplates,
@@ -92,12 +92,12 @@ describe('services/v1/organization/email-templates', () => {
       locale: 'fr'
     });
 
-    expect(items.map((item) => item.emailId)).toEqual([...STUDENT_EMAIL_IDS]);
-    expect(pagination).toEqual({ page: 1, limit: 20, total: STUDENT_EMAIL_IDS.length, totalPages: 1 });
+    expect(items.map((item) => item.emailId)).toEqual([...EMPLOYEE_EMAIL_IDS]);
+    expect(pagination).toEqual({ page: 1, limit: 20, total: EMPLOYEE_EMAIL_IDS.length, totalPages: 1 });
     expect(items[0]).toEqual({
-      emailId: 'studentCourseInvite',
+      emailId: 'employeeActivation',
       locale: 'fr',
-      subject: STUDENT_EMAIL_CATALOG.fr.templates.studentCourseInvite.subject,
+      subject: STUDENT_EMAIL_CATALOG.fr.templates.employeeActivation.subject,
       isCustomized: false,
       updatedAt: null
     });
@@ -126,12 +126,12 @@ describe('services/v1/organization/email-templates', () => {
   it('gets the default template when nothing is saved', async () => {
     vi.mocked(listStudentEmailTemplates).mockResolvedValue([]);
 
-    expect(await getEmailTemplateService(ORG_ID, ACTOR_ID, { emailId: 'studentProvePayment', locale: 'en' })).toEqual(
+    expect(await getEmailTemplateService(ORG_ID, ACTOR_ID, { emailId: 'employeeActivation', locale: 'en' })).toEqual(
       expect.objectContaining({
-        content: STUDENT_EMAIL_CATALOG.en.templates.studentProvePayment.body,
+        content: STUDENT_EMAIL_CATALOG.en.templates.employeeActivation.body,
         isCustomized: false,
         updatedAt: null,
-        hasActionLink: false
+        hasActionLink: true
       })
     );
   });

@@ -613,13 +613,13 @@
     },
     "emails": {
       "page_title": "Email templates",
-      "language_note": "Student emails use your organization's enforced language. When it is not enforced, emails use English.",
-      "heading": "Student email templates",
-      "description": "Customize the emails students receive. Staff emails always send in English.",
-      "paid_plan_note": "Upgrade your plan to translate and customize student emails.",
+      "language_note": "Employee emails use the organization’s enforced language. Otherwise, emails are sent in English.",
+      "heading": "Employee email templates",
+      "description": "Customize account activation, course access and learning notifications. Saved templates are used when emailing employees.",
+      "paid_plan_note": "Customize employee email content and language.",
       "sending_in": "Sending in",
       "change": "Change",
-      "template_navigation": "Student email types",
+      "template_navigation": "Employee email types",
       "edited": "Edited",
       "insert": "Insert",
       "link_chip": "Link",
@@ -644,7 +644,9 @@
         "status": "Status",
         "score": "Score",
         "lesson_title": "Lesson title",
-        "post_content": "Post content"
+        "post_content": "Post content",
+        "employee_name": "Employee name",
+        "employee_code": "Employee code"
       },
       "edit": "Edit",
       "preview": "Preview",
@@ -659,15 +661,15 @@
       },
       "test_sent": "Test email queued for delivery",
       "groups": {
-        "enrollment": "Enrollment",
+        "enrollment": "Accounts and enrollment",
         "learning": "Learning",
         "live_sessions": "Live sessions",
-        "updates_billing": "Updates & billing"
+        "updates_billing": "Updates"
       },
       "descriptions": {
         "studentCourseInvite": "Sent when you invite someone to a course.",
         "studentOrgInvite": "Sent when you invite someone to your organization.",
-        "studentCourseWelcome": "Sent when a student receives access to a course.",
+        "studentCourseWelcome": "Sent when an existing employee is added to a course with email notifications enabled.",
         "studentCohortWelcome": "Sent when a student receives access to a cohort.",
         "quizAssigned": "Sent when a quiz is assigned to a student.",
         "submissionGraded": "Sent when a student's exercise submission is reviewed.",
@@ -676,7 +678,8 @@
         "sessionReminder": "Sent before a scheduled live session.",
         "sessionUpdated": "Sent when live session details change.",
         "newsfeedPost": "Sent when a new course post is published.",
-        "studentProvePayment": "Sent when a student needs to provide payment proof."
+        "studentProvePayment": "Sent when a student needs to provide payment proof.",
+        "employeeActivation": "Sent when an activation link is issued or resent from Employees. Links are single use and expire after 48 hours."
       },
       "template": "Email",
       "language": "Language",
@@ -693,7 +696,7 @@
       "reset": "Reset to translated default",
       "templates": {
         "studentCourseInvite": "Course invitation",
-        "studentCourseWelcome": "Course welcome",
+        "studentCourseWelcome": "Course access granted",
         "studentCourseCompletion": "Course completion",
         "studentOrgInvite": "Organization invitation",
         "studentCohortWelcome": "Cohort welcome",
@@ -703,7 +706,8 @@
         "sessionReminder": "Live session reminder",
         "sessionUpdated": "Live session updated",
         "submissionGraded": "Submission graded",
-        "newsfeedPost": "Course newsfeed post"
+        "newsfeedPost": "Course newsfeed post",
+        "employeeActivation": "Employee account activation"
       }
     },
     "profile": {
@@ -4470,6 +4474,17 @@
       "header": "No Permission",
       "body": "Unfortunately you don't have access to this course.",
       "button": "Go home"
+    },
+    "employee_enrollment": {
+      "title": "Add employees to the course",
+      "description": "Only existing active employees can be added to this course.",
+      "learners": "Add learners",
+      "instructors": "Add instructors",
+      "search": "Search by employee code, name or email",
+      "empty": "No eligible employees found. They may already be enrolled or their accounts are not active.",
+      "manage_hint": "Create and activate new accounts in the Employees tab.",
+      "notify": "Send a course access notification by email",
+      "assign": "Grant access ({count})"
     }
   },
   "community": {

@@ -3142,6 +3142,17 @@
       "description": "Zaraz zobaczysz, co zobaczy student, który zapisze się na ten kurs",
       "copy_link": "Skopiuj link",
       "go_to_lms": "Przejdź do LMS-a"
+    },
+    "employee_enrollment": {
+      "title": "Add employees to the course",
+      "description": "Only existing active employees can be added to this course.",
+      "learners": "Add learners",
+      "instructors": "Add instructors",
+      "search": "Search by employee code, name or email",
+      "empty": "No eligible employees found. They may already be enrolled or their accounts are not active.",
+      "manage_hint": "Create and activate new accounts in the Employees tab.",
+      "notify": "Send a course access notification by email",
+      "assign": "Grant access ({count})"
     }
   },
   "courses": {
@@ -4468,13 +4479,13 @@
     },
     "emails": {
       "page_title": "Szablony e-maili",
-      "language_note": "W e-mailach uczniów używany jest język narzucony przez Twoją organizację. Jeśli nie jest to egzekwowane, w wiadomościach e-mail używany jest język angielski.",
-      "heading": "Szablony e-maili dla studentów",
-      "description": "Dostosuj e-maile otrzymywane przez uczniów. E-maile personelu są zawsze wysyłane w języku angielskim.",
-      "paid_plan_note": "Uaktualnij swój plan, aby tłumaczyć i dostosowywać e-maile dla uczniów.",
+      "language_note": "Employee emails use the organization’s enforced language. Otherwise, emails are sent in English.",
+      "heading": "Employee email templates",
+      "description": "Customize account activation, course access and learning notifications. Saved templates are used when emailing employees.",
+      "paid_plan_note": "Customize employee email content and language.",
       "sending_in": "Wysyłam",
       "change": "Zmień",
-      "template_navigation": "Typy e-maili uczniów",
+      "template_navigation": "Employee email types",
       "edited": "Edytowane",
       "insert": "Wstaw",
       "link_chip": "Link",
@@ -4498,7 +4509,7 @@
       "reset": "Zresetuj do przetłumaczonych ustawień domyślnych",
       "templates": {
         "studentCourseInvite": "Zaproszenie na kurs",
-        "studentCourseWelcome": "Oczywiście mile widziane",
+        "studentCourseWelcome": "Course access granted",
         "studentCourseCompletion": "Zakończenie kursu",
         "studentOrgInvite": "Zaproszenie organizacji",
         "studentCohortWelcome": "Kohorta mile widziana",
@@ -4508,12 +4519,13 @@
         "sessionReminder": "Przypomnienie sesji na żywo",
         "sessionUpdated": "Zaktualizowano sesję na żywo",
         "submissionGraded": "Zgłoszenie ocenione",
-        "newsfeedPost": "Post w aktualnościach kursu"
+        "newsfeedPost": "Post w aktualnościach kursu",
+        "employeeActivation": "Employee account activation"
       },
       "descriptions": {
         "studentCourseInvite": "Wysyłane, gdy zapraszasz kogoś na kurs.",
         "studentOrgInvite": "Wysyłane, gdy zapraszasz kogoś do swojej organizacji.",
-        "studentCourseWelcome": "Wysyłane, gdy student uzyska dostęp do kursu.",
+        "studentCourseWelcome": "Sent when an existing employee is added to a course with email notifications enabled.",
         "studentCohortWelcome": "Wysyłane, gdy uczeń uzyska dostęp do kohorty.",
         "quizAssigned": "Wysyłane, gdy quiz jest przypisany do ucznia.",
         "submissionGraded": "Wysyłane po sprawdzeniu przesłanych ćwiczeń przez ucznia.",
@@ -4522,13 +4534,14 @@
         "sessionReminder": "Wysłane przed zaplanowaną sesją na żywo.",
         "sessionUpdated": "Wysyłane, gdy zmienią się szczegóły sesji na żywo.",
         "newsfeedPost": "Wysyłane, gdy zostanie opublikowany nowy wpis dotyczący kursu.",
-        "studentProvePayment": "Wysyłane, gdy student musi przedstawić dowód wpłaty."
+        "studentProvePayment": "Wysyłane, gdy student musi przedstawić dowód wpłaty.",
+        "employeeActivation": "Sent when an activation link is issued or resent from Employees. Links are single use and expire after 48 hours."
       },
       "groups": {
-        "enrollment": "Rejestracja",
+        "enrollment": "Accounts and enrollment",
         "learning": "Nauka",
         "live_sessions": "Sesje na żywo",
-        "updates_billing": "Aktualizacje i rozliczenia"
+        "updates_billing": "Updates"
       },
       "variables": {
         "organization": "Organizacja",
@@ -4551,7 +4564,9 @@
         "status": "Stan",
         "score": "Wynik",
         "lesson_title": "Tytuł lekcji",
-        "post_content": "Opublikuj treść"
+        "post_content": "Opublikuj treść",
+        "employee_name": "Employee name",
+        "employee_code": "Employee code"
       },
       "test_dialog": {
         "title": "Wyślij e-mail testowy",

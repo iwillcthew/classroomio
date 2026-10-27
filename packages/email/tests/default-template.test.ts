@@ -3,14 +3,14 @@ import { describe, expect, it } from 'vitest';
 import { getDefaultTemplate } from '../src/templates';
 
 describe('getDefaultTemplate', () => {
-  it('uses system-owned English footer copy by default', () => {
+  it('uses the internal MP Learning branding by default', () => {
     const rendered = getDefaultTemplate('<p>System email</p>');
 
-    expect(rendered).toContain('All rights reserved.');
-    expect(rendered).toContain('Website');
+    expect(rendered).toContain('MP Transformation · Learning');
+    expect(rendered).not.toContain('classroomio.com');
   });
 
-  it('accepts localized footer copy for student emails', () => {
+  it('keeps internal branding when the email language is changed', () => {
     const rendered = getDefaultTemplate('<p>Courriel étudiant</p>', undefined, 'fr', {
       rightsReserved: 'Tous droits réservés.',
       website: 'Site web',
@@ -18,7 +18,8 @@ describe('getDefaultTemplate', () => {
       privacy: 'Confidentialité'
     });
 
-    expect(rendered).toContain('Tous droits réservés.');
-    expect(rendered).toContain('Site web');
+    expect(rendered).toContain('<html lang="fr">');
+    expect(rendered).toContain('MP Transformation · Learning');
+    expect(rendered).toContain('<p>Courriel étudiant</p>');
   });
 });

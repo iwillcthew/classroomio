@@ -19,7 +19,6 @@ vi.mock('@cio/db/queries/organization', () => ({
 
 vi.mock('@api/services/course/people', () => ({
   listPaginatedCourseMembers: vi.fn(),
-  addMembers: vi.fn(),
   updateMember: vi.fn(),
   deleteMember: vi.fn(),
   resetMemberCourseProgress: vi.fn()
@@ -29,6 +28,9 @@ vi.mock('@cio/core/services/course/course', () => ({
   getUserCourseAnalytics: vi.fn()
 }));
 
+vi.mock('@api/services/course/employees', () => ({ enrollExistingCourseEmployees: vi.fn() }));
+
+import { enrollExistingCourseEmployees } from '@api/services/course/employees';
 import { AppError } from '@api/utils/errors';
 import { ROLE } from '@cio/utils/constants';
 import { getCourseOrganizationId } from '@cio/db/queries/tag';
@@ -39,7 +41,6 @@ import {
   getOrganizationMembersByNormalizedEmails
 } from '@cio/db/queries/organization';
 import {
-  addMembers,
   deleteMember,
   listPaginatedCourseMembers,
   resetMemberCourseProgress,
@@ -98,7 +99,7 @@ describe('services/v1/courses/members', () => {
     });
     expect(isCourseTeamMemberOrOrgAdmin).toHaveBeenCalledWith(COURSE_ID, ACTOR_ID);
     expect(listPaginatedCourseMembers).not.toHaveBeenCalled();
-    expect(addMembers).not.toHaveBeenCalled();
+    expect(enrollExistingCourseEmployees).not.toHaveBeenCalled();
     expect(deleteMember).not.toHaveBeenCalled();
   });
 
@@ -126,35 +127,33 @@ describe('services/v1/courses/members', () => {
 
   it('addCourseMemberService adds an org member by email, linked to their profile, and returns the single member', async () => {
     const payload = { roleId: ROLE.STUDENT, email: 'a@example.com' };
-    vi.mocked(addMembers).mockResolvedValue([{ id: MEMBER_ID }] as Awaited<ReturnType<typeof addMembers>>);
+    vi.mocked(enrollExistingCourseEmployees).mockResolvedValue([{ id: MEMBER_ID }] as Awaited<
+      ReturnType<typeof enrollExistingCourseEmployees>
+    >);
 
     const result = await addCourseMemberService(ORG_ID, ACTOR_ID, courseParams, payload);
 
     expect(getOrganizationMembersByNormalizedEmails).toHaveBeenCalledWith(ORG_ID, ['a@example.com']);
-    expect(addMembers).toHaveBeenCalledWith(
+    expect(enrollExistingCourseEmployees).toHaveBeenCalledWith(
       COURSE_ID,
+      ACTOR_ID,
       [{ ...payload, profileId: 'profile-1' }],
-      'public_api',
-      expect.objectContaining({ actorProfileId: ACTOR_ID })
+      true,
+      expect.objectContaining({ method: 'admin' }),
+      'public_api'
     );
     expect(result).toEqual({ id: MEMBER_ID });
   });
 
-  it('addCourseMemberService keeps a pending org member (no profile yet) as an email-only member', async () => {
+  it('addCourseMemberService refuses pending accounts instead of creating email-only course members', async () => {
     const payload = { roleId: ROLE.STUDENT, email: 'pending@example.com' };
     vi.mocked(getOrganizationMembersByNormalizedEmails).mockResolvedValue([
       { normalizedEmail: 'pending@example.com', profileId: null, roleId: ROLE.STUDENT }
     ]);
-    vi.mocked(addMembers).mockResolvedValue([{ id: MEMBER_ID }] as Awaited<ReturnType<typeof addMembers>>);
-
-    await addCourseMemberService(ORG_ID, ACTOR_ID, courseParams, payload);
-
-    expect(addMembers).toHaveBeenCalledWith(
-      COURSE_ID,
-      [payload],
-      'public_api',
-      expect.objectContaining({ actorProfileId: ACTOR_ID })
-    );
+    await expect(addCourseMemberService(ORG_ID, ACTOR_ID, courseParams, payload)).rejects.toMatchObject({
+      statusCode: 400
+    });
+    expect(enrollExistingCourseEmployees).not.toHaveBeenCalled();
   });
 
   it('addCourseMemberService returns 404 when the email does not belong to this organization', async () => {
@@ -163,7 +162,7 @@ describe('services/v1/courses/members', () => {
     await expect(
       addCourseMemberService(ORG_ID, ACTOR_ID, courseParams, { roleId: ROLE.STUDENT, email: 'outsider@example.com' })
     ).rejects.toMatchObject({ statusCode: 404 });
-    expect(addMembers).not.toHaveBeenCalled();
+    expect(enrollExistingCourseEmployees).not.toHaveBeenCalled();
   });
 
   it('addCourseMemberService returns 404 when the profileId does not belong to this organization', async () => {
@@ -174,12 +173,21 @@ describe('services/v1/courses/members', () => {
       statusCode: 404
     });
     expect(getOrganizationMemberIdByOrgAndProfile).toHaveBeenCalledWith(ORG_ID, 'other-org-profile');
-    expect(addMembers).not.toHaveBeenCalled();
+    expect(enrollExistingCourseEmployees).not.toHaveBeenCalled();
   });
 
   it('addCourseMemberService passes a 409 through when the person is already a member', async () => {
-    vi.mocked(addMembers).mockRejectedValue(new AppError('Already a member of this course', 'CONFLICT', 409));
+    vi.mocked(enrollExistingCourseEmployees).mockRejectedValue(
+      new AppError('Already a member of this course', 'CONFLICT', 409)
+    );
 
+    await expect(
+      addCourseMemberService(ORG_ID, ACTOR_ID, courseParams, { roleId: ROLE.STUDENT, email: 'a@example.com' })
+    ).rejects.toMatchObject({ statusCode: 409 });
+  });
+
+  it('returns a conflict when enrollment is already present', async () => {
+    vi.mocked(enrollExistingCourseEmployees).mockResolvedValue([]);
     await expect(
       addCourseMemberService(ORG_ID, ACTOR_ID, courseParams, { roleId: ROLE.STUDENT, email: 'a@example.com' })
     ).rejects.toMatchObject({ statusCode: 409 });

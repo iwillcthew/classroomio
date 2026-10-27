@@ -7,7 +7,11 @@ import { renderStudentEmail, renderStudentEmailSubject } from '../core/student-e
 export const studentCourseWelcomeEmail = defineEmail({
   id: 'studentCourseWelcome',
   subject: (fields, context) =>
-    renderStudentEmailSubject('studentCourseWelcome', { course_name: fields.courseName }, context),
+    renderStudentEmailSubject(
+      'studentCourseWelcome',
+      { course_name: fields.courseName, org_name: fields.orgName },
+      context
+    ),
   schema: z.object({
     orgName: z.string().min(1),
     courseName: z.string().min(1),
@@ -16,7 +20,7 @@ export const studentCourseWelcomeEmail = defineEmail({
     branding: ZEmailBranding
   }),
   render: (fields, context) => {
-    const hasCourseMessage = Boolean(fields.customMessage?.trim());
+    const hasCourseMessage = !context?.contentOverride && Boolean(fields.customMessage?.trim());
     const bodyContext = hasCourseMessage ? { ...context, contentOverride: '{{course_message}}' } : context;
 
     return renderStudentEmail({

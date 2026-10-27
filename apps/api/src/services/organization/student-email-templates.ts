@@ -10,7 +10,7 @@ import {
   containsStudentEmailActionLink,
   getUnknownStudentEmailVariables,
   isEmailLocale,
-  isStudentEmailId,
+  isEmployeeEmailId,
   isStudentEmailTemplateCustomized,
   type EmailLocale,
   type StudentEmailId
@@ -26,8 +26,7 @@ import {
 } from '@cio/email';
 import { AppError, ErrorCodes } from '@api/utils/errors';
 import { enqueueRawEmail } from '@api/services/jobs/email-jobs';
-
-const TEST_EMAIL_ACTION_URL = 'https://classroomio.com';
+import { getDashboardBaseUrl } from '@cio/core/config/dashboard-url';
 
 export async function listStudentEmailTemplates(organizationId: string) {
   const templates = await listOrganizationStudentEmailTemplates(organizationId);
@@ -35,7 +34,7 @@ export async function listStudentEmailTemplates(organizationId: string) {
   return templates.flatMap((template) => {
     const emailId = template.emailId;
     const locale = template.locale;
-    if (!isStudentEmailId(emailId) || !isEmailLocale(locale)) return [];
+    if (!isEmployeeEmailId(emailId) || !isEmailLocale(locale)) return [];
 
     return [
       {
@@ -60,6 +59,8 @@ export async function saveStudentEmailTemplate(input: {
   content: string;
   subject?: string | null;
 }) {
+  assertActiveEmployeeTemplate(input.emailId);
+
   await assertStudentEmailCustomizationEntitlement(input.organizationId);
   const content = sanitizeHtml(input.content);
   validateTemplateContent(input.emailId, content);
@@ -84,6 +85,8 @@ export async function saveStudentEmailTemplate(input: {
 }
 
 export async function resetStudentEmailTemplate(organizationId: string, emailId: StudentEmailId, locale: EmailLocale) {
+  assertActiveEmployeeTemplate(emailId);
+
   await assertStudentEmailCustomizationEntitlement(organizationId);
 
   return deleteOrganizationStudentEmailTemplate(organizationId, emailId, locale);
@@ -97,6 +100,8 @@ export async function sendStudentEmailTemplateTest(input: {
   subject: string;
   recipientEmails: string[];
 }) {
+  assertActiveEmployeeTemplate(input.emailId);
+
   await assertStudentEmailCustomizationEntitlement(input.organizationId);
   const draftContent = sanitizeHtml(input.content);
   validateTemplateContent(input.emailId, draftContent);
@@ -110,19 +115,21 @@ export async function sendStudentEmailTemplateTest(input: {
   const sampleValues = getStudentEmailSampleValues(input.locale, organization.name);
   const context = { locale: input.locale, contentOverride: draftContent, subjectOverride: input.subject };
   const branding = buildEmailBranding(organization);
+  const actionUrl = getDashboardBaseUrl(organization);
   const content = renderStudentEmail({
     id: input.emailId,
     values: sampleValues,
-    actionUrl: TEST_EMAIL_ACTION_URL,
+    actionUrl,
     branding,
     context
   });
   const subject = renderStudentEmailSubject(input.emailId, sampleValues, context);
+  const from = buildEmailFromName(organization.name);
   const result = await enqueueRawEmail({
     to: input.recipientEmails,
     subject,
     content,
-    from: buildEmailFromName(`${organization.name} (via ClassroomIO.com)`)
+    from
   });
 
   if (result.jobIds.length === 0) {
@@ -141,6 +148,12 @@ function validateTemplateContent(emailId: StudentEmailId, content: string) {
 
   if (containsStudentEmailActionLink(content) && !STUDENT_EMAIL_LINKS[emailId]) {
     throw new AppError('This email template does not have an action link.', ErrorCodes.VALIDATION_ERROR, 400);
+  }
+}
+
+function assertActiveEmployeeTemplate(emailId: StudentEmailId) {
+  if (!isEmployeeEmailId(emailId)) {
+    throw new AppError('This email template is no longer used', ErrorCodes.NOT_FOUND, 404);
   }
 }
 

@@ -3142,6 +3142,17 @@
       "description": "Você está prestes a ver o que um aluno verá ao se inscrever neste curso",
       "copy_link": "Copiar link",
       "go_to_lms": "Acesse o LMS"
+    },
+    "employee_enrollment": {
+      "title": "Add employees to the course",
+      "description": "Only existing active employees can be added to this course.",
+      "learners": "Add learners",
+      "instructors": "Add instructors",
+      "search": "Search by employee code, name or email",
+      "empty": "No eligible employees found. They may already be enrolled or their accounts are not active.",
+      "manage_hint": "Create and activate new accounts in the Employees tab.",
+      "notify": "Send a course access notification by email",
+      "assign": "Grant access ({count})"
     }
   },
   "courses": {
@@ -4468,13 +4479,13 @@
     },
     "emails": {
       "page_title": "Modelos de e-mail",
-      "language_note": "Os e-mails dos alunos usam a linguagem imposta pela sua organização. Quando não é aplicado, os e-mails usam o inglês.",
-      "heading": "Modelos de e-mail para estudantes",
-      "description": "Personalize os e-mails que os alunos recebem. Os e-mails da equipe sempre são enviados em inglês.",
-      "paid_plan_note": "Atualize seu plano para traduzir e personalizar e-mails de alunos.",
+      "language_note": "Employee emails use the organization’s enforced language. Otherwise, emails are sent in English.",
+      "heading": "Employee email templates",
+      "description": "Customize account activation, course access and learning notifications. Saved templates are used when emailing employees.",
+      "paid_plan_note": "Customize employee email content and language.",
       "sending_in": "Enviando",
       "change": "Mudança",
-      "template_navigation": "Tipos de e-mail de estudante",
+      "template_navigation": "Employee email types",
       "edited": "Editado",
       "insert": "Inserir",
       "link_chip": "Ligação",
@@ -4498,7 +4509,7 @@
       "reset": "Redefinir para o padrão traduzido",
       "templates": {
         "studentCourseInvite": "Convite para curso",
-        "studentCourseWelcome": "Curso bem-vindo",
+        "studentCourseWelcome": "Course access granted",
         "studentCourseCompletion": "Conclusão do curso",
         "studentOrgInvite": "Convite da organização",
         "studentCohortWelcome": "Coorte bem-vinda",
@@ -4508,12 +4519,13 @@
         "sessionReminder": "Lembrete de sessão ao vivo",
         "sessionUpdated": "Sessão ao vivo atualizada",
         "submissionGraded": "Envio avaliado",
-        "newsfeedPost": "Postagem no feed de notícias do curso"
+        "newsfeedPost": "Postagem no feed de notícias do curso",
+        "employeeActivation": "Employee account activation"
       },
       "descriptions": {
         "studentCourseInvite": "Enviado quando você convida alguém para um curso.",
         "studentOrgInvite": "Enviado quando você convida alguém para sua organização.",
-        "studentCourseWelcome": "Enviado quando um aluno recebe acesso a um curso.",
+        "studentCourseWelcome": "Sent when an existing employee is added to a course with email notifications enabled.",
         "studentCohortWelcome": "Enviado quando um aluno recebe acesso a um coorte.",
         "quizAssigned": "Enviado quando um questionário é atribuído a um aluno.",
         "submissionGraded": "Enviado quando o envio do exercício de um aluno é revisado.",
@@ -4522,13 +4534,14 @@
         "sessionReminder": "Enviado antes de uma sessão ao vivo agendada.",
         "sessionUpdated": "Enviado quando os detalhes da sessão ao vivo mudam.",
         "newsfeedPost": "Enviado quando uma nova postagem do curso é publicada.",
-        "studentProvePayment": "Enviado quando um aluno precisa fornecer comprovante de pagamento."
+        "studentProvePayment": "Enviado quando um aluno precisa fornecer comprovante de pagamento.",
+        "employeeActivation": "Sent when an activation link is issued or resent from Employees. Links are single use and expire after 48 hours."
       },
       "groups": {
-        "enrollment": "Inscrição",
+        "enrollment": "Accounts and enrollment",
         "learning": "Aprendizagem",
         "live_sessions": "Sessões ao vivo",
-        "updates_billing": "Atualizações e faturamento"
+        "updates_billing": "Updates"
       },
       "variables": {
         "organization": "Organização",
@@ -4551,7 +4564,9 @@
         "status": "Estado",
         "score": "Pontuação",
         "lesson_title": "Título da lição",
-        "post_content": "Postar conteúdo"
+        "post_content": "Postar conteúdo",
+        "employee_name": "Employee name",
+        "employee_code": "Employee code"
       },
       "test_dialog": {
         "title": "Envie um e-mail de teste",

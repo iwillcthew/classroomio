@@ -3142,6 +3142,17 @@
       "description": "Вы скоро увидите, что увидит студент, записавшись на этот курс.",
       "copy_link": "Копировать ссылку",
       "go_to_lms": "Перейти в СДО"
+    },
+    "employee_enrollment": {
+      "title": "Add employees to the course",
+      "description": "Only existing active employees can be added to this course.",
+      "learners": "Add learners",
+      "instructors": "Add instructors",
+      "search": "Search by employee code, name or email",
+      "empty": "No eligible employees found. They may already be enrolled or their accounts are not active.",
+      "manage_hint": "Create and activate new accounts in the Employees tab.",
+      "notify": "Send a course access notification by email",
+      "assign": "Grant access ({count})"
     }
   },
   "courses": {
@@ -4468,13 +4479,13 @@
     },
     "emails": {
       "page_title": "Шаблоны писем",
-      "language_note": "Письма студентам отправляются на обязательном языке вашей организации. Если язык не закреплён, письма отправляются на английском.",
-      "heading": "Шаблоны писем для студентов",
-      "description": "Настройте письма, которые получают студенты. Письма сотрудникам всегда отправляются на английском.",
-      "paid_plan_note": "Перейдите на платный тариф, чтобы переводить и настраивать письма для студентов.",
+      "language_note": "Employee emails use the organization’s enforced language. Otherwise, emails are sent in English.",
+      "heading": "Employee email templates",
+      "description": "Customize account activation, course access and learning notifications. Saved templates are used when emailing employees.",
+      "paid_plan_note": "Customize employee email content and language.",
       "sending_in": "Язык отправки",
       "change": "Изменить",
-      "template_navigation": "Типы писем для студентов",
+      "template_navigation": "Employee email types",
       "edited": "Изменено",
       "insert": "Вставить",
       "link_chip": "Ссылка",
@@ -4499,7 +4510,9 @@
         "status": "Статус",
         "score": "Оценка",
         "lesson_title": "Название урока",
-        "post_content": "Текст публикации"
+        "post_content": "Текст публикации",
+        "employee_name": "Employee name",
+        "employee_code": "Employee code"
       },
       "edit": "Редактировать",
       "preview": "Предпросмотр",
@@ -4507,15 +4520,15 @@
       "send_test": "Отправить тестовое письмо",
       "test_sent": "Тестовое письмо поставлено в очередь на отправку",
       "groups": {
-        "enrollment": "Зачисление",
+        "enrollment": "Accounts and enrollment",
         "learning": "Обучение",
         "live_sessions": "Онлайн-занятия",
-        "updates_billing": "Новости и оплата"
+        "updates_billing": "Updates"
       },
       "descriptions": {
         "studentCourseInvite": "Отправляется, когда вы приглашаете кого-то на курс.",
         "studentOrgInvite": "Отправляется, когда вы приглашаете кого-то в организацию.",
-        "studentCourseWelcome": "Отправляется, когда студент получает доступ к курсу.",
+        "studentCourseWelcome": "Sent when an existing employee is added to a course with email notifications enabled.",
         "studentCohortWelcome": "Отправляется, когда студент получает доступ к группе.",
         "quizAssigned": "Отправляется, когда студенту назначен тест.",
         "submissionGraded": "Отправляется, когда работа студента проверена.",
@@ -4524,7 +4537,8 @@
         "sessionReminder": "Отправляется перед запланированным онлайн-занятием.",
         "sessionUpdated": "Отправляется при изменении деталей онлайн-занятия.",
         "newsfeedPost": "Отправляется при новой публикации в курсе.",
-        "studentProvePayment": "Отправляется, когда студенту нужно подтвердить оплату."
+        "studentProvePayment": "Отправляется, когда студенту нужно подтвердить оплату.",
+        "employeeActivation": "Sent when an activation link is issued or resent from Employees. Links are single use and expire after 48 hours."
       },
       "template": "Письмо",
       "language": "Язык",
@@ -4541,7 +4555,7 @@
       "reset": "Вернуть переведённый вариант по умолчанию",
       "templates": {
         "studentCourseInvite": "Приглашение на курс",
-        "studentCourseWelcome": "Приветствие на курсе",
+        "studentCourseWelcome": "Course access granted",
         "studentCourseCompletion": "Завершение курса",
         "studentOrgInvite": "Приглашение в организацию",
         "studentCohortWelcome": "Приветствие в группе",
@@ -4551,7 +4565,8 @@
         "sessionReminder": "Напоминание об онлайн-занятии",
         "sessionUpdated": "Онлайн-занятие изменено",
         "submissionGraded": "Работа проверена",
-        "newsfeedPost": "Публикация в ленте курса"
+        "newsfeedPost": "Публикация в ленте курса",
+        "employeeActivation": "Employee account activation"
       },
       "test_dialog": {
         "title": "Отправить тестовое письмо",

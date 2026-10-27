@@ -6,7 +6,8 @@ import type {
 } from '@cio/utils/validation/public-api';
 import {
   STUDENT_EMAIL_CATALOG,
-  STUDENT_EMAIL_IDS,
+  isEmployeeEmailId,
+  EMPLOYEE_EMAIL_IDS,
   STUDENT_EMAIL_LINKS,
   STUDENT_EMAIL_VARIABLES,
   type EmailLocale,
@@ -20,6 +21,7 @@ import {
   sendStudentEmailTemplateTest
 } from '@api/services/organization/student-email-templates';
 import { assertOrgAdmin, paginateInMemory } from '../shared';
+import { AppError, ErrorCodes } from '@api/utils/errors';
 
 type TSavedEmailTemplate = { subject: string | null; content: string; isCustomized: boolean; updatedAt: string };
 
@@ -35,6 +37,9 @@ function toPublicEmailTemplateSummary(emailId: StudentEmailId, locale: EmailLoca
 }
 
 function toPublicEmailTemplate(emailId: StudentEmailId, locale: EmailLocale, saved?: TSavedEmailTemplate) {
+  if (!isEmployeeEmailId(emailId))
+    throw new AppError('This email template is no longer used', ErrorCodes.NOT_FOUND, 404);
+
   return {
     ...toPublicEmailTemplateSummary(emailId, locale, saved),
     content: saved?.content ?? STUDENT_EMAIL_CATALOG[locale].templates[emailId].body,
@@ -57,7 +62,7 @@ export async function listEmailTemplatesService(
   await assertOrgAdmin(orgId, actorId);
 
   const saved = (await listStudentEmailTemplates(orgId)).filter((template) => template.locale === query.locale);
-  const templates = STUDENT_EMAIL_IDS.map((emailId) =>
+  const templates = EMPLOYEE_EMAIL_IDS.map((emailId) =>
     toPublicEmailTemplateSummary(
       emailId,
       query.locale,

@@ -3142,6 +3142,17 @@
       "description": "आप यह देखने वाले हैं कि इस पाठ्यक्रम में दाखिला लेने पर एक छात्र क्या देखेगा",
       "copy_link": "लिंक कॉपी करें",
       "go_to_lms": "एलएमएस पर जाएं"
+    },
+    "employee_enrollment": {
+      "title": "Add employees to the course",
+      "description": "Only existing active employees can be added to this course.",
+      "learners": "Add learners",
+      "instructors": "Add instructors",
+      "search": "Search by employee code, name or email",
+      "empty": "No eligible employees found. They may already be enrolled or their accounts are not active.",
+      "manage_hint": "Create and activate new accounts in the Employees tab.",
+      "notify": "Send a course access notification by email",
+      "assign": "Grant access ({count})"
     }
   },
   "courses": {
@@ -4468,13 +4479,13 @@
     },
     "emails": {
       "page_title": "ईमेल टेम्प्लेट",
-      "language_note": "छात्र ईमेल आपके संगठन की लागू भाषा का उपयोग करते हैं। जब इसे लागू नहीं किया जाता है, तो ईमेल अंग्रेजी का उपयोग करते हैं।",
-      "heading": "छात्र ईमेल टेम्प्लेट",
-      "description": "छात्रों को प्राप्त होने वाले ईमेल को अनुकूलित करें। स्टाफ ईमेल हमेशा अंग्रेजी में भेजते हैं।",
-      "paid_plan_note": "छात्र ईमेल का अनुवाद और कस्टमाइज़ करने की अपनी योजना को अपग्रेड करें।",
+      "language_note": "Employee emails use the organization’s enforced language. Otherwise, emails are sent in English.",
+      "heading": "Employee email templates",
+      "description": "Customize account activation, course access and learning notifications. Saved templates are used when emailing employees.",
+      "paid_plan_note": "Customize employee email content and language.",
       "sending_in": "अंदर भेजा जा रहा है",
       "change": "परिवर्तन",
-      "template_navigation": "छात्र ईमेल प्रकार",
+      "template_navigation": "Employee email types",
       "edited": "संपादित",
       "insert": "सम्मिलित करें",
       "link_chip": "लिंक",
@@ -4498,7 +4509,7 @@
       "reset": "अनुवादित डिफ़ॉल्ट पर रीसेट करें",
       "templates": {
         "studentCourseInvite": "पाठ्यक्रम आमंत्रण",
-        "studentCourseWelcome": "पाठ्यक्रम का स्वागत है",
+        "studentCourseWelcome": "Course access granted",
         "studentCourseCompletion": "कोर्स पूरा करना",
         "studentOrgInvite": "संगठन आमंत्रण",
         "studentCohortWelcome": "दल का स्वागत है",
@@ -4508,12 +4519,13 @@
         "sessionReminder": "लाइव सत्र अनुस्मारक",
         "sessionUpdated": "लाइव सत्र अपडेट किया गया",
         "submissionGraded": "सबमिशन को श्रेणीबद्ध किया गया",
-        "newsfeedPost": "कोर्स न्यूज़फ़ीड पोस्ट"
+        "newsfeedPost": "कोर्स न्यूज़फ़ीड पोस्ट",
+        "employeeActivation": "Employee account activation"
       },
       "descriptions": {
         "studentCourseInvite": "जब आप किसी को पाठ्यक्रम के लिए आमंत्रित करते हैं तो भेजा जाता है।",
         "studentOrgInvite": "जब आप किसी को अपने संगठन में आमंत्रित करते हैं तो भेजा जाता है।",
-        "studentCourseWelcome": "जब कोई छात्र किसी पाठ्यक्रम तक पहुंच प्राप्त करता है तो भेजा जाता है।",
+        "studentCourseWelcome": "Sent when an existing employee is added to a course with email notifications enabled.",
         "studentCohortWelcome": "तब भेजा जाता है जब किसी छात्र को समूह तक पहुंच प्राप्त होती है।",
         "quizAssigned": "जब किसी छात्र को प्रश्नोत्तरी सौंपी जाती है तो भेजा जाता है।",
         "submissionGraded": "तब भेजा जाता है जब किसी छात्र के अभ्यास सबमिशन की समीक्षा की जाती है।",
@@ -4522,13 +4534,14 @@
         "sessionReminder": "निर्धारित लाइव सत्र से पहले भेजा गया।",
         "sessionUpdated": "लाइव सत्र विवरण बदलने पर भेजा जाता है।",
         "newsfeedPost": "नया पाठ्यक्रम पोस्ट प्रकाशित होने पर भेजा जाता है।",
-        "studentProvePayment": "तब भेजा जाता है जब किसी छात्र को भुगतान प्रमाण प्रदान करने की आवश्यकता होती है।"
+        "studentProvePayment": "तब भेजा जाता है जब किसी छात्र को भुगतान प्रमाण प्रदान करने की आवश्यकता होती है।",
+        "employeeActivation": "Sent when an activation link is issued or resent from Employees. Links are single use and expire after 48 hours."
       },
       "groups": {
-        "enrollment": "नामांकन",
+        "enrollment": "Accounts and enrollment",
         "learning": "सीखना",
         "live_sessions": "लाइव सत्र",
-        "updates_billing": "अपडेट और बिलिंग"
+        "updates_billing": "Updates"
       },
       "variables": {
         "organization": "संगठन",
@@ -4551,7 +4564,9 @@
         "status": "स्थिति",
         "score": "स्कोर",
         "lesson_title": "पाठ का शीर्षक",
-        "post_content": "सामग्री पोस्ट करें"
+        "post_content": "सामग्री पोस्ट करें",
+        "employee_name": "Employee name",
+        "employee_code": "Employee code"
       },
       "test_dialog": {
         "title": "एक परीक्षण ईमेल भेजें",

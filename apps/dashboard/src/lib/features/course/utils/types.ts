@@ -1,4 +1,10 @@
 import { classroomio, type InferRequestType, type InferResponseType } from '$lib/utils/services/api';
+export type AvailableCourseEmployeesRequest = (typeof classroomio.course)[':courseId']['members']['available']['$get'];
+export type AvailableCourseEmployeesSuccess = Extract<
+  InferResponseType<AvailableCourseEmployeesRequest>,
+  { success: true }
+>;
+export type AvailableCourseEmployees = AvailableCourseEmployeesSuccess['data'];
 import type { TCourseInvitePreset } from '@cio/utils/validation/course/invite';
 import type { TLocale } from '@cio/db/types';
 import type { NonAutoGradableQuestionOffender } from '@cio/utils/validation/course';

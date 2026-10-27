@@ -26,6 +26,12 @@ interface TInviteRequestContext {
   userAgent?: string | null;
 }
 
+function assertCourseInviteDisabled(resourceType: TInviteLinkResourceType) {
+  if (resourceType === 'COURSE') {
+    throw new AppError('Add existing employees from course members instead', ErrorCodes.NOT_FOUND, 404);
+  }
+}
+
 interface TAuthUser {
   id: string;
   email?: string | null;
@@ -73,6 +79,8 @@ export async function getOrCreateInviteLink(input: {
   createdByProfileId: string;
   roleId?: number;
 }): Promise<InviteLinkResponse> {
+  assertCourseInviteDisabled(input.target.resourceType);
+
   const roleId = input.roleId ?? ROLE.STUDENT;
 
   const existing = await getInviteLinkByTarget(input.target, roleId);
@@ -179,6 +187,8 @@ export async function previewInviteLink(token: string): Promise<InviteLinkPrevie
     throw new AppError('Invalid invite link', ErrorCodes.NOT_FOUND, 404);
   }
 
+  assertCourseInviteDisabled(context.invite.resourceType);
+
   const handler = getInviteLinkHandler(context.invite.resourceType);
 
   const { id, name, siteName, theme, avatarUrl } = context.organization;
@@ -215,6 +225,8 @@ export async function acceptInviteLink(token: string, user: TAuthUser, context: 
   if (inviteContext.invite.isRevoked) {
     throw new AppError('This invite link has been disabled', ErrorCodes.UNAUTHORIZED, 403);
   }
+
+  assertCourseInviteDisabled(inviteContext.invite.resourceType);
 
   const handler = getInviteLinkHandler(inviteContext.invite.resourceType);
   const preview = handler.preview(inviteContext);

@@ -61,3 +61,14 @@ pnpm --filter @cio/api exec vitest run src/__tests__/employee-accounts.integrati
 ```
 
 Trước khi vận hành với dữ liệu thật, kiểm tra nhận thư qua SMTP thật và luồng HR tạo → nhân viên kích hoạt → đăng nhập bằng mã → học → HR khóa → phiên cũ bị từ chối.
+
+
+## Course enrollment and employee emails
+
+Course members can only be selected from active employees of the same organization. Search supports employee code, name, and email. New accounts must be created and activated in Employees. Instructors can assign learners; organization administrators assign existing employees with ADMIN or TUTOR roles as instructors.
+
+Course invitation creation and old course invitation links are retired, including acceptance of previously generated course share links. Course access notifications use the editable course access template. Enrollment and removal also synchronize the employee’s course assignments.
+
+Email settings show employee activation, course/cohort access, and learning notifications. Obsolete course invitations, organization invitations, and payment proof templates remain in the internal registry for compatibility but are not editable or listed. Activation sends use the saved organization template, enforced language, branding, and a protected single-use 48-hour action link. Saved organization course access messages take priority over legacy course welcome text.
+
+The translation command currently receives HTTP 401 from the configured RapidAPI provider. English and Vietnamese UI copy is maintained manually; the changed keys in other dashboard locales use English fallback copy. Activation email defaults are localized for every supported email language.

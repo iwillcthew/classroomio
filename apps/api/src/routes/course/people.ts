@@ -1,5 +1,7 @@
 import {
   ZAddCourseMembers,
+  ZAvailableCourseEmployees,
+  ZCourseEnrollmentOptions,
   ZCourseMembersMemberParam,
   ZCourseMembersParam,
   ZCourseMembersQuery,
@@ -7,7 +9,6 @@ import {
   ZUpdateCourseMember
 } from '@cio/utils/validation/course/people';
 import {
-  addMembers,
   deleteMember,
   listPaginatedCourseMembers,
   resetMemberCourseProgress,
@@ -20,8 +21,25 @@ import { courseTeamMemberMiddleware } from '@api/middlewares/course-team-member'
 import { getUserCourseAnalytics } from '@cio/core/services/course/course';
 import { handleError } from '@api/utils/errors';
 import { zValidator } from '@hono/zod-validator';
+import { enrollExistingCourseEmployees, listAvailableCourseEmployees } from '@api/services/course/employees';
 
 export const membersRouter = new Hono()
+  .get(
+    '/available',
+    courseTeamMemberMiddleware,
+    zValidator('param', ZCourseMembersParam),
+    zValidator('query', ZAvailableCourseEmployees),
+    async (c) => {
+      try {
+        const { courseId } = c.req.valid('param');
+        const { search } = c.req.valid('query');
+        const employees = await listAvailableCourseEmployees(courseId, search);
+        return c.json({ success: true, data: employees });
+      } catch (error) {
+        return handleError(c, error, 'Failed to list available employees');
+      }
+    }
+  )
   /**
    * GET /course/:courseId/members
    * Gets one page of course members for a course, filtered by search term and role
@@ -68,14 +86,14 @@ export const membersRouter = new Hono()
     courseTeamMemberMiddleware,
     zValidator('param', ZCourseMembersParam),
     zValidator('json', ZAddCourseMembers),
+    zValidator('query', ZCourseEnrollmentOptions),
     async (c) => {
       try {
         const { courseId } = c.req.valid('param');
         const members = c.req.valid('json');
 
-        const addedMembers = await addMembers(courseId, members, 'dashboard', {
-          actorProfileId: c.get('user')?.id ?? null
-        });
+        const { sendEmail } = c.req.valid('query');
+        const addedMembers = await enrollExistingCourseEmployees(courseId, c.get('user')!.id, members, sendEmail);
 
         return c.json(
           {

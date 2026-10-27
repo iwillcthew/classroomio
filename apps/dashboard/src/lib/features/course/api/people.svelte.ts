@@ -1,5 +1,7 @@
 import type {
   AddPeopleRequest,
+  AvailableCourseEmployeesRequest,
+  AvailableCourseEmployees,
   CourseInviteLink,
   CreateCourseInviteLinkRequest,
   CreateStudentInvitePayload,
@@ -28,6 +30,26 @@ import { t } from '$lib/utils/functions/translations';
  * API class for course members operations
  */
 export class PeopleApi extends BaseApiWithErrors {
+  availableEmployees = $state<AvailableCourseEmployees | null>(null);
+  private availableEmployeesRequest = 0;
+
+  async listAvailableEmployees(courseId: string, search = '') {
+    const requestId = ++this.availableEmployeesRequest;
+    return this.execute<AvailableCourseEmployeesRequest>({
+      requestFn: () =>
+        classroomio.course[':courseId'].members.available.$get({ param: { courseId }, query: { search } }),
+      logContext: 'listing available course employees',
+      onSuccess: (response) => {
+        if (requestId === this.availableEmployeesRequest) this.availableEmployees = response.data;
+      },
+      onError: () => {
+        if (requestId !== this.availableEmployeesRequest) return;
+
+        this.availableEmployees ??= [];
+        snackbar.error('snackbar.course_api.members_list_failed');
+      }
+    });
+  }
   inviteLink = $state<CourseInviteLink>(null);
   /** Which course `inviteLink` belongs to, so stale responses can be discarded. */
   activeInviteLinkCourseId = $state<string | null>(null);
@@ -68,11 +90,13 @@ export class PeopleApi extends BaseApiWithErrors {
    * @param members Array of members to add
    * @returns Array of created members or null on error
    */
-  async add(courseId: string, members: TAddCourseMembers) {
-    await this.execute<AddPeopleRequest>({
+  async add(courseId: string, members: TAddCourseMembers, sendEmail = true) {
+    const emailOption = sendEmail ? 'true' : 'false';
+    return this.execute<AddPeopleRequest>({
       requestFn: () =>
         classroomio.course[':courseId']['members'].$post({
           param: { courseId },
+          query: { sendEmail: emailOption },
           json: members
         }),
       logContext: 'adding course members',
@@ -85,9 +109,7 @@ export class PeopleApi extends BaseApiWithErrors {
         }
       },
       onError: (result) => {
-        if (typeof result === 'string') {
-          snackbar.error('snackbar.course_api.members_add_failed');
-        }
+        snackbar.error('snackbar.course_api.members_add_failed');
       }
     });
   }

@@ -6,6 +6,7 @@ export const EMAIL_LOCALES = ['en', 'hi', 'fr', 'pt', 'de', 'vi', 'ru', 'es', 'p
 export type EmailLocale = (typeof EMAIL_LOCALES)[number];
 
 export const STUDENT_EMAIL_IDS = [
+  'employeeActivation',
   'studentCourseInvite',
   'studentCourseWelcome',
   'studentCourseCompletion',
@@ -21,6 +22,14 @@ export const STUDENT_EMAIL_IDS = [
 ] as const;
 
 export type StudentEmailId = (typeof STUDENT_EMAIL_IDS)[number];
+
+export const EMPLOYEE_EMAIL_IDS = STUDENT_EMAIL_IDS.filter(
+  (emailId) => !['studentCourseInvite', 'studentOrgInvite', 'studentProvePayment'].includes(emailId)
+);
+
+export function isEmployeeEmailId(value: unknown): value is StudentEmailId {
+  return typeof value === 'string' && EMPLOYEE_EMAIL_IDS.some((emailId) => emailId === value);
+}
 
 const STUDENT_EMAIL_SUBMISSION_STATUSES: Record<
   EmailLocale,
@@ -75,6 +84,7 @@ export interface StudentEmailLocaleCopy {
 }
 
 export const STUDENT_EMAIL_VARIABLES: Record<StudentEmailId, readonly string[]> = {
+  employeeActivation: ['org_name', 'employee_name', 'employee_code', 'expires_at'],
   studentCourseInvite: ['org_name', 'course_name', 'expires_at'],
   studentCourseWelcome: ['org_name', 'course_name'],
   studentCourseCompletion: ['org_name', 'course_name', 'student_name', 'course_message'],
@@ -90,6 +100,7 @@ export const STUDENT_EMAIL_VARIABLES: Record<StudentEmailId, readonly string[]> 
 };
 
 export const STUDENT_EMAIL_LINKS: Partial<Record<StudentEmailId, string>> = {
+  employeeActivation: 'action_url',
   studentCourseInvite: 'action_url',
   studentCourseWelcome: 'action_url',
   studentCourseCompletion: 'action_url',

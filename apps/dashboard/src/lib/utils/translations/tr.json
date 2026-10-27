@@ -1308,13 +1308,13 @@
     },
     "emails": {
       "page_title": "E-posta şablonları",
-      "language_note": "Öğrenci e-postaları kuruluşunuzun zorunlu dilini kullanır. Zorunlu olmadığında e-postalarda İngilizce kullanılır.",
-      "heading": "Öğrenci e-posta şablonları",
-      "description": "Öğrencilerin aldığı e-postaları özelleştirin. Personel e-postaları her zaman İngilizce gönderilir.",
-      "paid_plan_note": "Öğrenci e-postalarını tercüme etmek ve özelleştirmek için planınızı yükseltin.",
+      "language_note": "Employee emails use the organization’s enforced language. Otherwise, emails are sent in English.",
+      "heading": "Employee email templates",
+      "description": "Customize account activation, course access and learning notifications. Saved templates are used when emailing employees.",
+      "paid_plan_note": "Customize employee email content and language.",
       "sending_in": "Gönderiliyor",
       "change": "Değiştir",
-      "template_navigation": "Öğrenci e-posta türleri",
+      "template_navigation": "Employee email types",
       "edited": "Düzenlendi",
       "insert": "Ekle",
       "link_chip": "Bağlantı",
@@ -1338,7 +1338,7 @@
       "reset": "Çevrilen varsayılana sıfırla",
       "templates": {
         "studentCourseInvite": "Kurs daveti",
-        "studentCourseWelcome": "Kurs hoş geldiniz",
+        "studentCourseWelcome": "Course access granted",
         "studentCourseCompletion": "Kurs tamamlama",
         "studentOrgInvite": "Organizasyon davetiyesi",
         "studentCohortWelcome": "Kohorta hoş geldiniz",
@@ -1348,12 +1348,13 @@
         "sessionReminder": "Canlı oturum hatırlatıcısı",
         "sessionUpdated": "Canlı oturum güncellendi",
         "submissionGraded": "Gönderime not verildi",
-        "newsfeedPost": "Kurs haber akışı gönderisi"
+        "newsfeedPost": "Kurs haber akışı gönderisi",
+        "employeeActivation": "Employee account activation"
       },
       "descriptions": {
         "studentCourseInvite": "Birini kursa davet ettiğinizde gönderilir.",
         "studentOrgInvite": "Birini kuruluşunuza davet ettiğinizde gönderilir.",
-        "studentCourseWelcome": "Öğrenci bir kursa erişim sağladığında gönderilir.",
+        "studentCourseWelcome": "Sent when an existing employee is added to a course with email notifications enabled.",
         "studentCohortWelcome": "Bir öğrenci bir gruba erişim aldığında gönderilir.",
         "quizAssigned": "Bir öğrenciye test atandığında gönderilir.",
         "submissionGraded": "Bir öğrencinin alıştırma gönderimi incelendiğinde gönderilir.",
@@ -1362,13 +1363,14 @@
         "sessionReminder": "Planlanmış bir canlı oturumdan önce gönderildi.",
         "sessionUpdated": "Canlı oturum ayrıntıları değiştiğinde gönderilir.",
         "newsfeedPost": "Yeni bir kurs gönderisi yayınlandığında gönderilir.",
-        "studentProvePayment": "Bir öğrencinin ödeme kanıtı sunması gerektiğinde gönderilir."
+        "studentProvePayment": "Bir öğrencinin ödeme kanıtı sunması gerektiğinde gönderilir.",
+        "employeeActivation": "Sent when an activation link is issued or resent from Employees. Links are single use and expire after 48 hours."
       },
       "groups": {
-        "enrollment": "Kayıt",
+        "enrollment": "Accounts and enrollment",
         "learning": "Öğrenme",
         "live_sessions": "Canlı oturumlar",
-        "updates_billing": "Güncellemeler ve faturalandırma"
+        "updates_billing": "Updates"
       },
       "variables": {
         "organization": "Organizasyon",
@@ -1391,7 +1393,9 @@
         "status": "Durum",
         "score": "Puan",
         "lesson_title": "Ders başlığı",
-        "post_content": "İçerik yayınlayın"
+        "post_content": "İçerik yayınlayın",
+        "employee_name": "Employee name",
+        "employee_code": "Employee code"
       },
       "test_dialog": {
         "title": "Test e-postası gönder",
@@ -4480,6 +4484,17 @@
       "header": "İzin Yok",
       "body": "Maalesef bu kursa erişiminiz yok.",
       "button": "Eve gidin"
+    },
+    "employee_enrollment": {
+      "title": "Add employees to the course",
+      "description": "Only existing active employees can be added to this course.",
+      "learners": "Add learners",
+      "instructors": "Add instructors",
+      "search": "Search by employee code, name or email",
+      "empty": "No eligible employees found. They may already be enrolled or their accounts are not active.",
+      "manage_hint": "Create and activate new accounts in the Employees tab.",
+      "notify": "Send a course access notification by email",
+      "assign": "Grant access ({count})"
     }
   },
   "community": {

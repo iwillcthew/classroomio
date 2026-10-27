@@ -3142,6 +3142,17 @@
       "description": "Estás a punto de ver lo que verá un estudiante cuando se inscriba en este curso.",
       "copy_link": "Copiar enlace",
       "go_to_lms": "Ir a LMS"
+    },
+    "employee_enrollment": {
+      "title": "Add employees to the course",
+      "description": "Only existing active employees can be added to this course.",
+      "learners": "Add learners",
+      "instructors": "Add instructors",
+      "search": "Search by employee code, name or email",
+      "empty": "No eligible employees found. They may already be enrolled or their accounts are not active.",
+      "manage_hint": "Create and activate new accounts in the Employees tab.",
+      "notify": "Send a course access notification by email",
+      "assign": "Grant access ({count})"
     }
   },
   "courses": {
@@ -4468,13 +4479,13 @@
     },
     "emails": {
       "page_title": "Plantillas de correo electrónico",
-      "language_note": "Los correos electrónicos de los estudiantes utilizan el lenguaje obligatorio de su organización. Cuando no se aplica, los correos electrónicos utilizan el inglés.",
-      "heading": "Plantillas de correo electrónico para estudiantes",
-      "description": "Personalice los correos electrónicos que reciben los estudiantes. Los correos electrónicos del personal siempre se envían en inglés.",
-      "paid_plan_note": "Actualice su plan para traducir y personalizar los correos electrónicos de los estudiantes.",
+      "language_note": "Employee emails use the organization’s enforced language. Otherwise, emails are sent in English.",
+      "heading": "Employee email templates",
+      "description": "Customize account activation, course access and learning notifications. Saved templates are used when emailing employees.",
+      "paid_plan_note": "Customize employee email content and language.",
       "sending_in": "Enviando",
       "change": "Cambiar",
-      "template_navigation": "Tipos de correo electrónico para estudiantes",
+      "template_navigation": "Employee email types",
       "edited": "Editado",
       "insert": "Insertar",
       "link_chip": "Enlace",
@@ -4498,7 +4509,7 @@
       "reset": "Restablecer el valor predeterminado traducido",
       "templates": {
         "studentCourseInvite": "invitación al curso",
-        "studentCourseWelcome": "Bienvenida al curso",
+        "studentCourseWelcome": "Course access granted",
         "studentCourseCompletion": "Finalización del curso",
         "studentOrgInvite": "Invitación de organización",
         "studentCohortWelcome": "Bienvenida a la cohorte",
@@ -4508,12 +4519,13 @@
         "sessionReminder": "Recordatorio de sesión en vivo",
         "sessionUpdated": "Sesión en vivo actualizada",
         "submissionGraded": "Envío calificado",
-        "newsfeedPost": "Publicación de noticias del curso"
+        "newsfeedPost": "Publicación de noticias del curso",
+        "employeeActivation": "Employee account activation"
       },
       "descriptions": {
         "studentCourseInvite": "Se envía cuando invitas a alguien a un curso.",
         "studentOrgInvite": "Se envía cuando invitas a alguien a tu organización.",
-        "studentCourseWelcome": "Enviado cuando un estudiante recibe acceso a un curso.",
+        "studentCourseWelcome": "Sent when an existing employee is added to a course with email notifications enabled.",
         "studentCohortWelcome": "Enviado cuando un estudiante recibe acceso a una cohorte.",
         "quizAssigned": "Se envía cuando se asigna una prueba a un estudiante.",
         "submissionGraded": "Se envía cuando se revisa el envío de ejercicios de un estudiante.",
@@ -4522,13 +4534,14 @@
         "sessionReminder": "Enviado antes de una sesión en vivo programada.",
         "sessionUpdated": "Enviado cuando cambian los detalles de la sesión en vivo.",
         "newsfeedPost": "Enviado cuando se publica una nueva publicación del curso.",
-        "studentProvePayment": "Se envía cuando un estudiante necesita proporcionar un comprobante de pago."
+        "studentProvePayment": "Se envía cuando un estudiante necesita proporcionar un comprobante de pago.",
+        "employeeActivation": "Sent when an activation link is issued or resent from Employees. Links are single use and expire after 48 hours."
       },
       "groups": {
-        "enrollment": "Inscripción",
+        "enrollment": "Accounts and enrollment",
         "learning": "Aprendizaje",
         "live_sessions": "Sesiones en vivo",
-        "updates_billing": "Actualizaciones y facturación"
+        "updates_billing": "Updates"
       },
       "variables": {
         "organization": "Organización",
@@ -4551,7 +4564,9 @@
         "status": "Estado",
         "score": "Puntuación",
         "lesson_title": "Título de la lección",
-        "post_content": "Publicar contenido"
+        "post_content": "Publicar contenido",
+        "employee_name": "Employee name",
+        "employee_code": "Employee code"
       },
       "test_dialog": {
         "title": "Enviar un correo electrónico de prueba",

@@ -16,6 +16,7 @@ import {
 import { db } from '@db/drizzle';
 import { isExerciseCompletedSql } from '@db/queries/course/progression';
 import { deleteStudentCourseProgress } from '@db/queries/course/reset-progress';
+import { deleteEmployeeCourseAssignment } from '@db/queries/course/employees';
 
 export type CourseMemberWithProfile = TGroupmember & {
   profile: {
@@ -550,6 +551,7 @@ export async function deleteCourseMember(courseId: string, memberId: string): Pr
     return await db.transaction(async (tx) => {
       if (member.roleId === ROLE.STUDENT && member.profileId) {
         await deleteStudentCourseProgress(tx, { courseId, groupMemberId: memberId, profileId: member.profileId });
+        await deleteEmployeeCourseAssignment(courseId, member.profileId, tx);
       }
 
       await tx.delete(schema.questionAnswer).where(eq(schema.questionAnswer.groupMemberId, memberId));

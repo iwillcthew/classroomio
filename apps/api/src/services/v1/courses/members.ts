@@ -12,12 +12,12 @@ import type { TEventSource } from '@cio/core/services/posthog';
 import { ROLE } from '@cio/utils/constants';
 import { buildMemberSource } from '@cio/core/services/webhook/emit';
 import {
-  addMembers,
   deleteMember,
   listPaginatedCourseMembers,
   resetMemberCourseProgress,
   updateMember
 } from '@api/services/course/people';
+import { enrollExistingCourseEmployees } from '@api/services/course/employees';
 import { getCourseMember } from '@cio/db/queries/course/people';
 import { getUserCourseAnalytics } from '@cio/core/services/course/course';
 import {
@@ -65,10 +65,23 @@ export async function addCourseMemberService(
     }
   }
 
-  const [addedMember] = await addMembers(params.courseId, [member], source, {
-    source: buildMemberSource(apiKeyId ? 'api' : 'admin', { apiKeyId }),
-    actorProfileId: actorId
-  });
+  assertAutomationActor(actorId);
+
+  if (!member.profileId) {
+    throw new AppError('Select an existing active employee', ErrorCodes.VALIDATION_ERROR, 400);
+  }
+
+  const webhookSource = buildMemberSource(apiKeyId ? 'api' : 'admin', { apiKeyId });
+  const [addedMember] = await enrollExistingCourseEmployees(
+    params.courseId,
+    actorId,
+    [member],
+    true,
+    webhookSource,
+    source
+  );
+
+  if (!addedMember) throw new AppError('Already a member of this course', ErrorCodes.CONFLICT, 409);
 
   return addedMember;
 }

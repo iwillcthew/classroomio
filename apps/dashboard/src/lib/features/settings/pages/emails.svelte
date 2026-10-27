@@ -5,11 +5,11 @@
   import type { TiptapEditor } from '@cio/ui/custom/editor';
   import {
     STUDENT_EMAIL_CATALOG,
-    STUDENT_EMAIL_IDS,
+    EMPLOYEE_EMAIL_IDS,
     STUDENT_EMAIL_LINKS,
     STUDENT_EMAIL_VARIABLES,
     isEmailLocale,
-    isStudentEmailId,
+    isEmployeeEmailId,
     type StudentEmailId
   } from '@cio/utils/email';
   import { Button } from '@cio/ui/base/button';
@@ -35,7 +35,7 @@
 
   const requestedTemplate = page.url.searchParams.get('template');
   let selectedTemplate = $state<StudentEmailId>(
-    isStudentEmailId(requestedTemplate) ? requestedTemplate : 'studentCourseInvite'
+    isEmployeeEmailId(requestedTemplate) ? requestedTemplate : 'employeeActivation'
   );
   let editor: TiptapEditor | null = $state(null);
   let capturedOrgId = $state('');
@@ -46,7 +46,7 @@
   const templateGroups = [
     {
       key: 'settings.emails.groups.enrollment',
-      emailIds: ['studentCourseInvite', 'studentOrgInvite', 'studentCourseWelcome', 'studentCohortWelcome']
+      emailIds: ['employeeActivation', 'studentCourseWelcome', 'studentCohortWelcome']
     },
     {
       key: 'settings.emails.groups.learning',
@@ -58,7 +58,7 @@
     },
     {
       key: 'settings.emails.groups.updates_billing',
-      emailIds: ['newsfeedPost', 'studentProvePayment']
+      emailIds: ['newsfeedPost']
     }
   ] as const;
 
@@ -216,13 +216,13 @@
           type="single"
           value={selectedTemplate}
           onValueChange={(value) => {
-            if (isStudentEmailId(value)) selectTemplate(value);
+            if (isEmployeeEmailId(value)) selectTemplate(value);
           }}
           disabled={hasUnsavedChanges}
         >
           <Select.Trigger class="w-full">{$t(`settings.emails.templates.${selectedTemplate}`)}</Select.Trigger>
           <Select.Content>
-            {#each STUDENT_EMAIL_IDS as emailId (emailId)}
+            {#each EMPLOYEE_EMAIL_IDS as emailId (emailId)}
               <Select.Item value={emailId}>{$t(`settings.emails.templates.${emailId}`)}</Select.Item>
             {/each}
           </Select.Content>

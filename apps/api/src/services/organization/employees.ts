@@ -30,7 +30,9 @@ import {
   updateEmployeeProfile
 } from '@cio/db/queries/organization';
 import { markUserAndProfileEmailVerified } from '@cio/db/queries/auth';
-import { deliverEmail, escapeHtml } from '@cio/email';
+import { sendEmail, buildEmailBranding, buildEmailFromName } from '@cio/email';
+import { getOrganizationById } from '@cio/db/queries/organization';
+import { getStudentEmailDeliveryLocale, getStudentEmailSendContext } from '@cio/core/services/email/localization';
 import { getDashboardBaseUrl } from '@cio/core/config/dashboard-url';
 import { AppError, ErrorCodes } from '@api/utils/errors';
 import type {
@@ -272,6 +274,7 @@ export function hashEmployeeToken(token: string) {
 export async function sendEmployeeActivation(orgId: string, actorId: string, employeeId: string) {
   const token = randomBytes(32).toString('hex');
   const tokenHash = hashEmployeeToken(token);
+  const expiresAt = new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString();
   const staff = await db.transaction(async (tx) => {
     await lockEmployeeOrganization(orgId, tx);
     const access = await requireEmployeeAccess(orgId, actorId, true, tx);
@@ -283,18 +286,39 @@ export async function sendEmployeeActivation(orgId: string, actorId: string, emp
 
     if (employeeRow.activatedAt || !['DRAFT', 'INVITED'].includes(employeeRow.status)) rejectEmployee('activation');
 
-    const expiresAt = new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString();
     await issueEmployeeActivation(employeeId, tokenHash, expiresAt, tx);
     return employeeRow;
   });
   const activationUrl = new URL('/activate', getDashboardBaseUrl());
   activationUrl.searchParams.set('token', token);
-  const link = escapeHtml(activationUrl.href);
-  const name = escapeHtml(staff.fullname);
-  const code = escapeHtml(staff.employeeCode);
-  const content = `<p>Chào ${name},</p><p>Bạn đã được cấp tài khoản MP Learning. Mã nhân viên: <strong>${code}</strong>.</p><p><a href="${link}">Kích hoạt tài khoản</a> để đặt mật khẩu và bắt đầu học. Liên kết có hiệu lực trong 48 giờ.</p><p>MP Transformation</p>`;
-  const results = await deliverEmail([{ to: staff.email, subject: 'Kích hoạt tài khoản MP Learning', content }]);
-  const sent = results.every((result) => result.success);
+  const organization = await getOrganizationById(orgId);
+  if (!organization) rejectEmployee('missing', 404);
+
+  const locale = await getStudentEmailDeliveryLocale(orgId, 'employeeActivation');
+  const context = await getStudentEmailSendContext(orgId, 'employeeActivation', locale);
+  const branding = buildEmailBranding(organization);
+  const from = buildEmailFromName(organization.name);
+  const expiryLabel = new Intl.DateTimeFormat(context.locale, {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+    timeZone: 'Asia/Ho_Chi_Minh'
+  }).format(new Date(expiresAt));
+  const results = await sendEmail('employeeActivation', {
+    to: staff.email,
+    from,
+    locale: context.locale,
+    contentOverride: context.templateOverride?.content,
+    subjectOverride: context.templateOverride?.subject ?? undefined,
+    fields: {
+      orgName: organization.name,
+      employeeName: staff.fullname,
+      employeeCode: staff.employeeCode,
+      expiresAt: expiryLabel,
+      activationUrl: activationUrl.href,
+      branding
+    }
+  });
+  const sent = results.length > 0 && results.every((result) => result.success);
   await db.transaction(async (tx) => {
     await lockEmployeeOrganization(orgId, tx);
     const latest = await findEmployee(orgId, employeeId, tx);
