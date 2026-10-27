@@ -44,7 +44,7 @@ Khóa tài khoản giữ lại bài nộp, kết quả học, chứng chỉ và 
 
 ## Giao đào tạo và báo cáo
 
-Khóa học và cohort được lưu bằng quan hệ tới dữ liệu gốc. Việc kích hoạt liên kết hồ sơ, ghi danh và chuẩn bị bản ghi đào tạo bắt buộc cùng một transaction. Nếu ghi danh thất bại, không để lại tài khoản tạo dở hay làm mất liên kết kích hoạt. Giao thêm khóa học cho người đã kích hoạt có hiệu lực ngay. Bỏ chọn không thu hồi ghi danh đã có hoặc xóa lịch sử; việc thu hồi quyền khóa học dùng chức năng quản lý khóa học hiện hành.
+Khóa học và cohort được lưu bằng quan hệ tới dữ liệu gốc. Việc kích hoạt liên kết hồ sơ, ghi danh và chuẩn bị bản ghi đào tạo bắt buộc cùng một transaction. Nếu ghi danh thất bại, không để lại tài khoản tạo dở hay làm mất liên kết kích hoạt. Có thể giao trước khóa chưa xuất bản; màn hình giao đào tạo đánh dấu **Chưa xuất bản**. Học viên chỉ thấy và mở được khóa đã xuất bản sau khi tài khoản được kích hoạt. Khi xuất bản, khóa đã giao tự xuất hiện mà không cần ghi danh hoặc gửi kích hoạt lại. Gỡ xuất bản ẩn khóa khỏi danh sách học viên và giữ nguyên ghi danh. Bỏ chọn không thu hồi ghi danh đã có hoặc xóa lịch sử; việc thu hồi quyền khóa học dùng chức năng quản lý khóa học hiện hành.
 
 Chi tiết nhân viên hiển thị trạng thái học và thời điểm hoàn thành. Khóa thường tính theo tiến độ hiện có; khóa đào tạo bắt buộc dùng chu kỳ mới nhất. Xuất danh sách áp dụng bộ lọc và phạm vi quyền đang có, bao gồm phạm vi nhân viên trực tiếp của quản lý.
 

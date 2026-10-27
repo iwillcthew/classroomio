@@ -6660,7 +6660,7 @@
     "identity": "Thông tin tài khoản",
     "organization": "Thông tin nhân sự",
     "learning": "Giao khóa học và chương trình",
-    "learning_hint": "Nhân viên được cấp quyền học khi kích hoạt. Bỏ chọn không thu hồi ghi danh đã có hoặc xóa lịch sử học.",
+    "learning_hint": "Khóa đã giao chỉ mở cho học viên sau khi tài khoản được kích hoạt và khóa được xuất bản. Khóa chưa xuất bản được ẩn khỏi học viên. Bỏ chọn không thu hồi ghi danh đã có hoặc xóa lịch sử học.",
     "form_hint": "Mã nhân viên và email là định danh cố định. Nhân viên tự đặt mật khẩu qua thư kích hoạt.",
     "status_label": "Trạng thái tài khoản",
     "actions": "Thao tác",

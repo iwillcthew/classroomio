@@ -6650,7 +6650,7 @@
     "identity": "Account information",
     "organization": "Employment information",
     "learning": "Assign courses and programs",
-    "learning_hint": "Assignments grant access on activation. Removing a selection does not revoke existing enrollments or erase learning history.",
+    "learning_hint": "Assigned courses become available after account activation and publication. Unpublished courses stay hidden from learners. Removing a selection does not revoke existing enrollments or erase learning history.",
     "form_hint": "Employee code and email are permanent identifiers. Employees set their own password through an activation email.",
     "status_label": "Account status",
     "actions": "Handlinger",

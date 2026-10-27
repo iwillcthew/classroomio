@@ -346,7 +346,12 @@
                     ? [...api.fields.courseIds, course.id]
                     : api.fields.courseIds.filter((courseId) => courseId !== course.id);
                 }}
-              /><Field.Label for={`employee-course-${course.id}`}>{course.title}</Field.Label></Field.Field
+              /><Field.Label for={`employee-course-${course.id}`}>
+                {course.title}
+                {#if !course.isPublished}<span class="ui:text-muted-foreground text-xs"
+                    >· {$t('courses.course_card.unpublished')}</span
+                  >{/if}
+              </Field.Label></Field.Field
             >{/each}
           {#each api.options?.cohorts ?? [] as cohort (cohort.id)}<Field.Field orientation="horizontal"
               ><Checkbox
@@ -428,7 +433,12 @@
                   : api.importCourseIds.filter((id) => id !== course.id);
                 api.importResult = null;
               }}
-            /><Field.Label for={`import-course-${course.id}`}>{course.title}</Field.Label></Field.Field
+            /><Field.Label for={`import-course-${course.id}`}>
+              {course.title}
+              {#if !course.isPublished}<span class="ui:text-muted-foreground text-xs"
+                  >· {$t('courses.course_card.unpublished')}</span
+                >{/if}
+            </Field.Label></Field.Field
           >{/each}
         {#each api.options?.cohorts ?? [] as cohort (cohort.id)}<Field.Field orientation="horizontal"
             ><Checkbox

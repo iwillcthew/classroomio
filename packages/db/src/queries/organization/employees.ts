@@ -130,7 +130,7 @@ export async function employeeOptions(orgId: string, client: DbOrTxClient = db) 
       )
     );
   const courses = await client
-    .select({ id: schema.course.id, title: schema.course.title })
+    .select({ id: schema.course.id, title: schema.course.title, isPublished: schema.course.isPublished })
     .from(schema.course)
     .innerJoin(schema.group, eq(schema.course.groupId, schema.group.id))
     .where(eq(schema.group.organizationId, orgId));

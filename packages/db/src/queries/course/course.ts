@@ -1211,6 +1211,7 @@ export const getEnrolledCourses = async ({
           eq(schema.group.organizationId, orgId),
           eq(schema.course.status, 'ACTIVE'),
           eq(schema.course.isTemplate, false),
+          eq(schema.course.isPublished, true),
           or(isNotNull(schema.groupmember.id), isNotNull(schema.programMember.id))
         )
       )
