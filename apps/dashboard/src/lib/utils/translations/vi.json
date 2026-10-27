@@ -6492,7 +6492,16 @@
     "context_admin": "Quản trị đào tạo",
     "context_learner": "Không gian học tập",
     "switch_to_learner": "Mở không gian học tập",
-    "switch_to_admin": "Mở trang quản trị đào tạo"
+    "switch_to_admin": "Mở trang quản trị đào tạo",
+    "settings": {
+      "system": "Cài đặt hệ thống",
+      "preferences": "Cấu hình đào tạo",
+      "access_policy": "Quyền truy cập do MP Transformation quản lý. Nhân viên sử dụng tài khoản do HR cấp hoặc lời mời được phê duyệt."
+    },
+    "access": {
+      "title": "Chưa được cấp quyền truy cập",
+      "description": "Vui lòng liên hệ quản trị đào tạo MP Transformation để được cấp quyền truy cập MP Learning."
+    }
   },
   "page_titles": {
     "integrations": "Tích hợp",

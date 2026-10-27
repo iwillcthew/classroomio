@@ -6482,7 +6482,16 @@
     "context_admin": "Training admin",
     "context_learner": "Learning space",
     "switch_to_learner": "Open learning space",
-    "switch_to_admin": "Open training admin"
+    "switch_to_admin": "Open training admin",
+    "settings": {
+      "system": "Настройки системы",
+      "preferences": "Настройки обучения",
+      "access_policy": "Доступом управляет MP Transformation. Сотрудники используют учетные записи, созданные отделом кадров, или одобренные приглашения."
+    },
+    "access": {
+      "title": "Доступ не предоставлен",
+      "description": "Обратитесь к администратору обучения MP Transformation, чтобы получить доступ к MP Learning."
+    }
   },
   "page_titles": {
     "integrations": "Integrations",

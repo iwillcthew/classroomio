@@ -6462,7 +6462,16 @@
     "context_admin": "Training admin",
     "context_learner": "Learning space",
     "switch_to_learner": "Open learning space",
-    "switch_to_admin": "Open training admin"
+    "switch_to_admin": "Open training admin",
+    "settings": {
+      "system": "Sistem ayarları",
+      "preferences": "Eğitim tercihleri",
+      "access_policy": "Erişim MP Transformation tarafından yönetilir. Çalışanlar İK tarafından oluşturulan hesapları veya onaylanmış davetleri kullanır."
+    },
+    "access": {
+      "title": "Erişim izni verilmedi",
+      "description": "MP Learning erişimi için MP Transformation eğitim yöneticisiyle iletişime geçin."
+    }
   },
   "page_titles": {
     "integrations": "Integrations",

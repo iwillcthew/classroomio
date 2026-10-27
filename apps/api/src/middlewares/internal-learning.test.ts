@@ -3,7 +3,7 @@ import { Hono } from 'hono';
 import { internalLearning } from './internal-learning';
 
 describe('internal learning surfaces', () => {
-  const app = new Hono().use('*', internalLearning).get('*', (context) => context.text('ok'));
+  const app = new Hono().use('*', internalLearning).all('*', (context) => context.text('ok'));
 
   it.each([
     '/course/slug/example',
@@ -12,10 +12,32 @@ describe('internal learning surfaces', () => {
     '/org-site/course/demo',
     '/org-site/og/mp',
     '/organization/courses/public',
-    '/organization/tags/public'
+    '/organization/tags/public',
+    '/onboarding/create-org',
+    '/onboarding/update-metadata',
+    '/account/workspaces',
+    '/account/workspaces/legacy-id',
+    '/account/usage',
+    '/organization/join',
+    '/organization/plan/activate',
+    '/organization/plan/early-adopter-event',
+    '/domain/request',
+    '/v1/organization/landing-page/featured-courses',
+    '/public-api/v1/organization/landing-page/featured-courses'
   ])('retires %s', async (pathname) => {
     const response = await app.request(pathname);
     expect(response.status).toBe(404);
+  });
+
+  it.each(['POST', 'DELETE'])('blocks %s organization creation and deletion', async (method) => {
+    const response = await app.request('/organization', { method });
+    expect(response.status).toBe(404);
+  });
+
+  it('preserves operational settings updates', async () => {
+    const updateApp = new Hono().use('*', internalLearning).put('/organization', (context) => context.text('ok'));
+    const response = await updateApp.request('/organization', { method: 'PUT' });
+    expect(response.status).toBe(200);
   });
 
   it.each(['/api/auth/get-session', '/invite/test', '/account', '/course/123', '/organization/first'])(

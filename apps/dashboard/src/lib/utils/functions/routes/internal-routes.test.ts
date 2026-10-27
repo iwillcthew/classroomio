@@ -6,6 +6,12 @@ describe('internal LMS routes', () => {
     '/org/mp/landingpage',
     '/org/mp/landingpage/edit',
     '/org/mp/settings/billing',
+    '/org/mp/settings/org',
+    '/org/mp/settings/workspaces',
+    '/org/mp/settings/domains',
+    '/org/mp/settings/ai-credits',
+    '/org/mp/setup',
+    '/api/polar/webhook',
     '/courses/internal-course/landingpage',
     '/claim/old-subscription',
     '/widgets/test',
@@ -20,7 +26,7 @@ describe('internal LMS routes', () => {
     '/invite/test',
     '/org/mp/courses',
     '/org/mp/settings/teams',
-    '/org/mp/settings/ai-credits',
+    '/org/mp/settings/customize-lms',
     '/org/mp/automation/mcp',
     '/org/mp/automation/webhooks'
   ])('preserves %s', (pathname) => {

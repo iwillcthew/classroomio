@@ -10,7 +10,7 @@
   const errorCode = $derived(new URLSearchParams(page.url.search).get('error'));
 
   function goHome() {
-    window.location.href = '/';
+    window.location.href = errorCode === 'access' ? '/logout' : '/';
   }
 </script>
 
@@ -28,7 +28,9 @@
       <Avatar.Fallback>{$currentOrg.name ? $currentOrg.name : 'MP Learning'}</Avatar.Fallback>
     </Avatar.Root>
 
-    <p class="text-xl font-semibold">{$t('auth.auth_failed.title')}</p>
+    <p class="text-xl font-semibold">
+      {$t(errorCode === 'access' ? 'mp_learning.access.title' : 'auth.auth_failed.title')}
+    </p>
 
     {#if errorCode}
       <Card.Description class="border px-2 py-1">
@@ -37,9 +39,11 @@
     {/if}
 
     <Card.Description class="text-center">
-      {$t('auth.auth_failed.description')}
+      {$t(errorCode === 'access' ? 'mp_learning.access.description' : 'auth.auth_failed.description')}
     </Card.Description>
 
-    <Button onclick={goHome} class="">{$t('common.restricted_page.home')}</Button>
+    <Button onclick={goHome} class=""
+      >{$t(errorCode === 'access' ? 'settings.profile.logout' : 'common.restricted_page.home')}</Button
+    >
   </div>
 </AuthUI>

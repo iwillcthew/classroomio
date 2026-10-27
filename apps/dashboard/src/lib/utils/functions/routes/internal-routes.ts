@@ -1,8 +1,10 @@
 const retiredPages = [
   /^\/org\/[^/]+\/(landingpage|widgets)(\/|$)/,
-  /^\/org\/[^/]+\/settings\/(billing|domains)(\/|$)/,
+  /^\/org\/[^/]+\/settings\/(org|billing|domains|workspaces|ai-credits)(\/|$)/,
+  /^\/org\/[^/]+\/(setup|zapier)(\/|$)/,
   /^\/courses\/[^/]+\/landingpage(\/|$)/,
   /^\/claim(\/|$)/,
+  /^\/api\/polar(\/|$)/,
   /^\/(widgets|widget-preview|pages|join-academy)(\/|$)/
 ];
 

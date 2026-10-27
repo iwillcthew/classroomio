@@ -47,6 +47,7 @@ import rateLimiter from '@api/middlewares/rate-limiter';
 import { secureHeaders } from 'hono/secure-headers';
 import { signupGuard } from '@api/middlewares/signup-guard';
 import { internalLearning } from '@api/middlewares/internal-learning';
+import { learningInstance } from '@api/middlewares/learning-instance';
 import { ssoDiscoveryRouter } from '@api/routes/sso/discovery';
 import { unsplashRouter } from '@api/routes/unsplash/unsplash';
 import { publicApiRouter } from '@api/routes/public-api';
@@ -108,6 +109,7 @@ export const app = new Hono()
     await next();
   })
   .use('*', rateLimiter)
+  .use('*', learningInstance)
 
   // Routes
   .get('/', (c) =>

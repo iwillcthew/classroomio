@@ -18,7 +18,7 @@ function watchWorkspaceSources() {
 }
 
 export default ({ mode }) => {
-  process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
+  process.env = { ...process.env, ...loadEnv(mode, process.cwd()), PUBLIC_IS_SELFHOSTED: 'true' };
   const useHttps = process.env.HTTPS === 'true' || process.env.VITE_USE_HTTPS_ON_LOCALHOST === 'true';
   const host = process.env.HOST || (useHttps ? '0.0.0.0' : undefined);
 

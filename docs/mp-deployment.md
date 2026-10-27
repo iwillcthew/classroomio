@@ -4,7 +4,7 @@ MP Learning là bản tùy biến ClassroomIO cho đào tạo nội bộ MP Tran
 
 ## Phạm vi
 
-- Một tổ chức, tự triển khai. Giữ khóa học, bài học, bài tập, chương trình đào tạo, chứng chỉ, cộng đồng, nhân viên, phân quyền và báo cáo.
+- Một đơn vị MP Transformation cố định, tự triển khai. Các API tạo tổ chức, onboarding SaaS, workspace, tên miền và gói cước trả 404. API cập nhật chỉ nhận cài đặt vận hành, không nhận thay đổi nhận diện. Giữ khóa học, bài học, bài tập, chương trình đào tạo, chứng chỉ, cộng đồng, nhân viên, phân quyền và báo cáo.
 - Xóa ứng dụng quảng bá `apps/website`. Trang `/` chuyển đến đăng nhập. Các trang landing-page editor, widget, tích hợp bán SaaS, tên miền và billing bị chặn ở máy chủ, đồng thời bỏ khỏi menu chính.
 - Các API công khai `/org-site/*`, `/widgets/*` và catalog công khai trả 404. Nội dung học trong dashboard yêu cầu phiên đăng nhập; quyền truy cập khóa học tiếp tục do các API hiện có kiểm tra.
 - AI mặc định tắt; Google chỉ hiển thị khi cấu hình rõ ràng. Không thay đổi cơ chế giấy phép của các tính năng Enterprise upstream.
@@ -46,8 +46,8 @@ Các cổng PostgreSQL, Redis, API, dashboard và storage được bind localhos
 ## Tài khoản đầu tiên và nhân viên
 
 1. Mở `/signup` bằng email trong `LMS_ALLOWED_EMAILS`. Danh sách này nên chỉ chứa người được phép bootstrap; không dùng wildcard.
-2. Đăng nhập, tạo tổ chức `MP Transformation`, mã `mp-transformation`; chọn tiếng Việt. Tài khoản đầu tiên tiếp tục dùng luồng bootstrap self-hosted của upstream.
-3. Cấu hình ngôn ngữ tổ chức, logo và màu xanh trong Cài đặt. Thêm giảng viên/quản trị bằng quyền phù hợp, mời nhân viên qua chức năng Nhân viên.
+2. Đăng nhập bằng email được cấp phép: hệ thống tự khởi tạo MP Transformation (`mp-transformation`), tiếng Việt và tài khoản quản trị trong một giao dịch. Các lần đăng nhập đồng thời được tuần tự hóa; chỉ tài khoản khởi tạo thành công được cấp quyền quản trị. Nếu đã có dữ liệu, hệ thống giữ đơn vị đầu tiên cùng ID, mã và các quan hệ hiện hữu; không xóa hay gộp dữ liệu của đơn vị khác.
+3. Vào Cài đặt → Cấu hình đào tạo để thiết lập ngôn ngữ và tính năng học tập. Thương hiệu MP Transformation được cố định. Thêm giảng viên/quản trị bằng quyền phù hợp, quản lý tài khoản nhân viên qua chức năng Nhân viên.
 4. Hook tạo user kiểm tra email được cấp phép, thành viên đã được thêm hoặc lời mời còn hiệu lực. Áp dụng cả đăng ký email và tài khoản mới qua OAuth. Nhân viên phải xác minh email trước khi đăng nhập bằng mật khẩu. Chỉ ẩn nút trên UI không phải cơ chế kiểm soát này.
 5. Sau bootstrap có thể để `LMS_ALLOWED_EMAILS` trống và restart API; người mới phải có lời mời hoặc membership. Biến này không thu hồi tài khoản hiện hữu. Dùng quản trị người dùng để thu hồi truy cập nhân viên nghỉ việc.
 

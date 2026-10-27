@@ -6482,7 +6482,16 @@
     "context_admin": "Training admin",
     "context_learner": "Learning space",
     "switch_to_learner": "Open learning space",
-    "switch_to_admin": "Open training admin"
+    "switch_to_admin": "Open training admin",
+    "settings": {
+      "system": "Systemindstillinger",
+      "preferences": "Læringsindstillinger",
+      "access_policy": "MP Transformation administrerer adgangen. Medarbejdere bruger konti oprettet af HR eller en godkendt invitation."
+    },
+    "access": {
+      "title": "Adgang ikke givet",
+      "description": "Kontakt uddannelsesadministratoren hos MP Transformation for at få adgang til MP Learning."
+    }
   },
   "page_titles": {
     "integrations": "Integrations",

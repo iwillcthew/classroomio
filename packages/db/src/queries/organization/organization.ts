@@ -1100,8 +1100,12 @@ export const getFreePlanOrganizationsOverStudentLimit = async (
  * Gets the first (and typically only) organization - used for self-hosted single-org mode
  * @returns First organization by createdAt, or null if none exist
  */
-export const getFirstOrganization = async (): Promise<TOrganization | null> => {
-  const [organization] = await db.select().from(schema.organization).orderBy(schema.organization.createdAt).limit(1);
+export const getFirstOrganization = async (dbClient: DbOrTxClient = db): Promise<TOrganization | null> => {
+  const [organization] = await dbClient
+    .select()
+    .from(schema.organization)
+    .orderBy(schema.organization.createdAt, schema.organization.id)
+    .limit(1);
 
   return organization || null;
 };
@@ -1118,7 +1122,7 @@ export const getFirstOrganizationWithPlans = async (): Promise<
   const [firstOrg] = await db
     .select({ id: schema.organization.id })
     .from(schema.organization)
-    .orderBy(schema.organization.createdAt)
+    .orderBy(schema.organization.createdAt, schema.organization.id)
     .limit(1);
 
   if (!firstOrg) return null;

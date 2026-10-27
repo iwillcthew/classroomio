@@ -24,7 +24,7 @@ export const load = async ({ url, cookies, request, locals }): Promise<LoadOutpu
   const loadStart = performance.now();
 
   const orgSiteInfoStart = performance.now();
-  const orgSiteInfo = await getOrgSiteInfo(url, cookies);
+  const orgSiteInfo = await getOrgSiteInfo(cookies);
   const orgSiteInfoMs = Math.round((performance.now() - orgSiteInfoStart) * 100) / 100;
 
   const response: LoadOutput = {

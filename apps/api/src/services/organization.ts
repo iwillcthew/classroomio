@@ -10,7 +10,6 @@ import type { TNewOrganizationPlan, TOrganization, TOrganizationPlan } from '@db
 import {
   activateOrganizationPlan,
   cancelOrganizationPlan,
-  checkSiteNameExists,
   createOrganizationPlan,
   deleteOrganizationAudienceMember,
   deleteOrganizationMember,
@@ -26,7 +25,6 @@ import {
   getOrganizationMemberIdByOrgAndProfile,
   getOrganizationPlanBySubscriptionId,
   getOrganizationTeam,
-  getOrganizations,
   revokeActiveOrganizationInvitesByEmails,
   updateOrganization,
   updateOrganizationPlan
@@ -53,12 +51,11 @@ import { getLastLogin, getProfileCourseProgress, getUserExercisesStats } from '@
 import type { OrganizationWithPlans } from '@cio/db/queries/organization/types';
 import { canUseBasicAuthSettings, PLAN } from '@cio/utils/plans';
 import { env } from '@cio/core/config/env';
-import { isFreeLandingPageTheme, ROLE } from '@cio/utils/constants';
+import { ROLE } from '@cio/utils/constants';
 import { createOrganizationWithOwner } from '@api/services/onboarding';
 import { deriveAudienceMemberStatus } from '@api/utils/audience-member-status';
 import { getProfileById, getProfileByEmail } from '@cio/db/queries/auth';
 import { inviteTeamMembers as inviteTeamMembersSecure, recordOrganizationInviteAudits } from './organization/invite';
-import { trustCustomDomainHostname, untrustCustomDomainHostname } from '@cio/db/utils';
 
 export { updateTeamMemberRole } from './organization/team-role';
 
@@ -107,8 +104,16 @@ export async function getOrganizationsWithFilters(filters?: {
   isCustomDomainVerified?: boolean;
 }): Promise<OrganizationWithPlans[]> {
   try {
-    const organizations = await getOrganizations(filters);
-    return organizations;
+    const organization = await getFirstOrganizationWithPlans();
+    if (!organization) return [];
+
+    const matchesFilters =
+      (!filters?.siteName || organization.siteName === filters.siteName) &&
+      (!filters?.customDomain || organization.customDomain === filters.customDomain) &&
+      (filters?.isCustomDomainVerified === undefined ||
+        organization.isCustomDomainVerified === filters.isCustomDomainVerified);
+
+    return matchesFilters ? [organization] : [];
   } catch (error) {
     throw new AppError(
       error instanceof Error ? error.message : 'Failed to fetch organizations',
@@ -809,39 +814,23 @@ async function assertAuthSettingsEntitlement(orgId: string, data: Partial<TOrgan
 
 export async function updateOrg(orgId: string, data: Partial<TOrganization>) {
   try {
-    if (data.siteName) {
-      const exists = await checkSiteNameExists(data.siteName, orgId); // exclude current org
-      if (exists) {
-        throw new AppError('Site name already exists', ErrorCodes.SITENAME_EXISTS, 409, 'siteName');
-      }
-    }
-
-    if (data.landingpage && typeof data.landingpage === 'object') {
-      const landingpage = data.landingpage as Record<string, unknown>;
-      const theme = landingpage.theme;
-
-      if (typeof theme === 'string' && !isFreeLandingPageTheme(theme)) {
-        const activePlan = await getActiveOrganizationPlan(orgId);
-        const planName = activePlan?.planName ?? PLAN.BASIC;
-
-        if (planName === PLAN.BASIC) {
-          throw new AppError('Landing page themes require a paid plan', ErrorCodes.UPGRADE_REQUIRED, 403);
-        }
-      }
+    const allowedSettings = new Set([
+      'customization',
+      'settings',
+      'disableSignup',
+      'disableSignupMessage',
+      'disableEmailPassword',
+      'disableGoogleAuth'
+    ]);
+    if (Object.keys(data).some((field) => !allowedSettings.has(field))) {
+      throw new AppError(
+        'MP Learning identity and deployment settings are managed by the system',
+        ErrorCodes.VALIDATION_ERROR,
+        403
+      );
     }
 
     await assertAuthSettingsEntitlement(orgId, data);
-
-    let previousCustomDomainHostname: string | undefined;
-
-    if (data.customDomain !== undefined || data.isCustomDomainVerified !== undefined) {
-      const previousOrg = await getOrganizationById(orgId);
-      const oldHost = previousOrg?.customDomain?.trim().toLowerCase();
-
-      if (oldHost) {
-        previousCustomDomainHostname = oldHost;
-      }
-    }
 
     let updateData = data;
 
@@ -855,16 +844,6 @@ export async function updateOrg(orgId: string, data: Partial<TOrganization>) {
     const organization = await updateOrganization(orgId, updateData);
     if (!organization) {
       throw new AppError('Organization not found', ErrorCodes.ORGANIZATION_NOT_FOUND, 404);
-    }
-
-    if (previousCustomDomainHostname) {
-      untrustCustomDomainHostname(previousCustomDomainHostname);
-    }
-
-    const newCustomDomainHostname = organization.customDomain?.trim().toLowerCase();
-
-    if (newCustomDomainHostname && organization.isCustomDomainVerified) {
-      trustCustomDomainHostname(newCustomDomainHostname);
     }
 
     return organization;

@@ -1,18 +1,10 @@
 import { BaseApi, classroomio } from '$lib/utils/services/api';
-import {
-  currentOrg,
-  getAppOrigin,
-  getOrgPublicUrl,
-  isOrgManagerRole,
-  mergeAccountOrgFromServer,
-  orgs
-} from '$lib/utils/store/org';
+import { currentOrg, getAppOrigin, mergeAccountOrgFromServer, orgs } from '$lib/utils/store/org';
 import { defaultProfileState, defaultUserState, profile, user } from '$lib/utils/store/user';
 
 import type { AccountResponse, AccountSuccess } from './types';
-import { type AppOrgParams } from './resolve-app-org-params';
+import type { AppOrgParams as AppSetupParams } from './resolve-app-org-params';
 import type { PendingOrgInvite } from '$features/lms/utils/types';
-import { PUBLIC_IS_SELFHOSTED } from '$env/static/public';
 import type { TUser } from '@cio/db/types';
 import { authClient } from '$lib/utils/services/auth/client';
 import { get } from 'svelte/store';
@@ -22,7 +14,6 @@ import { identifyPosthogUser } from '$lib/utils/services/posthog';
 import { identifyUserJotUser } from '$lib/utils/services/userjot';
 import { isOrgStudent, globalStore } from '$lib/utils/store/app';
 import { isPublicRoute } from '$lib/utils/functions/routes/isPublicRoute';
-import { isOnboardingIncomplete } from '$features/onboarding/utils/completeness';
 import { licenseApi } from '$features/license/api/license.svelte';
 import { logout } from '$lib/utils/functions/logout';
 import { page } from '$app/state';
@@ -31,9 +22,6 @@ import { setSentryUser } from '$lib/utils/services/sentry';
 import { setTheme } from '$lib/utils/functions/theme';
 import { setupAnalyticsBasedOnLicense } from '$lib/utils/functions/appSetup';
 import shouldRedirectOnAuth from '$lib/utils/functions/routes/shouldRedirectOnAuth';
-import { ROLE } from '@cio/utils/constants';
-
-type AppSetupParams = AppOrgParams;
 
 function tenantSyncKey(params: AppSetupParams): string | null {
   if (!params.orgSiteName) {
@@ -151,6 +139,11 @@ class AppInitApi extends BaseApi {
         return undefined;
       }
 
+      const instanceOrganization = result.organizations[0];
+      if (instanceOrganization && this.session && !this.isMemberOfOrg(this.session, instanceOrganization.id)) {
+        await authClient.getSession({ query: { disableCookieCache: true } });
+      }
+
       return result;
     } catch (error) {
       console.error('Error fetching account:', error);
@@ -251,16 +244,14 @@ class AppInitApi extends BaseApi {
 
     orgs.set(this.data.organizations.map((org) => mergeAccountOrgFromServer(org)));
 
-    const nextOrg = this.pickCurrentOrg(params);
+    const nextOrg = this.pickCurrentOrg();
     if (!nextOrg) {
       return;
     }
 
     currentOrg.set(mergeAccountOrgFromServer(nextOrg));
 
-    if (nextOrg.siteName) {
-      localStorage.setItem('classroomio_org_sitename', nextOrg.siteName);
-    }
+    localStorage.removeItem('classroomio_org_sitename');
 
     const theme = get(currentOrg)?.theme;
 
@@ -268,171 +259,44 @@ class AppInitApi extends BaseApi {
     this.syncedTenantKey = tenantSyncKey(params ?? { isOrgSite: false, orgSiteName: '' });
   }
 
-  /**
-   * Prefer the tenant from the current URL on org sites. Only fall back to
-   * localStorage / the first account org on the admin host (`app.*`).
-   */
-  private pickCurrentOrg(params?: AppSetupParams) {
-    const organizations = this.data?.success ? this.data.organizations : [];
-    const urlResolvedOrg = get(currentOrg);
-
-    if (params?.orgSiteName) {
-      const membership = organizations.find((org) => org.siteName === params.orgSiteName);
-      if (membership) {
-        return membership;
-      }
-
-      if (params.isOrgSite) {
-        if (PUBLIC_IS_SELFHOSTED === 'true') {
-          const managedOrganizations = organizations.filter((org) => isOrgManagerRole(org.roleId));
-          const accountOrganization = managedOrganizations[0] ?? organizations[0];
-          if (accountOrganization) {
-            return accountOrganization;
-          }
-        }
-
-        // Keep the server-resolved tenant org (set from URL in +layout.svelte) instead
-        // of switching to another membership from /account.
-        if (urlResolvedOrg.siteName === params.orgSiteName && urlResolvedOrg.id) {
-          return urlResolvedOrg;
-        }
-
-        if (params.orgId && urlResolvedOrg.id === params.orgId) {
-          return urlResolvedOrg;
-        }
-
-        return undefined;
-      }
-    }
-
-    if (!organizations.length) {
-      return undefined;
-    }
-
-    const managedOrganizations = organizations.filter((org) => isOrgManagerRole(org.roleId));
-    const lastOrgSiteName = localStorage.getItem('classroomio_org_sitename');
-
-    return (
-      managedOrganizations.find((org) => org.siteName === lastOrgSiteName) ??
-      managedOrganizations[0] ??
-      organizations[0]
-    );
+  private pickCurrentOrg() {
+    return this.data?.success ? this.data.organizations[0] : undefined;
   }
 
-  routeUserToNextPage(params: AppSetupParams) {
-    console.log('routeUserToNextPage', window.location.pathname);
-    if (!this.data?.success) {
-      return;
-    }
+  routeUserToNextPage(_params: AppSetupParams) {
+    if (!this.data?.success) return;
 
-    const { isOrgSite, orgId, orgSiteName } = params;
     const path = window.location.pathname;
-    if (path === '/join-academy') {
-      return;
-    }
+    if (this.pendingOrgInvite) return;
 
-    const isCloud = PUBLIC_IS_SELFHOSTED !== 'true';
-    const isCurrentOrgMember = this.data.organizations.some(
-      (organization) => organization.id === orgId || organization.siteName === orgSiteName
-    );
-    const isCloudOrgSiteNonMember = isCloud && isOrgSite && !isCurrentOrgMember;
-    const redirect = page.url.searchParams.get('redirect');
-    const redirectTargetsLms = redirect === '/lms' || redirect?.startsWith('/lms?');
-    if (isCloudOrgSiteNonMember && (path.startsWith('/lms') || redirectTargetsLms)) {
-      if (path !== '/') {
-        window.location.href = '/';
+    if (!this.data.organizations.length) {
+      if (!isPublicRoute(path) || shouldRedirectOnAuth(path)) {
+        goto('/auth-failed?error=access');
       }
 
       return;
     }
 
+    const redirect = page.url.searchParams.get('redirect');
     if (redirect && redirect.startsWith('/') && !redirect.startsWith('//') && !redirect.includes('\\')) {
-      console.log('redirecting to', redirect);
-      // goto redirect won't accept dynamic url so we need to use window.location.href
       window.location.href = redirect;
       return;
     }
 
-    // This allows you to be on the landing page of an organization site and not be redirected
-    if (isPublicRoute(path) && !['/', '/login', '/signup'].includes(path)) {
-      console.log('no redirect is needed');
-      return;
-    }
+    if (!shouldRedirectOnAuth(path)) return;
 
-    if (isCloudOrgSiteNonMember) {
-      if (path !== '/') {
-        window.location.href = '/';
-      }
-
-      return;
-    }
-
-    const isStudent = get(isOrgStudent);
-    const userHasOrganizations = this.data.organizations.length > 0;
-    const userIsManager = this.data.organizations.some((org) => isOrgManagerRole(org.roleId));
-    const needsOnboarding =
-      userIsManager && !this.data.profile.isEmailVerified && isOnboardingIncomplete(this.data.profile);
-
-    // CLOUD: when user has no orgs and isOrgSite is false, route to /onboarding
-    // isOrgSite - means the user is on a multi tenant organization site, we don't want to redirect to /onboarding in this case
-    if (isCloud) {
-      const shouldRedirectToOnboarding = !userHasOrganizations && !isOrgSite;
-      if (shouldRedirectToOnboarding) {
-        console.log('cloud: redirecting to onboarding');
-        return goto(resolve(`/onboarding`, {}));
-      }
-    } else {
-      // Self-hosted: when user has no orgs, route to /onboarding
-      if (!userHasOrganizations) {
-        console.log('self-hosted: redirecting to onboarding');
-        return goto(resolve(`/onboarding`, {}));
-      }
-    }
-
-    if (needsOnboarding && !isOrgSite && !path.includes('/onboarding')) {
-      console.log('redirecting to onboarding to finish setup');
-      return goto(resolve(`/onboarding`, {}));
-    }
-
-    if (!shouldRedirectOnAuth(page.url.pathname)) return;
-
-    if (path.includes('/onboarding') && ((isStudent && userHasOrganizations) || needsOnboarding)) {
-      return;
-    }
-
-    const shouldGoToLMS = isCloud ? isOrgSite || !!isStudent : !!isStudent;
-    console.log('redirecting to', shouldGoToLMS ? 'lms' : 'org');
-    return shouldGoToLMS ? this.goToLMS(isOrgSite) : this.goToOrg();
+    return get(isOrgStudent) ? this.goToLMS(true) : this.goToOrg();
   }
 
-  goToLMS(isOrgSite: boolean) {
-    const isCloud = PUBLIC_IS_SELFHOSTED !== 'true';
-    const isStudent = get(isOrgStudent);
-    const selectedOrg = get(currentOrg);
-    const userHasOneOrg = this.data.organizations.length === 1;
-    const userIsStudentInAllOrgs = this.data.organizations.every((org) => org.roleId === ROLE.STUDENT);
-    const userIsAdminInAtleastOneOrg = this.data.organizations.some((org) => org.roleId === ROLE.ADMIN);
-
-    if (userHasOneOrg && isCloud && !isOrgSite && isStudent && selectedOrg.siteName && userIsStudentInAllOrgs) {
-      window.location.href = getOrgPublicUrl(selectedOrg, '/lms');
-      return;
-    }
-
-    // User is an admin in at least one org, so they should be redirected to the org dashboard.
-    if (userIsAdminInAtleastOneOrg && isCloud && !isOrgSite) {
-      const orgWithAdminRole = this.data.organizations.find((org) => org.roleId === ROLE.ADMIN);
-
-      goto(resolve(`/org/${orgWithAdminRole.siteName}`, {}));
-      return;
-    }
-
+  goToLMS(_isOrgSite: boolean) {
     goto(resolve('/lms', {}));
   }
 
   goToOrg() {
     const selectedOrg = get(currentOrg);
+    if (!selectedOrg.siteName) return;
 
-    goto(resolve(`/org/${selectedOrg.siteName}/dash`, {}));
+    goto(resolve(`/org/${selectedOrg.siteName}/dash`, {}), { invalidateAll: true });
   }
 
   setUserAnalytics() {

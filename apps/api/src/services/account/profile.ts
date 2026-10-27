@@ -1,26 +1,16 @@
-import { emitOrganizationMemberWebhookEvent } from '@cio/core/services/webhook/emit';
 import { AppError, ErrorCodes } from '@api/utils/errors';
-import {
-  countActiveStudents,
-  ensureSelfHostedStudentMembership,
-  getOrganizationByProfileId,
-  getUserOrgRolesMap
-} from '@cio/db/queries/organization';
-import { getPlanLimit, toResourceUsage } from '@cio/utils/plans';
+import { getOrganizationByProfileId } from '@cio/db/queries/organization';
 import {
   getProfileByEmail,
   getProfileById,
   syncProfileEmailVerificationFromAuthUser,
   updateProfile
 } from '@cio/db/queries/auth';
-
 import type { OrganizationWithMemberAndPlans } from '@cio/db/queries/organization/types';
-import { ROLE } from '@cio/utils/constants';
 import type { TProfile } from '@cio/db/types';
 import type { TUpdateProfile } from '@cio/utils/validation/account';
-import { countOrgTemplates } from '@cio/db/queries/course';
-import { env } from '@cio/core/config/env';
 import { getLicenseStatus } from '@cio/core/services/license';
+import { ensureLearningInstance } from '@api/services/learning-instance';
 
 export type GetAccountDataResult = {
   profile: TProfile;
@@ -28,90 +18,20 @@ export type GetAccountDataResult = {
   licenseFeatures: string[];
 };
 
-/**
- * Fetches account data including profile and organizations for a user
- * In self-hosted mode: auto-adds non-member users as students to the single org
- * @param userId - The user ID to fetch account data for
- * @returns Account data with profile and organizations
- */
 export async function getAccountData(userId: string): Promise<GetAccountDataResult> {
-  const isSelfHosted = env.PUBLIC_IS_SELFHOSTED === 'true';
-
-  let [profile, organizations, licenseStatus] = await Promise.all([
-    getProfileById(userId),
-    getOrganizationByProfileId(userId),
-    isSelfHosted ? getLicenseStatus() : Promise.resolve({ valid: true, features: [] as string[] })
-  ]);
-
+  let profile = await getProfileById(userId);
   if (!profile) {
     throw new AppError(`Account not found for user ID: ${userId}`, ErrorCodes.ACCOUNT_NOT_FOUND, 404);
   }
 
   profile = (await syncProfileEmailVerificationFromAuthUser(userId)) ?? profile;
+  const organization = await ensureLearningInstance(userId, profile.email ?? '');
+  const [memberships, licenseStatus] = await Promise.all([getOrganizationByProfileId(userId), getLicenseStatus()]);
+  const organizations = memberships.filter((membership) => membership.id === organization.id);
 
-  // Self-hosted: auto-add user as student to the single org if they are not a member.
-  // Skip if they already have membership (by profileId) or a pending invite (by email).
-  // Also skip if the user is an admin/tutor in any org — they should not be downgraded to student.
-  if (isSelfHosted && organizations.length === 0) {
-    const orgRoles = await getUserOrgRolesMap(userId);
-    const isTeamMember = Object.values(orgRoles).some((roleId) => roleId === ROLE.ADMIN || roleId === ROLE.TUTOR);
-
-    if (!isTeamMember) {
-      const { ensured: membershipEnsured, createdMember } = await ensureSelfHostedStudentMembership({
-        profileId: userId,
-        email: profile.email
-      });
-
-      if (createdMember) {
-        await emitOrganizationMemberWebhookEvent(
-          'organization.member.added',
-          createdMember.organizationId,
-          createdMember,
-          userId
-        );
-      }
-
-      if (membershipEnsured) {
-        organizations = await getOrganizationByProfileId(userId);
-      }
-    }
-  }
-
-  // Attach per-resource usage + plan limits for admin/tutor members only.
-  // Plain COUNTs (no rows) so the payload stays light and students never
-  // receive org limit data. Skip self-hosted (unlimited, matching the guard).
-  if (!isSelfHosted) {
-    await Promise.all(
-      organizations.map(async (org) => {
-        if (org.roleId !== ROLE.ADMIN && org.roleId !== ROLE.TUTOR) return;
-
-        const activePlan = org.plans.find((plan) => plan.isActive);
-        const studentsUsed = await countActiveStudents(org.id);
-        const studentsLimit = getPlanLimit('students', activePlan?.planName);
-        const templatesUsed = await countOrgTemplates(org.id);
-        const templatesLimit = getPlanLimit('templates', activePlan?.planName);
-
-        org.limits = {
-          students: toResourceUsage(studentsUsed, studentsLimit),
-          templates: toResourceUsage(templatesUsed, templatesLimit)
-        };
-      })
-    );
-  }
-
-  return {
-    profile,
-    organizations,
-    licenseFeatures: isSelfHosted ? licenseStatus.features : []
-  };
+  return { profile, organizations, licenseFeatures: licenseStatus.features };
 }
 
-/**
- * Updates profile data for a user
- * @param userId - The user ID to update profile for
- * @param data - Partial profile data to update (excluding email, id, createdAt, updatedAt)
- * @returns Updated profile data
- */
 export async function updateUser(userId: string, data: TUpdateProfile) {
   try {
     const updatedProfile = await updateProfile(userId, data);

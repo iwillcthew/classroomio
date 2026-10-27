@@ -49,8 +49,10 @@ const envSchema = z.object({
   PROJECT_ID_VERCEL: z.string().optional(),
   TEAM_ID_VERCEL: z.string().optional(),
   UNSPLASH_API_KEY: z.string().optional(),
-  /** When 'true', instance runs in self-hosted mode: single org, auto-enroll as student, no org switching */
-  PUBLIC_IS_SELFHOSTED: z.string().optional(),
+  PUBLIC_IS_SELFHOSTED: z
+    .string()
+    .optional()
+    .transform(() => 'true'),
   WEBHOOK_ALLOW_PRIVATE_NETWORKS: z.string().optional(),
   /** License key for enterprise features (SSO, token-auth, no-tracking, etc.) */
   LICENSE_KEY: z.string().optional(),

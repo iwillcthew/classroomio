@@ -6452,7 +6452,16 @@
     "context_admin": "Training admin",
     "context_learner": "Learning space",
     "switch_to_learner": "Open learning space",
-    "switch_to_admin": "Open training admin"
+    "switch_to_admin": "Open training admin",
+    "settings": {
+      "system": "System settings",
+      "preferences": "Learning preferences",
+      "access_policy": "Access is managed by MP Transformation. Employees use accounts provisioned by HR or an approved invitation."
+    },
+    "access": {
+      "title": "Access not granted",
+      "description": "Contact the MP Transformation training administrator to request access to MP Learning."
+    }
   },
   "page_titles": {
     "integrations": "Integrations",

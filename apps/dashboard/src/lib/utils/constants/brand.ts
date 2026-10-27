@@ -1,7 +1,7 @@
+import { MP_LEARNING } from '@cio/utils/constants';
+
 export const BRAND = {
-  name: 'MP Transformation',
-  product: 'MP Learning',
-  logo: '/brand/mp-transformation.png',
+  ...MP_LEARNING,
   mark: '/brand/mp-mark.png',
   background: '/brand/learning-background.png'
 } as const;

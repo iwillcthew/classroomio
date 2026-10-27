@@ -6,6 +6,7 @@ Nền tảng đào tạo nhân viên nội bộ, tùy biến từ ClassroomIO.
 - Chương trình đào tạo, theo dõi tiến độ và chứng chỉ.
 - Quản lý nhân viên, giảng viên, phân quyền và báo cáo.
 - Nhận diện MP Transformation, tiếng Việt mặc định, đăng ký có kiểm soát bằng lời mời/email được cấp phép.
+- Một hệ thống cố định cho MP Transformation: không tạo/chuyển workspace, đổi tổ chức, tên miền hay gói cước.
 - Không có website quảng bá hay landing page công khai trong luồng sử dụng.
 
 ## Chạy bằng Docker
@@ -16,7 +17,7 @@ node scripts/setup-mp.mjs --email admin@your-company.vn --origin http://localhos
 docker compose --profile storage up -d --build
 ```
 
-Mở http://localhost:3082. Dùng email quản trị đã cấu hình để kích hoạt tài khoản tại `/signup` và tạo tổ chức MP Transformation.
+Mở http://localhost:3082. Dùng email quản trị đã cấu hình để kích hoạt tài khoản tại `/signup`. Lần đăng nhập đầu tiên tự khởi tạo MP Learning cho MP Transformation và cấp quyền quản trị; không có bước tạo tổ chức.
 
 Xem [hướng dẫn triển khai](docs/mp-deployment.md) cho HTTPS, lưu trữ, quyền truy cập, sao lưu và nghiệm thu production. Chỉ dùng compose build từ source; compose image upstream không chứa tùy biến MP.
 

@@ -1,3 +1,4 @@
+import { MP_LEARNING } from '@cio/utils/constants';
 import type { AccountOrg, PublicOrg } from './types';
 
 type OrganizationCustomization = AccountOrg['customization'] & {
@@ -19,15 +20,15 @@ export function toPublicOrg(org: AccountOrg): PublicOrg {
 
   return {
     id: org.id,
-    name: org.name,
+    name: MP_LEARNING.name,
     siteName: org.siteName,
-    avatarUrl: org.avatarUrl,
-    favicon: org.favicon,
-    theme: org.theme,
+    avatarUrl: MP_LEARNING.logo,
+    favicon: '/brand/mp-mark.png',
+    theme: MP_LEARNING.theme,
     isRestricted: org.isRestricted,
     landingpage: org.landingpage,
-    customDomain: org.customDomain,
-    isCustomDomainVerified: org.isCustomDomainVerified,
+    customDomain: null,
+    isCustomDomainVerified: false,
     disableSignup: org.disableSignup,
     disableSignupMessage: org.disableSignupMessage,
     disableEmailPassword: org.disableEmailPassword,

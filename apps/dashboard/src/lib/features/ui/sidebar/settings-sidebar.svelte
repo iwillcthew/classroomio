@@ -1,6 +1,6 @@
 <script lang="ts">
   import * as Sidebar from '@cio/ui/base/sidebar';
-  import { currentOrgPath } from '$lib/utils/store/org';
+  import { currentOrgPath, isOrgAdmin } from '$lib/utils/store/org';
   import { page } from '$app/state';
   import { t } from '$lib/utils/functions/translations';
   import { IS_AI_ENABLED } from '$lib/utils/constants/ai';
@@ -9,7 +9,6 @@
   import ArrowLeftIcon from '@lucide/svelte/icons/arrow-left';
   import BellIcon from '@lucide/svelte/icons/bell';
   import BotIcon from '@lucide/svelte/icons/bot';
-  import Building2Icon from '@lucide/svelte/icons/building-2';
   import KeyRoundIcon from '@lucide/svelte/icons/key-round';
   import MailIcon from '@lucide/svelte/icons/mail';
   import PaletteIcon from '@lucide/svelte/icons/palette';
@@ -25,11 +24,10 @@
       ]
     },
     {
-      label: 'settings.sidebar.workspace',
+      label: 'mp_learning.settings.system',
       items: [
-        { key: 'settings.sidebar.branding', path: '/settings/org', icon: Building2Icon },
         { key: 'settings.tabs.teams_tab', path: '/settings/teams', icon: UsersRoundIcon },
-        { key: 'settings.tabs.customize_lms_tab', path: '/settings/customize-lms', icon: PaletteIcon },
+        { key: 'mp_learning.settings.preferences', path: '/settings/customize-lms', icon: PaletteIcon },
         { key: 'settings.tabs.emails_tab', path: '/settings/emails', icon: MailIcon }
       ]
     },
@@ -63,7 +61,7 @@
     <Search compact placeholder={$t('settings.sidebar.search')} />
   </Sidebar.Header>
   <Sidebar.Content>
-    {#each groups as group (group.label)}
+    {#each groups.filter((group) => group.label === 'settings.sidebar.personal' || $isOrgAdmin) as group (group.label)}
       <Sidebar.Group class="py-1!">
         <Sidebar.GroupLabel>{$t(group.label)}</Sidebar.GroupLabel>
         <Sidebar.Menu class="gap-0.5">

@@ -6482,7 +6482,16 @@
     "context_admin": "Training admin",
     "context_learner": "Learning space",
     "switch_to_learner": "Open learning space",
-    "switch_to_admin": "Open training admin"
+    "switch_to_admin": "Open training admin",
+    "settings": {
+      "system": "सिस्टम सेटिंग्स",
+      "preferences": "प्रशिक्षण प्राथमिकताएँ",
+      "access_policy": "पहुँच का प्रबंधन MP Transformation करता है। कर्मचारी HR द्वारा बनाए गए खाते या स्वीकृत आमंत्रण का उपयोग करते हैं।"
+    },
+    "access": {
+      "title": "पहुँच की अनुमति नहीं है",
+      "description": "MP Learning की पहुँच के लिए MP Transformation के प्रशिक्षण व्यवस्थापक से संपर्क करें।"
+    }
   },
   "page_titles": {
     "integrations": "Integrations",

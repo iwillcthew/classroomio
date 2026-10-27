@@ -6482,7 +6482,16 @@
     "context_admin": "Training admin",
     "context_learner": "Learning space",
     "switch_to_learner": "Open learning space",
-    "switch_to_admin": "Open training admin"
+    "switch_to_admin": "Open training admin",
+    "settings": {
+      "system": "Ustawienia systemu",
+      "preferences": "Preferencje nauki",
+      "access_policy": "Dostępem zarządza MP Transformation. Pracownicy korzystają z kont utworzonych przez HR lub zatwierdzonego zaproszenia."
+    },
+    "access": {
+      "title": "Brak dostępu",
+      "description": "Skontaktuj się z administratorem szkoleń MP Transformation, aby uzyskać dostęp do MP Learning."
+    }
   },
   "page_titles": {
     "integrations": "Integrations",

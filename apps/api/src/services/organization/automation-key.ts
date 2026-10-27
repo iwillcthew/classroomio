@@ -11,6 +11,7 @@ import { AppError, ErrorCodes } from '@api/utils/errors';
 import {
   createOrganizationApiKey,
   getActiveOrganizationApiKeyByHash,
+  getFirstOrganization,
   getOrganizationApiKeyById,
   listOrganizationApiKeys,
   rotateOrganizationApiKeyIfActive,
@@ -191,6 +192,11 @@ export async function authenticateOrganizationApiKeyService(rawSecret: string): 
   const key = await getActiveOrganizationApiKeyByHash(hashSecret(rawSecret));
 
   if (!key) {
+    throw new AppError('Invalid organization API key', ErrorCodes.UNAUTHORIZED, 401);
+  }
+
+  const organization = await getFirstOrganization();
+  if (key.organizationId !== organization?.id) {
     throw new AppError('Invalid organization API key', ErrorCodes.UNAUTHORIZED, 401);
   }
 

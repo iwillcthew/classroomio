@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Switch } from '@cio/ui/base/switch';
 
-  import { currentOrg, isFreePlan } from '$lib/utils/store/org';
+  import { currentOrg } from '$lib/utils/store/org';
   import { t } from '$lib/utils/functions/translations';
   import { orgApi } from '$features/org/api/org.svelte';
   import { handleOpenWidget } from '$features/ui/course-landing-page/store';
@@ -30,19 +30,6 @@
   function widgetControl(key: string) {
     widgetKey = key;
     $handleOpenWidget.open = true;
-  }
-
-  function authBackgroundWidgetControl() {
-    if ($isFreePlan) {
-      return;
-    }
-
-    widgetKey = 'auth-background';
-    $handleOpenWidget.open = true;
-  }
-
-  function deleteAuthBackgroundImage() {
-    customization.auth.backgroundImage = '';
   }
 
   function captureCustomizationSnapshot() {
@@ -176,45 +163,6 @@
           placeholder={$t('components.settings.customize_lms.dashboard.banner_text_placeholder')}
           bind:value={customization.dashboard.bannerText}
         />
-      </Field.Field>
-    </Field.Group>
-  </Field.Set>
-
-  <Field.Separator />
-
-  <Field.Set>
-    <Field.Legend>{$t('components.settings.customize_lms.auth_background.title')}</Field.Legend>
-    <Field.Description>{$t('components.settings.customize_lms.auth_background.description')}</Field.Description>
-    {#if $isFreePlan}
-      <Field.Description class="ui:text-muted-foreground">
-        {$t('components.settings.customize_lms.auth_background.paid_plan_note')}
-      </Field.Description>
-    {/if}
-    <Field.Group>
-      <Field.Field>
-        <div class="flex items-center gap-2">
-          <Button onclick={authBackgroundWidgetControl} disabled={$isFreePlan}>
-            {$t('course.navItem.settings.replace')}
-          </Button>
-          <Button variant="outline" onclick={deleteAuthBackgroundImage} disabled={$isFreePlan}>
-            {$t('ai.reset')}
-          </Button>
-        </div>
-        {#if $handleOpenWidget.open && widgetKey === 'auth-background'}
-          <UploadWidget bind:imageURL={customization.auth.backgroundImage} />
-        {/if}
-      </Field.Field>
-      <Field.Field>
-        <div class="relative w-fit">
-          <img
-            style="min-width:280px; min-height:200px"
-            alt={$t('components.settings.customize_lms.auth_background.preview_alt')}
-            src={customization.auth.backgroundImage
-              ? customization.auth.backgroundImage
-              : '/images/mp-course-cover.svg'}
-            class="relative mt-2 h-[200px] w-[280px] rounded-md object-cover md:mt-0"
-          />
-        </div>
       </Field.Field>
     </Field.Group>
   </Field.Set>

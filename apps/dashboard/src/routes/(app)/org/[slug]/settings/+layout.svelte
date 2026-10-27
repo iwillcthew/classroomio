@@ -10,8 +10,7 @@
   let { children }: Props = $props();
 
   const SHARED_HEADER_TITLES: Record<string, string> = {
-    '/settings/org': 'settings.sidebar.branding',
-    '/settings/customize-lms': 'settings.tabs.customize_lms_tab',
+    '/settings/customize-lms': 'mp_learning.settings.preferences',
     '/settings/domains': 'settings.tabs.domains_tab',
     '/settings/teams': 'settings.tabs.teams_tab'
   };
@@ -26,11 +25,8 @@
   {#if sharedHeaderTitleKey}
     <Page.Header>
       <Page.HeaderContent>
-        <Page.Eyebrow>{$t('settings.sidebar.workspace')}</Page.Eyebrow>
+        <Page.Eyebrow>{$t('mp_learning.settings.system')}</Page.Eyebrow>
         <Page.Title>{$t(sharedHeaderTitleKey)}</Page.Title>
-        {#if sharedHeaderTitleKey === 'settings.sidebar.branding'}
-          <Page.Subtitle>{$t('settings.organization.page_subtitle')}</Page.Subtitle>
-        {/if}
       </Page.HeaderContent>
     </Page.Header>
   {/if}
