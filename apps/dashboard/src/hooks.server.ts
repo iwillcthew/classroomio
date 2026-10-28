@@ -169,8 +169,18 @@ export const handle: Handle = async (args) => {
   return applyCspExtensions(response);
 };
 
-const handlePagesRoutes: Handle = async ({ event, resolve }) => {
+/**
+ * Marks every `<script>` so Cloudflare Rocket Loader leaves it alone. Rocket Loader rewrites script
+ * tags and re-runs inline ones without their CSP nonce, so SvelteKit never hydrates.
+ */
+function excludeScriptsFromRocketLoader({ html }: { html: string }) {
+  return html.replaceAll('<script', '<script data-cfasync="false"');
+}
+
+const handlePagesRoutes: Handle = async ({ event, resolve: resolvePage }) => {
   const { pathname } = event.url;
+  const resolve = (pageEvent: typeof event) =>
+    resolvePage(pageEvent, { transformPageChunk: excludeScriptsFromRocketLoader });
 
   if (isRetiredPage(pathname)) error(404, 'Not found');
 
