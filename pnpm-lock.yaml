@@ -819,6 +819,9 @@ importers:
       openai:
         specifier: ^6.36.0
         version: 6.36.0(ws@8.18.3(bufferutil@4.1.0)(utf-8-validate@6.0.6))(zod@4.2.1)
+      zod:
+        specifier: 4.2.1
+        version: 4.2.1
     devDependencies:
       '@types/node':
         specifier: ^24.10.1
@@ -835,9 +838,6 @@ importers:
       vitest:
         specifier: ^1.2.2
         version: 1.6.1(@types/node@24.10.4)(jsdom@29.0.1(@noble/hashes@2.0.1))(lightningcss@1.32.0)(sass@1.97.1)
-      zod:
-        specifier: 4.2.1
-        version: 4.2.1
 
   apps/tenant-router:
     devDependencies:
@@ -1159,6 +1159,9 @@ importers:
       better-auth:
         specifier: ^1.4.18
         version: 1.4.18(580416afa390431d1b420885cab09137)
+      dotenv:
+        specifier: ^17.2.3
+        version: 17.2.3
       drizzle-kit:
         specifier: ^0.31.8
         version: 0.31.8
@@ -1181,9 +1184,6 @@ importers:
       '@types/pg':
         specifier: ^8.16.0
         version: 8.16.0
-      dotenv:
-        specifier: ^17.2.3
-        version: 17.2.3
       pg:
         specifier: ^8.18.0
         version: 8.18.0

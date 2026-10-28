@@ -1,9 +1,5 @@
-FROM node:24.22.1-bookworm-slim
-
-# ffmpeg is needed for media probe / thumbnail / audio-extract / transcode tasks.
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends ffmpeg ca-certificates \
-    && rm -rf /var/lib/apt/lists/*
+# syntax=docker/dockerfile:1
+FROM node:24.22.1-bookworm-slim AS base
 
 WORKDIR /app
 
@@ -14,20 +10,30 @@ ENV PATH="$PNPM_HOME:$PATH"
 
 RUN corepack enable && corepack prepare pnpm@10.19.0 --activate
 
-# Fetch deps from the lockfile first (cached unless pnpm-lock.yaml changes); the
-# store is baked into this layer and reused by the offline install below. `pnpm
-# fetch` populates the store for the whole lockfile, so no hand-maintained package
-# list. Mirrors the api/dashboard images.
-COPY pnpm-lock.yaml ./
-RUN pnpm fetch --store-dir /pnpm/store
+FROM base AS build
 
 COPY . .
 
-RUN pnpm install --offline --frozen-lockfile --ignore-scripts \
+RUN --mount=type=cache,id=cio-pnpm-store,target=/pnpm/store,sharing=locked \
+    pnpm install --frozen-lockfile --ignore-scripts \
     --store-dir /pnpm/store --filter @cio/jobs-worker...
 RUN find . -name 'tsconfig.tsbuildinfo' -delete
-# Build the worker and all its workspace deps in topological order.
 RUN pnpm -r --filter @cio/jobs-worker... build
+RUN find . -name node_modules -type d -prune -exec rm -rf {} +
+
+FROM base
+
+# ffmpeg is needed for media probe / thumbnail / audio-extract / transcode tasks.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends ffmpeg ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=build /app /app
+
+# Workspace packages declare zod as a peer; without dev deps Node only finds it hoisted to /app.
+RUN --mount=type=cache,id=cio-pnpm-store,target=/pnpm/store,sharing=locked \
+    pnpm install --prod --frozen-lockfile --ignore-scripts --shamefully-hoist \
+    --store-dir /pnpm/store --filter @cio/jobs-worker...
 
 # Reported in self-hosted usage pings. Set last so a new version doesn't bust the build cache.
 ARG CIO_VERSION=dev
