@@ -13,6 +13,7 @@ export const ALL_ROLES_FILTER = 'all';
 /** The API reads pagination and filters from the query string, so numbers and booleans go over the wire as strings. */
 export function toPeopleRequestQuery(query: ListPeopleQuery): ListPeopleRequestQuery {
   return {
+    audience: query.audience,
     page: String(query.page),
     limit: String(query.limit),
     search: query.search,

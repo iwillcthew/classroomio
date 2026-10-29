@@ -1,9 +1,10 @@
 import * as schema from '@db/schema';
 
 import { TGroupmember, TNewGroup, TNewGroupmember } from '@db/types';
-import { and, asc, eq, inArray, isNotNull, isNull, ne, or } from 'drizzle-orm';
+import { sql, and, asc, eq, inArray, isNotNull, isNull, ne, or } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
 
+import { assignCourseGroups, learningMembershipSql } from '../course/learning-access';
 import { ROLE } from '@cio/utils/constants';
 import { db, type DbOrTxClient } from '@db/drizzle';
 
@@ -67,9 +68,13 @@ export async function enrollUsersInCourseGroups(
   groupIds: string[],
   users: Array<{ profileId: string; email?: string }>,
   roleId: number,
-  dbClient: DbOrTxClient = db
+  dbClient: DbOrTxClient = db,
+  mode: 'DIRECT' | 'CONTEXT' = 'DIRECT'
 ): Promise<TGroupmember[]> {
   if (groupIds.length === 0 || users.length === 0) return [];
+
+  if (dbClient === db)
+    return db.transaction((transaction) => enrollUsersInCourseGroups(groupIds, users, roleId, transaction, mode));
 
   const pairs = users.flatMap((u) => groupIds.map((groupId) => ({ groupId, profileId: u.profileId })));
   const existingSet = await getExistingGroupMembers(pairs, dbClient);
@@ -80,11 +85,17 @@ export async function enrollUsersInCourseGroups(
     .map((p) => ({
       groupId: p.groupId,
       roleId,
+      learningAccessManaged: roleId === ROLE.STUDENT,
       profileId: p.profileId,
       email: emailByProfile.get(p.profileId) ?? undefined
     }));
 
-  return addGroupMembers(toInsert, dbClient);
+  const inserted = await addGroupMembers(toInsert, dbClient);
+  if (roleId === ROLE.STUDENT && mode === 'DIRECT') {
+    const profileIds = users.map((user) => user.profileId);
+    await assignCourseGroups(groupIds, profileIds, null, dbClient);
+  }
+  return inserted;
 }
 
 /**
@@ -122,12 +133,21 @@ export const isUserCourseMember = async (
     .from(schema.groupmember)
     .innerJoin(schema.course, eq(schema.course.groupId, schema.groupmember.groupId))
     .innerJoin(schema.group, eq(schema.course.groupId, schema.group.id))
-    .where(and(eq(schema.course.id, courseId), eq(schema.groupmember.profileId, profileId)))
+    .where(
+      and(
+        eq(schema.course.id, courseId),
+        eq(schema.groupmember.profileId, profileId),
+        or(
+          ne(schema.groupmember.roleId, ROLE.STUDENT),
+          learningMembershipSql(sql`${schema.course.id}`, sql`${schema.course.groupId}`, profileId)
+        )
+      )
+    )
     .limit(1);
 
   return {
     isMember: result.length > 0,
-    organizationId: result[0].organizationId
+    organizationId: result[0]?.organizationId ?? null
   };
 };
 
@@ -173,7 +193,16 @@ export const isUserCourseMemberOrOrgAdmin = async (courseId: string, profileId: 
       and(
         eq(schema.course.id, courseId),
         or(isNull(schema.group.organizationId), isNotNull(orgMembership.id)),
-        or(isNotNull(schema.groupmember.id), isNotNull(schema.organizationmember.id))
+        or(
+          and(
+            isNotNull(schema.groupmember.id),
+            or(
+              ne(schema.groupmember.roleId, ROLE.STUDENT),
+              learningMembershipSql(sql`${schema.course.id}`, sql`${schema.course.groupId}`, profileId)
+            )
+          ),
+          isNotNull(schema.organizationmember.id)
+        )
       )
     )
     .limit(1);
@@ -192,7 +221,16 @@ export const getUserCourseRole = async (courseId: string, profileId: string): Pr
     .select({ roleId: schema.groupmember.roleId })
     .from(schema.groupmember)
     .innerJoin(schema.course, eq(schema.course.groupId, schema.groupmember.groupId))
-    .where(and(eq(schema.course.id, courseId), eq(schema.groupmember.profileId, profileId)))
+    .where(
+      and(
+        eq(schema.course.id, courseId),
+        eq(schema.groupmember.profileId, profileId),
+        or(
+          ne(schema.groupmember.roleId, ROLE.STUDENT),
+          learningMembershipSql(sql`${schema.course.id}`, sql`${schema.course.groupId}`, profileId)
+        )
+      )
+    )
     .limit(1);
 
   return result.length > 0 ? Number(result[0].roleId) : null;
@@ -207,10 +245,14 @@ export const getUserCourseRole = async (courseId: string, profileId: string): Pr
  *
  * This is designed for middleware use to avoid doing multiple DB queries.
  */
-export const isCourseTeamMemberOrOrgAdmin = async (courseId: string, profileId: string): Promise<boolean> => {
+export const isCourseTeamMemberOrOrgAdmin = async (
+  courseId: string,
+  profileId: string,
+  client: DbOrTxClient = db
+): Promise<boolean> => {
   const orgMembership = alias(schema.organizationmember, 'org_membership');
 
-  const result = await db
+  const result = await client
     .select({
       groupMemberId: schema.groupmember.id,
       orgMemberId: schema.organizationmember.id
@@ -333,7 +375,11 @@ export async function getCourseProgramAccess(
       .innerJoin(schema.programCourse, eq(schema.course.id, schema.programCourse.courseId))
       .innerJoin(
         schema.program,
-        and(eq(schema.program.id, schema.programCourse.programId), eq(schema.program.status, 'ACTIVE'))
+        and(
+          eq(schema.program.id, schema.programCourse.programId),
+          eq(schema.program.status, 'ACTIVE'),
+          eq(schema.program.organizationId, schema.group.organizationId)
+        )
       )
       .innerJoin(
         schema.programMember,

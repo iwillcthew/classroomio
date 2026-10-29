@@ -1,3 +1,5 @@
+import { ZAssignCourseTraining } from '@cio/utils/validation/course/training-assignment';
+import { mapZodErrorsToTranslations } from '$lib/utils/validation';
 import type {
   AddPeopleRequest,
   AvailableCourseEmployeesRequest,
@@ -25,11 +27,43 @@ import { toPeopleRequestQuery } from '$features/course/utils/people-utils';
 import type { TAddCourseMembers } from '@cio/utils/validation/course/people';
 import { snackbar } from '$features/ui/snackbar/store';
 import { t } from '$lib/utils/functions/translations';
+import type { AssignTrainingRequest, AssignTrainingPayload, RevokeLearningSourceRequest } from '../utils/types';
 
 /**
  * API class for course members operations
  */
 export class PeopleApi extends BaseApiWithErrors {
+  async assignTraining(courseId: string, payload: AssignTrainingPayload) {
+    const validated = ZAssignCourseTraining.safeParse(payload);
+    if (!validated.success) {
+      this.errors = mapZodErrorsToTranslations(validated.error);
+      snackbar.error('snackbar.course_api.members_add_failed');
+      return;
+    }
+
+    return this.execute<AssignTrainingRequest>({
+      requestFn: () =>
+        classroomio.course[':courseId'].members['training-assignments'].$post({
+          param: { courseId },
+          json: validated.data
+        }),
+      logContext: 'assigning internal training',
+      onSuccess: () => snackbar.success('training_assignment.saved'),
+      onError: () => snackbar.error('snackbar.course_api.members_add_failed')
+    });
+  }
+
+  async revokeLearningSource(courseId: string, sourceId: string) {
+    return this.execute<RevokeLearningSourceRequest>({
+      requestFn: () =>
+        classroomio.course[':courseId'].members['learning-sources'][':sourceId'].$delete({
+          param: { courseId, sourceId }
+        }),
+      logContext: 'revoking a learning source',
+      onSuccess: () => snackbar.success('training_assignment.cancelled'),
+      onError: () => snackbar.error('training_assignment.cancel_failed')
+    });
+  }
   availableEmployees = $state<AvailableCourseEmployees | null>(null);
   private availableEmployeesRequest = 0;
 

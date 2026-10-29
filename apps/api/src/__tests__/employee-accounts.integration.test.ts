@@ -391,13 +391,25 @@ integration('employee accounts on an isolated PostgreSQL database', () => {
       'studentCourseWelcome',
       expect.objectContaining({ to: staff.email, fields: expect.objectContaining({ courseName: 'Employee training' }) })
     );
-    expect(await courses.listAvailableCourseEmployees(fixture.courseId, staff.employeeCode)).toEqual([]);
+    expect(
+      (await courses.listAvailableCourseEmployees(fixture.courseId, staff.employeeCode)).map(
+        (employee) => employee.profileId
+      )
+    ).toEqual([staff.profileId]);
     expect(await courses.enrollExistingCourseEmployees(fixture.courseId, administratorId, members, false)).toEqual([]);
     expect(jobs.enqueueTransactionalEmail).toHaveBeenCalledTimes(1);
     const assignments = await queries.getEmployeeAssignments(staff.id);
     expect(assignments.courseIds).toContain(fixture.courseId);
     const { deleteCourseMember } = await import('@cio/db/queries/course/people');
-    await deleteCourseMember(fixture.courseId, added[0].id);
+    expect(await deleteCourseMember(fixture.courseId, added[0].id)).toBeNull();
+    const { getLearningContexts } = await import('@cio/db/queries/course/learning-access');
+    const { cancelCourseSource } = await import('@api/services/course/training-assignment');
+    const contexts = await getLearningContexts(organizationId, {
+      courseIds: [fixture.courseId],
+      profileIds: [staff.profileId]
+    });
+    const direct = contexts.find((source) => source.kind === 'DIRECT')!;
+    await cancelCourseSource(fixture.courseId, direct.sourceId, administratorId);
     expect((await queries.getEmployeeAssignments(staff.id)).courseIds).not.toContain(fixture.courseId);
   });
 
@@ -466,7 +478,11 @@ integration('employee accounts on an isolated PostgreSQL database', () => {
         false
       )
     ).rejects.toThrow('Only active employees');
-    expect(await courses.listAvailableCourseEmployees(fixture.courseId, staff.employeeCode)).toEqual([]);
+    expect(
+      (await courses.listAvailableCourseEmployees(fixture.courseId, staff.employeeCode)).map(
+        (employee) => employee.profileId
+      )
+    ).toEqual([]);
     const [count] = await database.db.execute(
       database.sql`select count(*)::int as total from groupmember where group_id = ${fixture.groupId}`
     );

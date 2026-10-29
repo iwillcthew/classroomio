@@ -74,6 +74,18 @@ describe('employee learning priorities', () => {
     expect(filterLearningCourses(courses, 'dao tao', CourseSortBy.DateCreated)).toHaveLength(1);
   });
 
+  it('prioritizes required ordinary-course assignments without treating self-selection as mandatory', () => {
+    const courses = [
+      course({ id: 'self', isRequired: false, isSelfEnrolled: true, progressRate: 8 }),
+      course({ id: 'assigned', isRequired: true, learningDueDate: '2026-10-20T00:00:00Z' }),
+      course({ id: 'recommended', isRequired: false, isAssigned: true })
+    ];
+    const summary = getLearningSummary(courses, Date.parse('2026-10-25T00:00:00Z'));
+    expect(summary.mandatory.map((entry) => entry.id)).toEqual(['assigned']);
+    expect(summary.overdue.map((entry) => entry.id)).toEqual(['assigned']);
+    expect(summary.pending[0].id).toBe('assigned');
+  });
+
   it('handles empty learning assignments without a fictitious completion rate', () => {
     const summary = getLearningSummary([], Date.now());
     expect(summary.progress).toBe(0);

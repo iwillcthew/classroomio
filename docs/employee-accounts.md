@@ -63,17 +63,20 @@ pnpm --filter @cio/api exec vitest run src/__tests__/employee-accounts.integrati
 Trước khi vận hành với dữ liệu thật, kiểm tra nhận thư qua SMTP thật và luồng HR tạo → nhân viên kích hoạt → đăng nhập bằng mã → học → HR khóa → phiên cũ bị từ chối.
 
 
-## Thư viện đào tạo và tự đăng ký nội bộ
+## Học tự chọn và giao đào tạo
 
-**Thư viện đào tạo** giúp nhân viên tìm hiểu các khóa được giới thiệu trong công ty và xem lại khóa mình có quyền học. **Khóa học của tôi** tập trung vào các khóa đã được giao hoặc đăng ký thành công, tiến độ và hạn hoàn thành. Một khóa có thể xuất hiện ở cả hai nơi.
+**Thư viện đào tạo** chỉ giới thiệu khóa đã xuất bản và đang cho phép nhân viên tự đăng ký. Khóa đã đăng ký vẫn ở thư viện khi còn mở. Đóng tự đăng ký đưa khóa ra khỏi thư viện nhưng giữ quyền và tiến độ người đã tham gia. Xuất bản không tự mở thư viện hoặc tự giao đào tạo.
 
-Xuất bản chỉ đưa nội dung vào trạng thái sẵn sàng học. Trong cài đặt quyền truy cập của khóa, **Hiển thị trong thư viện toàn công ty** và **Cho phép nhân viên tự đăng ký** là hai lựa chọn độc lập. Khóa mới, kể cả khóa nhập, sao chép và tạo từ mẫu, mặc định chỉ được giao học và không hiển thị rộng. Khóa cũ giữ cấu hình trước đây; lần lưu cài đặt tiếp theo ghi rõ lựa chọn hiển thị độc lập.
+**Khóa học của tôi** có các bộ lọc Được giao, Tự đăng ký, Bắt buộc và Đã hoàn thành. Một khóa chỉ có một thẻ, kể cả khi có nhiều nguồn tham gia. Nguồn, yêu cầu hoàn thành và hạn học được hiển thị riêng. Khóa thông thường cũng có thể được giao bắt buộc; COMPLIANCE là loại khóa tuân thủ có chu kỳ và hiệu lực, không đồng nghĩa với mọi phân công bắt buộc.
 
-Nhân viên mở trang giới thiệu trong hệ thống nội bộ trước khi đăng ký. Chỉ tài khoản nội bộ đang hoạt động được tự đăng ký khóa đã xuất bản, hiển thị trong thư viện và đang cho phép tự đăng ký. Khóa **Đào tạo bắt buộc** luôn do người có quyền giao học; nhân viên không thể tự đăng ký loại khóa này. Khóa chỉ giao học vẫn có thể được giới thiệu trong thư viện với hướng dẫn liên hệ HR/L&D hoặc giảng viên.
+Trong tab **Người học**, chọn **Giao đào tạo**, nhân viên, yêu cầu bắt buộc/khuyến nghị, hạn và lời nhắn. Có thể giao cho người đã tự học mà không đặt lại tiến độ. Gửi lặp giữ nguyên phân công và hạn hiện có. Muốn thay đổi yêu cầu của phân công trực tiếp, hủy rồi giao lại để giữ lịch sử.
 
-Đăng ký thành công đưa khóa vào **Khóa học của tôi** và mở trang học. Khóa vẫn xuất hiện trong thư viện với trạng thái đã tham gia. Quyền được giao qua chương trình hoặc nhóm học tập cũng được nhận diện; thao tác đăng ký lại không tạo thêm ghi danh hoặc đặt lại tiến độ.
+Hủy nguồn tham gia chỉ thu hồi quyền từ nguồn đó, không xóa tiến độ, bài làm hoặc chứng chỉ. Quyền từ chương trình/cohort còn hiệu lực vẫn được giữ. Với COMPLIANCE, dùng chức năng miễn trừ/điều chỉnh hạn hiện có; không dùng hủy nguồn để bỏ qua nghĩa vụ tuân thủ. Tab Đội ngũ giảng dạy tách khỏi thống kê người học; tab Lịch sử tham gia giữ các định danh và nguồn đã hủy.
 
-Ẩn khóa khỏi thư viện chung hoặc tắt tự đăng ký không thu hồi quyền đã cấp. Gỡ xuất bản ẩn khóa khỏi học viên nhưng giữ ghi danh và kết quả. Thư viện chỉ cung cấp thông tin giới thiệu; xem được giới thiệu không đồng nghĩa được đọc bài giảng hoặc tải tài liệu. Đợt này chưa có chức năng yêu cầu và duyệt tham gia.
+Hồ sơ nhân viên phân biệt lựa chọn phân công trực tiếp với khóa tự đăng ký. Khóa tự chọn vẫn hiển thị trong báo cáo học tập, nhưng không đi vào mẫu số đào tạo bắt buộc. Mục tiêu N trong M khóa vẫn được theo dõi ở chương trình/cohort.
+
+Dữ liệu cũ không đủ bằng chứng được gắn nhãn chưa xác định nguồn; không tự chuyển thành phân công bắt buộc. Triển khai cần chạy migration `0044_learning_sources_and_assignments.sql` bằng quy trình migration hiện có trước khi chạy mã mới. Migration giữ nguyên tiến độ và hồ sơ tuân thủ.
+
 
 ## Course enrollment and employee emails
 

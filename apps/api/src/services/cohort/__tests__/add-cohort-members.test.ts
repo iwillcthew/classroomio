@@ -25,6 +25,10 @@ vi.mock('../../organization/student-limit', () => ({
   assertStudentCapacityOrThrow: vi.fn(),
   notifyStudentMilestone: vi.fn()
 }));
+vi.mock('../../course/compliance', () => ({
+  ensureComplianceEnrollmentRecordsForProfiles: vi.fn(async () => ({ createdRecords: [] })),
+  emitComplianceEnrollmentEvents: vi.fn(async () => {})
+}));
 
 import {
   addCohortMember,

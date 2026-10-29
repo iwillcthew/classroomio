@@ -229,7 +229,7 @@ const cohortHandler: InviteLinkHandler = {
 
     const courseGroups = await getCourseGroupIds(cohortCourseIds, tx);
     const groupIds = courseGroups.map((mapping) => mapping.groupId).filter(Boolean) as string[];
-    const enrolledMembers = await enrollUsersInCourseGroups(groupIds, [{ profileId, email }], roleId, tx);
+    const enrolledMembers = await enrollUsersInCourseGroups(groupIds, [{ profileId, email }], roleId, tx, 'CONTEXT');
 
     return { isFreshJoin, enrolledMembers, cohortMember: createdMember };
   },

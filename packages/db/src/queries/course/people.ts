@@ -15,8 +15,7 @@ import {
 } from '@cio/utils/validation/course';
 import { db } from '@db/drizzle';
 import { isExerciseCompletedSql } from '@db/queries/course/progression';
-import { deleteStudentCourseProgress } from '@db/queries/course/reset-progress';
-import { deleteEmployeeCourseAssignment } from '@db/queries/course/employees';
+import { learningMembershipSql } from './learning-access';
 
 export type CourseMemberWithProfile = TGroupmember & {
   profile: {
@@ -29,6 +28,7 @@ export type CourseMemberWithProfile = TGroupmember & {
 };
 
 export interface PaginatedCourseMembersOptions {
+  audience?: 'learners' | 'staff' | 'all' | 'history';
   page: number;
   limit: number;
   search?: string;
@@ -227,6 +227,21 @@ export async function getPaginatedCourseMembers(
 
   try {
     const conditions: SQL[] = [eq(schema.course.id, courseId)];
+    if (options.audience === 'staff') conditions.push(sql`${schema.groupmember.roleId} in (1, 2)`);
+    if (options.audience === 'history') conditions.push(eq(schema.groupmember.roleId, ROLE.STUDENT));
+    if (options.audience === 'learners') conditions.push(eq(schema.groupmember.roleId, ROLE.STUDENT));
+    if (options.audience !== 'history')
+      conditions.push(
+        or(
+          sql`${schema.groupmember.roleId} <> ${ROLE.STUDENT}`,
+          isNull(schema.groupmember.profileId),
+          learningMembershipSql(
+            sql`${schema.course.id}`,
+            sql`${schema.course.groupId}`,
+            sql`${schema.groupmember.profileId}`
+          )
+        )!
+      );
 
     if (roleId) {
       conditions.push(eq(schema.groupmember.roleId, roleId));
@@ -534,12 +549,16 @@ export async function updateCourseMember(
   }
 }
 
-/**
- * Deletes a course member and, for students, the course data they own
- * @param courseId Course ID
- * @param memberId Member ID
- * @returns Deleted member or null if not found
- */
+export async function hasCourseLearnerHistory(courseId: string, memberId: string, profileId: string | null) {
+  const [row] = await db.execute<{ retained: boolean }>(sql`select (
+    exists (select 1 from course_enrollment_source where course_id = ${courseId} and profile_id = ${profileId})
+    or exists (select 1 from course_completion_record where course_id = ${courseId} and group_member_id = ${memberId})
+    or exists (select 1 from lesson_completion lc join lesson l on l.id = lc.lesson_id where l.course_id = ${courseId} and lc.profile_id = ${profileId})
+    or exists (select 1 from submission where submitted_by = ${memberId})
+  ) retained`);
+  return row.retained;
+}
+
 export async function deleteCourseMember(courseId: string, memberId: string): Promise<TGroupmember | null> {
   try {
     // Verify member belongs to course
@@ -548,12 +567,14 @@ export async function deleteCourseMember(courseId: string, memberId: string): Pr
       return null;
     }
 
-    return await db.transaction(async (tx) => {
-      if (member.roleId === ROLE.STUDENT && member.profileId) {
-        await deleteStudentCourseProgress(tx, { courseId, groupMemberId: memberId, profileId: member.profileId });
-        await deleteEmployeeCourseAssignment(courseId, member.profileId, tx);
-      }
+    if (member.roleId === ROLE.STUDENT && member.profileId) {
+      return null;
+    }
 
+    const retained = await hasCourseLearnerHistory(courseId, memberId, member.profileId);
+    if (retained) return null;
+
+    return await db.transaction(async (tx) => {
       await tx.delete(schema.questionAnswer).where(eq(schema.questionAnswer.groupMemberId, memberId));
       await tx.delete(schema.appsPollSubmission).where(eq(schema.appsPollSubmission.selectedById, memberId));
 

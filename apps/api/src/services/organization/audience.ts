@@ -165,19 +165,10 @@ async function enrollAudienceStudentProfilesInCourses(
   const toInsert = pairs.filter((p) => !existingSet.has(`${p.groupId}:${p.profileId}`));
   const alreadyEnrolled = pairs.length - toInsert.length;
 
-  if (toInsert.length > 0) {
-    const enrolledMembers = await addGroupMembers(
-      toInsert.map((p) => ({
-        groupId: p.groupId,
-        roleId: ROLE.STUDENT,
-        profileId: p.profileId,
-        email: profileEmailMap.get(p.profileId) || undefined
-      }))
-    );
-
-    await invalidateOrgStats(orgId);
-    captureLearnersEnrolled(enrolledMembers, 'audience', source);
-  }
+  const users = validProfiles.map((profileId) => ({ profileId, email: profileEmailMap.get(profileId) || undefined }));
+  const enrolledMembers = await enrollUsersInCourseGroups(validGroupIds, users, ROLE.STUDENT);
+  await invalidateOrgStats(orgId);
+  captureLearnersEnrolled(enrolledMembers, 'audience', source);
 
   if (validProfiles.length > 0) {
     await ensureComplianceEnrollmentRecordsForProfiles(
@@ -298,7 +289,7 @@ async function enrollAudienceStudentProfilesInCohorts(
       profileId,
       email: profileEmailMap.get(profileId) || undefined
     }));
-    const enrolledMembers = await enrollUsersInCourseGroups(groupIds, users, ROLE.STUDENT);
+    const enrolledMembers = await enrollUsersInCourseGroups(groupIds, users, ROLE.STUDENT, undefined, 'CONTEXT');
 
     if (enrolledMembers.length > 0) {
       await invalidateOrgStats(orgId);

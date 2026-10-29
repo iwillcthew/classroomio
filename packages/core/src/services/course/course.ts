@@ -1,3 +1,4 @@
+import { getEmployeeAccess } from '@cio/db/queries/organization';
 import { AppError, ErrorCodes } from '@cio/utils/errors';
 import { sanitizeHtml, sanitizeOptionalHtml, sanitizeUnknownStrings } from '../../utils/sanitize-html';
 import {
@@ -34,7 +35,6 @@ import { ContentType, ROLE, resolveLiveSessionReminderOffsets } from '@cio/utils
 import {
   isPublishedComplianceMissingDeadline,
   resolveCourseCertificateDeadline,
-  isCourseShownInLibrary,
   isSelfEnrollmentAllowed
 } from '@cio/utils/functions';
 import type { TCourse } from '@cio/db/types';
@@ -104,6 +104,9 @@ export async function ensureProgramCourseAccess(courseId: string, profileId: str
     return false;
   }
 
+  const internalAccess = await getEmployeeAccess(organizationId, profileId);
+  if (!internalAccess) return false;
+
   const normalizedEmail = access.profileEmail?.trim() || undefined;
 
   if (access.roleId === ROLE.STUDENT) {
@@ -118,22 +121,10 @@ export async function ensureProgramCourseAccess(courseId: string, profileId: str
   }
 
   await db.transaction(async (tx) => {
-    await insertOrganizationMembersOnConflictDoNothing(
-      [
-        {
-          organizationId,
-          roleId: access.roleId,
-          profileId,
-          email: normalizedEmail,
-          verified: true
-        }
-      ],
-      tx
-    );
-
     await insertGroupMembersOnConflictDoNothing(
       [
         {
+          learningAccessManaged: true,
           groupId: access.courseGroupId,
           roleId: access.roleId,
           profileId,
@@ -468,17 +459,15 @@ export async function updateCourse(
 
     const nextType = sanitizedData.type ?? currentCourse.type;
     if (data.metadata) {
-      const showInLibrary = data.metadata.showInLibrary ?? isCourseShownInLibrary(currentCourse.metadata);
       const allowSelfEnrollment =
         nextType === 'COMPLIANCE'
           ? false
           : (data.metadata.allowSelfEnrollment ??
             data.metadata.allowNewStudent ??
             isSelfEnrollmentAllowed(currentCourse.metadata));
-      sanitizedData.metadata = { ...sanitizedData.metadata, showInLibrary, allowSelfEnrollment };
+      sanitizedData.metadata = { ...sanitizedData.metadata, allowSelfEnrollment };
     } else if (nextType === 'COMPLIANCE') {
-      const showInLibrary = isCourseShownInLibrary(currentCourse.metadata);
-      sanitizedData.metadata = { ...currentCourse.metadata, showInLibrary, allowSelfEnrollment: false };
+      sanitizedData.metadata = { ...currentCourse.metadata, allowSelfEnrollment: false };
     }
     const nextIsPublished = data.isPublished ?? currentCourse.isPublished;
     const nextDeadline = resolveCourseCertificateDeadline(currentCourse.certificate?.deadline, data.certificate);

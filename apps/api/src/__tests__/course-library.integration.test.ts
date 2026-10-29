@@ -107,11 +107,11 @@ integration('course library on isolated PostgreSQL', () => {
     await createCourse({ isPublished: false });
     await createCourse({ isTemplate: true });
     await createCourse({ status: 'DELETED' });
-    await createCourse({ metadata: { showInLibrary: false, allowSelfEnrollment: true } });
+    const open = await createCourse({ metadata: { showInLibrary: false, allowSelfEnrollment: true } });
     const result = await services.listCourseLibrary(organizationId, profileId);
     expect(result.total).toBe(2);
-    expect(result.data.map((course) => course.id).sort()).toEqual([legacy.id, assignedOnly.id].sort());
-    expect(result.data.find((course) => course.id === assignedOnly.id)?.canSelfEnroll).toBe(false);
+    expect(result.data.map((course) => course.id).sort()).toEqual([legacy.id, open.id].sort());
+    expect(result.data.find((course) => course.id === assignedOnly.id)).toBeUndefined();
     await expect(services.getCourseLibraryDetails(organizationId, profileId, legacyClosed.id)).rejects.toMatchObject({
       statusCode: 404
     });
@@ -147,7 +147,7 @@ integration('course library on isolated PostgreSQL', () => {
     await database.db.insert(database.programMember).values({ programId: program.id, profileId, roleId: 3 });
     await database.db.insert(database.cohortCourse).values({ cohortId: cohort.id, courseId: course.id });
     await database.db.insert(database.cohortMember).values({ cohortId: cohort.id, profileId, roleId: 3 });
-    expect((await services.listCourseLibrary(organizationId, profileId)).total).toBe(1);
+    expect((await services.listCourseLibrary(organizationId, profileId)).total).toBe(0);
     const enrolled = await services.enrollInternalLearner(organizationId, course.id, {
       id: profileId,
       email: userEmail
@@ -177,7 +177,7 @@ integration('course library on isolated PostgreSQL', () => {
       .select()
       .from(database.employeeCourse)
       .where(database.eq(database.employeeCourse.employeeId, employeeId));
-    expect(assignments).toHaveLength(1);
+    expect(assignments).toHaveLength(0);
     const completedAt = '2026-10-20T00:00:00.000Z';
     await database.db
       .update(database.groupmember)
@@ -233,18 +233,18 @@ integration('course library on isolated PostgreSQL', () => {
     const compliance = await createCourse({ type: 'COMPLIANCE' });
     const course = await createCourse();
     const user = { id: profileId, email: userEmail };
-    expect((await services.getCourseLibraryDetails(organizationId, profileId, compliance.id)).canSelfEnroll).toBe(
-      false
-    );
+    await expect(services.getCourseLibraryDetails(organizationId, profileId, compliance.id)).rejects.toMatchObject({
+      statusCode: 404
+    });
     await expect(services.enrollInternalLearner(organizationId, compliance.id, user)).rejects.toMatchObject({
-      statusCode: 403
+      statusCode: 404
     });
     await database.db
       .update(database.course)
       .set({ metadata: { showInLibrary: true, allowSelfEnrollment: false } })
       .where(database.eq(database.course.id, course.id));
     await expect(services.enrollInternalLearner(organizationId, course.id, user)).rejects.toMatchObject({
-      statusCode: 403
+      statusCode: 404
     });
   });
 
@@ -257,7 +257,6 @@ integration('course library on isolated PostgreSQL', () => {
       metadata: { showInLibrary: true, allowSelfEnrollment: true, goals: 'Preserved goals' }
     });
     expect(created.metadata).toMatchObject({
-      showInLibrary: false,
       allowSelfEnrollment: false,
       goals: 'Preserved goals'
     });

@@ -32,6 +32,7 @@ export const DEFAULT_PEOPLE_QUERY: ListPeopleQuery = {
 
 /** Params this page owns; anything else on the URL belongs to a different feature. */
 const OWNED_PARAMS = [
+  'audience',
   'page',
   'limit',
   'search',
@@ -55,6 +56,7 @@ export function getPeopleQueryFromSearchParams(searchParams: URLSearchParams): L
   const certificateEarned = searchParams.get('certificateEarned');
 
   return {
+    audience: readEnum(searchParams.get('audience'), ['learners', 'staff', 'all', 'history']),
     page: Number.isFinite(page) && page > 0 ? Math.floor(page) : DEFAULT_PEOPLE_QUERY.page,
     limit:
       Number.isFinite(limit) && limit > 0 ? Math.min(Math.max(Math.floor(limit), 1), 100) : DEFAULT_PEOPLE_QUERY.limit,
@@ -83,6 +85,7 @@ export function getPeopleSearchParams(
     searchParams.delete(param);
   }
 
+  if (query.audience) searchParams.set('audience', query.audience);
   if (query.page !== DEFAULT_PEOPLE_QUERY.page) searchParams.set('page', String(query.page));
   if (query.limit !== DEFAULT_PEOPLE_QUERY.limit) searchParams.set('limit', String(query.limit));
   if (query.sortBy !== DEFAULT_PEOPLE_QUERY.sortBy) searchParams.set('sortBy', query.sortBy);
@@ -124,6 +127,7 @@ export function applyPeopleView(
 ): ListPeopleQuery {
   return {
     ...DEFAULT_PEOPLE_QUERY,
+    audience: current.audience,
     search: current.search,
     sortBy: current.sortBy,
     sortOrder: current.sortOrder,

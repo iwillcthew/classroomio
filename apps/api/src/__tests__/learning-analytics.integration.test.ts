@@ -1,3 +1,4 @@
+import { createEnrollmentSource, createTrainingAssignment } from '@cio/db/queries/course/learning-access';
 import { describe, expect, it } from 'vitest';
 import { randomUUID } from 'node:crypto';
 import { db } from '@cio/db/drizzle';
@@ -20,6 +21,7 @@ async function withRollback(run: (transaction: TestTransaction) => Promise<void>
 }
 
 async function createPopulation(transaction: TestTransaction) {
+  await transaction.insert(schema.submissionstatus).values({ id: 1, label: 'Submitted' }).onConflictDoNothing();
   const profiles = await transaction.select({ id: schema.profile.id }).from(schema.profile).limit(2);
   if (profiles.length !== 2) throw new Error('Analytics integration tests require two local test profiles');
 
@@ -52,6 +54,12 @@ async function createCourse(
     .insert(schema.groupmember)
     .values({ groupId: group.id, profileId, roleId: 3 })
     .returning();
+  const enrollment = await createEnrollmentSource(course.id, profileId, 'DIRECT', transaction);
+  await createTrainingAssignment(
+    enrollment.source.id,
+    { assignedBy: null, required: true, dueDate: null, message: '' },
+    transaction
+  );
   return { courseId: course.id, memberId: member.id };
 }
 

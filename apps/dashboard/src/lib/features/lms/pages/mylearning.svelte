@@ -20,7 +20,9 @@
   let hasLoaded = $state(false);
   const coursesInProgress = $derived(learningApi.enrolledCourses.filter((course) => !isStudentCourseComplete(course)));
   const coursesComplete = $derived(learningApi.enrolledCourses.filter(isStudentCourseComplete));
-  const mandatoryCourses = $derived(coursesInProgress.filter((course) => course.type === 'COMPLIANCE'));
+  const mandatoryCourses = $derived(
+    coursesInProgress.filter((course) => course.isRequired ?? course.type === 'COMPLIANCE')
+  );
   const tabs = $derived([
     {
       label: $t('my_learning.progress'),
@@ -33,6 +35,18 @@
       count: mandatoryCourses.length,
       value: 'mandatory',
       courses: mandatoryCourses
+    },
+    {
+      label: $t('training_assignment.assigned'),
+      count: coursesInProgress.filter((course) => course.isAssigned).length,
+      value: 'assigned',
+      courses: coursesInProgress.filter((course) => course.isAssigned)
+    },
+    {
+      label: $t('training_assignment.self_selected'),
+      count: coursesInProgress.filter((course) => course.isSelfEnrolled).length,
+      value: 'self',
+      courses: coursesInProgress.filter((course) => course.isSelfEnrolled)
     },
     { label: $t('my_learning.complete'), count: coursesComplete.length, value: 'completed', courses: coursesComplete }
   ]);

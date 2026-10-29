@@ -20,14 +20,12 @@ export function isSelfEnrollmentAllowed(metadata: SelfEnrollmentMetadata | null 
 }
 
 export function isCourseShownInLibrary(metadata: SelfEnrollmentMetadata | null | undefined): boolean {
-  return metadata?.showInLibrary ?? isSelfEnrollmentAllowed(metadata);
+  return isSelfEnrollmentAllowed(metadata);
 }
 
 export function canSelfEnrollInCourse(course: {
   type: string | null;
   metadata: SelfEnrollmentMetadata | null | undefined;
 }): boolean {
-  return (
-    course.type !== 'COMPLIANCE' && isCourseShownInLibrary(course.metadata) && isSelfEnrollmentAllowed(course.metadata)
-  );
+  return course.type !== 'COMPLIANCE' && isSelfEnrollmentAllowed(course.metadata);
 }

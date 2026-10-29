@@ -1485,6 +1485,7 @@ export const groupmember = pgTable(
     email: varchar(),
     createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' }).defaultNow(),
     assignedStudentId: varchar('assigned_student_id'),
+    learningAccessManaged: boolean('learning_access_managed').default(false).notNull(),
     completedAt: timestamp('completed_at', { withTimezone: true, mode: 'string' }),
     certificateEarnedAt: timestamp('certificate_earned_at', { withTimezone: true, mode: 'string' }),
     certificationEmailSentAt: timestamp('certification_email_sent_at', { withTimezone: true, mode: 'string' })
@@ -1510,6 +1511,43 @@ export const groupmember = pgTable(
     unique('unique_group_profile').on(table.groupId, table.profileId)
   ]
 );
+
+export const courseEnrollmentSource = pgTable(
+  'course_enrollment_source',
+  {
+    id: uuid().defaultRandom().primaryKey(),
+    courseId: uuid('course_id')
+      .notNull()
+      .references(() => course.id, { onDelete: 'cascade' }),
+    profileId: uuid('profile_id')
+      .notNull()
+      .references(() => profile.id),
+    kind: varchar({ length: 20 }).notNull().$type<'SELF' | 'DIRECT' | 'LEGACY'>(),
+    createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+    revokedAt: timestamp('revoked_at', { withTimezone: true, mode: 'string' }),
+    revokedBy: uuid('revoked_by').references(() => profile.id)
+  },
+  (table) => [
+    uniqueIndex('course_enrollment_source_active_unique')
+      .on(table.courseId, table.profileId, table.kind)
+      .where(sql`${table.revokedAt} is null`),
+    index('course_enrollment_source_profile_idx').on(table.profileId, table.courseId),
+    check('course_enrollment_source_kind_check', sql`${table.kind} in ('SELF', 'DIRECT', 'LEGACY')`)
+  ]
+);
+
+export const courseTrainingAssignment = pgTable('course_training_assignment', {
+  id: uuid().defaultRandom().primaryKey(),
+  enrollmentSourceId: uuid('enrollment_source_id')
+    .notNull()
+    .unique()
+    .references(() => courseEnrollmentSource.id, { onDelete: 'cascade' }),
+  assignedBy: uuid('assigned_by').references(() => profile.id),
+  required: boolean().default(true).notNull(),
+  dueDate: timestamp('due_date', { withTimezone: true, mode: 'string' }),
+  message: text().default('').notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' }).defaultNow().notNull()
+});
 
 export const courseInvite = pgTable(
   'course_invite',

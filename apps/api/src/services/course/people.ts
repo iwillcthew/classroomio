@@ -5,6 +5,7 @@ import {
   addCourseMember,
   deleteCourseMember,
   getCourseMember,
+  hasCourseLearnerHistory,
   getPaginatedCourseMembers,
   getCourseTeachers,
   updateCourseMember
@@ -35,6 +36,7 @@ import { getCourseMemberProgressSummaries } from './member-progress';
 import { getWelcomeSessionIcs } from './session-invite';
 import type { TEventSource } from '@cio/core/services/posthog';
 import { captureLearnersEnrolled } from '@api/services/product-events';
+import { getLearningContexts, materializeCourseLearners } from '@cio/db/queries/course/learning-access';
 
 /**
  * Attaches only `stage` to a page of members.
@@ -75,12 +77,23 @@ async function addMemberStages(courseId: string, members: PaginatedCourseMember[
  */
 export async function listPaginatedCourseMembers(courseId: string, query: PaginatedCourseMembersOptions) {
   try {
+    await materializeCourseLearners(courseId);
     const result = await getPaginatedCourseMembers(courseId, query);
     const items = await addMemberStages(courseId, result.items);
+    const organizationId = await getOrgIdByCourseId(courseId);
+    const profileIds = items.flatMap((item) => (item.profileId ? [item.profileId] : []));
+    const contexts = organizationId
+      ? await getLearningContexts(organizationId, { courseIds: [courseId], profileIds })
+      : [];
+    const learners = items.map((item) => ({
+      ...item,
+      learningSources:
+        item.roleId === ROLE.STUDENT ? contexts.filter((context) => context.profileId === item.profileId) : []
+    }));
 
     return {
       ...result,
-      items
+      items: learners
     };
   } catch (error) {
     if (error instanceof AppError) {
@@ -459,6 +472,16 @@ export async function deleteMember(
   context: { actorProfileId?: string | null; reason?: string | null } = {}
 ) {
   try {
+    const existing = await getCourseMember(courseId, memberId);
+    if (existing?.roleId === ROLE.STUDENT && existing.profileId) {
+      throw new AppError('Cancel a learning source instead of deleting learner history', ErrorCodes.CONFLICT, 409);
+    }
+
+    const hasHistory = existing ? await hasCourseLearnerHistory(courseId, memberId, existing.profileId) : false;
+    if (hasHistory) {
+      throw new AppError('This identity has retained learning history', ErrorCodes.CONFLICT, 409);
+    }
+
     const progressBeforeRemoval = await readProgressAtRemoval(courseId, memberId);
     const deleted = await deleteCourseMember(courseId, memberId);
     if (!deleted) {

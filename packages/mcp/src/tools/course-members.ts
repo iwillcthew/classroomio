@@ -122,7 +122,7 @@ export function registerCourseMemberTools(server: McpServer, apiClient: Classroo
 
   server.tool(
     'delete_course_member',
-    `Permanently remove someone's access to a course, leaving their account and organization membership in place; ${COURSE_TEAM_RULE}.`,
+    `Remove a teaching-team member; learner records are retained and return a conflict; ${COURSE_TEAM_RULE}.`,
     deleteCourseMemberShape,
     DESTRUCTIVE,
     async (args) => {

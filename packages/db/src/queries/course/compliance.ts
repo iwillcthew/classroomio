@@ -41,6 +41,8 @@ export async function getStudentCourseMembersForCompliance(
   profileIds?: string[],
   dbClient: DbOrTxClient = db
 ): Promise<Array<{ member: TGroupmember; profile: CourseMemberProfile | null }>> {
+  if (profileIds?.length === 0) return [];
+
   try {
     const conditions = [
       eq(schema.course.id, courseId),

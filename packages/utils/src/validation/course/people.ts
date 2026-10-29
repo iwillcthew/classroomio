@@ -40,6 +40,7 @@ export const CoursePeopleEnrolledWindow = z.enum(['7d', '30d', '90d', '180d']);
 export type TCoursePeopleEnrolledWindow = z.infer<typeof CoursePeopleEnrolledWindow>;
 
 export const ZCourseMembersQuery = z.object({
+  audience: z.enum(['learners', 'staff', 'all', 'history']).default('learners'),
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(100).default(20),
   search: z.string().trim().max(200).optional(),

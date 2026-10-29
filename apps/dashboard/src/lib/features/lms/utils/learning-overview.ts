@@ -14,9 +14,11 @@ export function normalizeLearningSearch(value: string): string {
 }
 
 export function getLearningDeadline(course: LearningCourse): number {
-  if (course.type !== 'COMPLIANCE' || isStudentCourseComplete(course)) return Number.POSITIVE_INFINITY;
+  if (!(course.isRequired ?? course.type === 'COMPLIANCE') || isStudentCourseComplete(course))
+    return Number.POSITIVE_INFINITY;
 
-  const deadline = course.complianceDueDate ? new Date(course.complianceDueDate).getTime() : Number.NaN;
+  const deadlineValue = course.learningDueDate ?? course.complianceDueDate;
+  const deadline = deadlineValue ? new Date(deadlineValue).getTime() : Number.NaN;
   return Number.isFinite(deadline) ? deadline : Number.POSITIVE_INFINITY;
 }
 
@@ -54,7 +56,7 @@ export function filterLearningCourses(
 export function getLearningSummary(courses: UserEnrolledCourses, now: number) {
   const completed = courses.filter(isStudentCourseComplete);
   const pending = prioritizeLearningCourses(courses.filter((course) => !isStudentCourseComplete(course)));
-  const mandatory = pending.filter((course) => course.type === 'COMPLIANCE');
+  const mandatory = pending.filter((course) => course.isRequired ?? course.type === 'COMPLIANCE');
   const overdue = mandatory.filter((course) => getLearningDeadline(course) < now);
   const completedItems = courses.reduce(
     (total, course) => total + (course.progressRate ?? 0) + (course.exercisesCompleted ?? 0),

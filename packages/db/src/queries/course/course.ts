@@ -1,3 +1,9 @@
+import {
+  getLearningContexts,
+  summarizeLearningContexts,
+  courseLearnerCountSql,
+  learningMembershipSql
+} from './learning-access';
 import * as schema from '@db/schema';
 
 import {
@@ -56,6 +62,11 @@ export interface TAdminCourse extends TBaseCourse {
  * progressRate = lessons completed, exercisesCompleted = exercises submitted
  */
 export interface TStudentCourse extends TBaseCourse {
+  learningSources?: Awaited<ReturnType<typeof getLearningContexts>>;
+  isAssigned?: boolean;
+  isSelfEnrolled?: boolean;
+  isRequired?: boolean;
+  learningDueDate?: string | null;
   progressRate: number;
   exercisesCompleted: number;
   certificateEarnedAt: string | null;
@@ -510,7 +521,16 @@ export async function getCourseWithRelations(
           })
           .from(schema.group)
           .innerJoin(schema.organization, eq(schema.group.organizationId, schema.organization.id))
-          .leftJoin(schema.groupmember, eq(schema.group.id, schema.groupmember.groupId))
+          .leftJoin(
+            schema.groupmember,
+            and(
+              eq(schema.group.id, schema.groupmember.groupId),
+              or(
+                sql`${schema.groupmember.roleId} <> ${ROLE.STUDENT}`,
+                learningMembershipSql(finalCourseId, course.groupId, sql`${schema.groupmember.profileId}`)
+              )
+            )
+          )
           .leftJoin(schema.profile, eq(schema.groupmember.profileId, schema.profile.id))
           .where(eq(schema.group.id, course.groupId))
       : Promise.resolve([]);
@@ -568,7 +588,8 @@ export async function getCourseWithRelations(
 
 export async function createCourse(newCourse: TNewCourse, dbClient: DbOrTxClient = db) {
   try {
-    const metadata = { ...newCourse.metadata, showInLibrary: false, allowSelfEnrollment: false };
+    const metadata = { ...newCourse.metadata, allowSelfEnrollment: false };
+    delete metadata.showInLibrary;
     const values = { ...newCourse, metadata };
     return await dbClient.insert(schema.course).values(values).returning();
   } catch (error) {
@@ -962,11 +983,9 @@ export const getOrgCourses = async ({
       .select({
         course: schema.course,
         lessonCount: sql<number>`COUNT(DISTINCT ${schema.lesson.id})`.as('lesson_count'),
-        studentCount: sql<number>`(SELECT COUNT(*)::bigint
-          FROM ${schema.groupmember} as gm
-          WHERE ${eq(sql`gm.group_id`, schema.course.groupId)}
-          AND gm.role_id = ${ROLE.STUDENT}
-        )`.as('total_students'),
+        studentCount: courseLearnerCountSql(sql`${schema.course.id}`, sql`${schema.course.groupId}`).as(
+          'total_students'
+        ),
         exerciseCount: sql<number>`(
           SELECT COUNT(*)::bigint
           FROM ${schema.exercise} as ex
@@ -1224,19 +1243,36 @@ export const getEnrolledCourses = async ({
     const liveCourseIds = result.filter((row) => row.course.type === 'LIVE_CLASS').map((row) => row.course.id);
     const upcomingByCourse = await getUpcomingSessionsForCourseIds(liveCourseIds, { includeRunning: true });
 
-    return result.map((row) => ({
-      ...withResolvedCourseBannerImage(row.course),
-      lessonCount: Number(row.lessonCount),
-      progressRate: Number(row.progressRate),
-      exerciseCount: Number(row.exerciseCount),
-      exercisesCompleted: Number(row.exercisesCompleted),
-      certificateEarnedAt: row.certificateEarnedAt ?? null,
-      complianceStatus: row.complianceStatus ?? null,
-      complianceCycleNumber: row.complianceCycleNumber ?? null,
-      complianceDueDate: row.complianceDueDate ?? null,
-      complianceValidUntil: row.complianceValidUntil ?? null,
-      upcomingSession: upcomingByCourse.get(row.course.id) ?? null
-    }));
+    const contexts = await getLearningContexts(orgId, {
+      profileIds: [profileId],
+      courseIds: result.map((row) => row.course.id)
+    });
+    return result.map((row) => {
+      const summary = summarizeLearningContexts(contexts.filter((context) => context.courseId === row.course.id));
+      const complianceRequired =
+        row.course.type === 'COMPLIANCE' && row.complianceCycleNumber !== null && row.complianceStatus !== 'waived';
+      const isRequired = row.complianceStatus === 'waived' ? false : summary.isRequired || complianceRequired;
+      const deadlines = [summary.learningDueDate, complianceRequired ? row.complianceDueDate : null].filter(
+        (date): date is string => Boolean(date)
+      );
+      deadlines.sort((left, right) => new Date(left).getTime() - new Date(right).getTime());
+      return {
+        ...summary,
+        isRequired,
+        learningDueDate: deadlines[0] ?? null,
+        ...withResolvedCourseBannerImage(row.course),
+        lessonCount: Number(row.lessonCount),
+        progressRate: Number(row.progressRate),
+        exerciseCount: Number(row.exerciseCount),
+        exercisesCompleted: Number(row.exercisesCompleted),
+        certificateEarnedAt: row.certificateEarnedAt ?? null,
+        complianceStatus: row.complianceStatus ?? null,
+        complianceCycleNumber: row.complianceCycleNumber ?? null,
+        complianceDueDate: row.complianceDueDate ?? null,
+        complianceValidUntil: row.complianceValidUntil ?? null,
+        upcomingSession: upcomingByCourse.get(row.course.id) ?? null
+      };
+    });
   } catch (error) {
     console.error('getEnrolledCourses error:', error);
     throw new Error(`Failed to get enrolled courses: ${error instanceof Error ? error.message : 'Unknown error'}`);

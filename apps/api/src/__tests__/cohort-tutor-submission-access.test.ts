@@ -223,6 +223,10 @@ describe.skipIf(!hasDatabase)('cohort tutor submission access', () => {
     }
 
     const groupIds = [linkedGroupId, addedGroupId, ...extraGroupIds].filter(Boolean);
+    for (const courseId of courseIds) {
+      await db.delete(schema.courseCompletionRecord).where(eq(schema.courseCompletionRecord.courseId, courseId));
+    }
+
     for (const groupId of groupIds) {
       await db.delete(schema.groupmember).where(eq(schema.groupmember.groupId, groupId));
       await db.delete(schema.course).where(eq(schema.course.groupId, groupId));
@@ -266,10 +270,12 @@ describe.skipIf(!hasDatabase)('cohort tutor submission access', () => {
     expect(body.data.canGrade).toBe(false);
   });
 
-  it('hides the course shell from an org tutor who is only a cohort learner', async () => {
+  it('lets an org tutor learn through a cohort without granting grading rights', async () => {
     const response = await appAs(cohortLearnerId).request(`/course/${linkedCourseId}`);
 
-    expect(response.status).toBe(403);
+    expect(response.status).toBe(200);
+    const body = await response.json();
+    expect(body.data.canGrade).toBe(false);
   });
 
   it('lets a cohort tutor grade without a course group row or org admin', async () => {
@@ -384,6 +390,68 @@ describe.skipIf(!hasDatabase)('cohort tutor submission access', () => {
     expect(Number(studentMembership[0].roleId)).toBe(ROLE.STUDENT);
     expect(learnerMembership).toHaveLength(1);
     expect(Number(learnerMembership[0].roleId)).toBe(ROLE.STUDENT);
+  });
+
+  it('creates one compliance cycle through either cohort enrollment path and preserves it after removal', async () => {
+    const { db } = await import('@db/drizzle');
+    const schema = await import('@db/schema');
+    const { addCourseToCohortService, addCohortMembersSettled, removeCohortMemberService } = await import(
+      '@api/services/cohort/cohort'
+    );
+    const { isUserCourseMemberOrOrgAdmin } = await import('@cio/db/queries/group');
+    const [group] = await db.insert(schema.group).values({ organizationId, name: 'Compliance' }).returning();
+    extraGroupIds.push(group.id);
+    const [course] = await db
+      .insert(schema.course)
+      .values({
+        groupId: group.id,
+        title: 'Compliance via cohort',
+        description: 'Compliance',
+        type: 'COMPLIANCE',
+        isPublished: true,
+        compliance: { retakeIntervalMonths: 12, gracePeriodDays: 0, reminderDaysBefore: [7, 1], isMandatory: true },
+        certificate: { deadline: '2030-03-01T00:00:00.000Z' }
+      })
+      .returning();
+    extraCourseIds.push(course.id);
+    const [cohort] = await db.insert(schema.cohort).values({ organizationId, name: 'Compliance cohort' }).returning();
+    extraCohortIds.push(cohort.id);
+    const [member] = await db
+      .insert(schema.cohortMember)
+      .values({ cohortId: cohort.id, profileId: studentId, roleId: ROLE.STUDENT })
+      .returning();
+
+    await addCourseToCohortService(cohort.id, { courseId: course.id });
+    const [record] = await db
+      .select()
+      .from(schema.courseCompletionRecord)
+      .where(eq(schema.courseCompletionRecord.courseId, course.id));
+    expect(record).toMatchObject({ profileId: studentId, cycleNumber: 1 });
+    expect(new Date(record.dueDate).toISOString()).toBe('2030-03-01T00:00:00.000Z');
+    await db
+      .update(schema.courseCompletionRecord)
+      .set({ attempts: 2, status: 'in_progress' })
+      .where(eq(schema.courseCompletionRecord.id, record.id));
+    await removeCohortMemberService(cohort.id, member.id);
+    expect(await isUserCourseMemberOrOrgAdmin(course.id, studentId)).toBe(true);
+
+    const [result] = await addCohortMembersSettled(cohort.id, {
+      members: [{ profileId: studentId, roleId: ROLE.STUDENT }]
+    });
+    expect(result.status).toBe('fulfilled');
+    const records = await db
+      .select()
+      .from(schema.courseCompletionRecord)
+      .where(eq(schema.courseCompletionRecord.courseId, course.id));
+    expect(records).toHaveLength(1);
+    expect(records[0]).toMatchObject({
+      id: record.id,
+      attempts: 2,
+      status: 'in_progress',
+      dueDate: record.dueDate
+    });
+    const [identity] = await db.select().from(schema.groupmember).where(eq(schema.groupmember.groupId, group.id));
+    expect(identity.learningAccessManaged).toBe(true);
   });
 
   it('does not give an organization student a course tutor row', async () => {

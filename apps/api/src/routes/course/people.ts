@@ -22,8 +22,50 @@ import { getUserCourseAnalytics } from '@cio/core/services/course/course';
 import { handleError } from '@api/utils/errors';
 import { zValidator } from '@hono/zod-validator';
 import { enrollExistingCourseEmployees, listAvailableCourseEmployees } from '@api/services/course/employees';
+import { ZAssignCourseTraining, ZRevokeCourseSource } from '@cio/utils/validation/course/training-assignment';
+import {
+  assignCourseTraining,
+  cancelCourseSource,
+  listCourseLearningSources
+} from '@api/services/course/training-assignment';
 
 export const membersRouter = new Hono()
+  .get('/learning-sources', courseTeamMemberMiddleware, zValidator('param', ZCourseMembersParam), async (c) => {
+    try {
+      const data = await listCourseLearningSources(c.req.valid('param').courseId, c.get('user')!.id);
+      return c.json({ success: true, data });
+    } catch (error) {
+      return handleError(c, error, 'Failed to list learning sources');
+    }
+  })
+  .post(
+    '/training-assignments',
+    courseTeamMemberMiddleware,
+    zValidator('param', ZCourseMembersParam),
+    zValidator('json', ZAssignCourseTraining),
+    async (c) => {
+      try {
+        const data = await assignCourseTraining(c.req.valid('param').courseId, c.get('user')!.id, c.req.valid('json'));
+        return c.json({ success: true, data });
+      } catch (error) {
+        return handleError(c, error, 'Failed to assign training');
+      }
+    }
+  )
+  .delete(
+    '/learning-sources/:sourceId',
+    courseTeamMemberMiddleware,
+    zValidator('param', ZRevokeCourseSource),
+    async (c) => {
+      try {
+        const { courseId, sourceId } = c.req.valid('param');
+        const data = await cancelCourseSource(courseId, sourceId, c.get('user')!.id);
+        return c.json({ success: true, data });
+      } catch (error) {
+        return handleError(c, error, 'Failed to cancel enrollment source');
+      }
+    }
+  )
   .get(
     '/available',
     courseTeamMemberMiddleware,

@@ -199,7 +199,8 @@
                       count: heroCourse.lessonCount ?? 0
                     })}</span
                   >
-                  {#if heroCourse.type === 'COMPLIANCE'}<span class="inline-flex items-center gap-1.5"
+                  {#if heroCourse.isRequired ?? heroCourse.type === 'COMPLIANCE'}<span
+                      class="inline-flex items-center gap-1.5"
                       ><ShieldCheckIcon class="custom size-3.5" />{$t('lms_home.mandatory')}</span
                     >{/if}
                   {#if deadline}<span class="inline-flex items-center gap-1.5"

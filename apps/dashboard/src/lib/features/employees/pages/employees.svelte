@@ -532,19 +532,27 @@
     <Table.Root
       ><Table.Header
         ><Table.Row
-          ><Table.Head>{$t('employees.course')}</Table.Head><Table.Head>{$t('employees.result')}</Table.Head><Table.Head
-            >{$t('employees.score')}</Table.Head
-          ><Table.Head>{$t('employees.due')}</Table.Head><Table.Head>{$t('employees.completed')}</Table.Head></Table.Row
+          ><Table.Head>{$t('employees.course')}</Table.Head><Table.Head>{$t('training_assignment.sources')}</Table.Head
+          ><Table.Head>{$t('employees.result')}</Table.Head><Table.Head>{$t('employees.score')}</Table.Head><Table.Head
+            >{$t('employees.due')}</Table.Head
+          ><Table.Head>{$t('employees.completed')}</Table.Head></Table.Row
         ></Table.Header
       ><Table.Body
         >{#each api.details?.learning ?? [] as course, index (`${course.courseId}-${index}`)}<Table.Row
-            ><Table.Cell>{course.title}</Table.Cell><Table.Cell
-              >{$t(`employees.progress.${course.status ?? 'assigned'}`)}</Table.Cell
-            ><Table.Cell>{course.score ?? ''}</Table.Cell><Table.Cell
-              >{course.dueDate ? new Date(course.dueDate).toLocaleDateString() : ''}</Table.Cell
-            ><Table.Cell>{course.completedAt ? new Date(course.completedAt).toLocaleDateString() : ''}</Table.Cell
+            ><Table.Cell>{course.title}</Table.Cell><Table.Cell>
+              {#each course.learningSources.filter((source) => !source.revokedAt) as source (`${source.kind}:${source.sourceId}`)}
+                <p>
+                  {$t(`training_assignment.source.${source.kind}`)}{source.required
+                    ? ` · ${$t('training_assignment.required')}`
+                    : ''}
+                </p>
+              {/each}
+            </Table.Cell><Table.Cell>{$t(`employees.progress.${course.status ?? 'assigned'}`)}</Table.Cell><Table.Cell
+              >{course.score ?? ''}</Table.Cell
+            ><Table.Cell>{course.dueDate ? new Date(course.dueDate).toLocaleDateString() : ''}</Table.Cell><Table.Cell
+              >{course.completedAt ? new Date(course.completedAt).toLocaleDateString() : ''}</Table.Cell
             ></Table.Row
-          >{:else}<Table.Row><Table.Cell colspan={5}>{$t('employees.no_learning')}</Table.Cell></Table.Row
+          >{:else}<Table.Row><Table.Cell colspan={6}>{$t('employees.no_learning')}</Table.Cell></Table.Row
           >{/each}</Table.Body
       ></Table.Root
     >

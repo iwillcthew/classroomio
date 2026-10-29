@@ -8,8 +8,8 @@ describe('internal course library policy', () => {
     [{}, true],
     [{ allowNewStudent: false }, false],
     [{ allowSelfEnrollment: true, allowNewStudent: false }, true],
-    [{ showInLibrary: true, allowSelfEnrollment: false }, true],
-    [{ showInLibrary: false, allowSelfEnrollment: true }, false]
+    [{ showInLibrary: true, allowSelfEnrollment: false }, false],
+    [{ showInLibrary: false, allowSelfEnrollment: true }, true]
   ])('resolves legacy and explicit visibility: %j', (metadata, expected) => {
     expect(isCourseShownInLibrary(metadata)).toBe(expected);
   });
@@ -19,7 +19,7 @@ describe('internal course library policy', () => {
       for (const allowSelfEnrollment of [false, true]) {
         const metadata = { showInLibrary, allowSelfEnrollment };
         const course = { type, metadata };
-        expect(canSelfEnrollInCourse(course)).toBe(type !== 'COMPLIANCE' && showInLibrary && allowSelfEnrollment);
+        expect(canSelfEnrollInCourse(course)).toBe(type !== 'COMPLIANCE' && allowSelfEnrollment);
       }
     }
   });

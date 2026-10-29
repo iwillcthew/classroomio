@@ -9,6 +9,7 @@ const mocks = vi.hoisted(() => ({
   context: vi.fn(),
   insert: vi.fn(),
   assign: vi.fn(),
+  source: vi.fn(),
   email: vi.fn(),
   invalidate: vi.fn(),
   webhook: vi.fn(),
@@ -23,6 +24,10 @@ vi.mock('@cio/db/queries/course/employees', () => ({
   getCourseEmployeeContext: mocks.context,
   insertCourseEmployees: mocks.insert,
   assignEmployeeCourseRecords: mocks.assign
+}));
+vi.mock('@cio/db/queries/course/learning-access', () => ({
+  ensureLearnerMembership: async (...args: unknown[]) => (await mocks.insert(...args))[0],
+  createEnrollmentSource: mocks.source
 }));
 vi.mock('@cio/db/queries/organization', () => ({
   getEmployeeAccess: mocks.employeeAccess,
@@ -57,14 +62,12 @@ describe('internal learner enrollment', () => {
     ]);
   });
 
-  it('writes membership and employee relation in the same transaction and marks the event source', async () => {
+  it('writes self-enrollment provenance without an employee assignment and marks the event source', async () => {
     const result = await enrollInternalLearner('org', 'course', user);
     expect(result.alreadyJoined).toBe(false);
-    expect(mocks.insert).toHaveBeenCalledWith(
-      [{ groupId: 'group', profileId: 'learner', email: 'learner@example.com', roleId: 3 }],
-      transaction
-    );
-    expect(mocks.assign).toHaveBeenCalledWith(['employee'], 'course', transaction);
+    expect(mocks.insert).toHaveBeenCalledWith('group', 'learner', 'learner@example.com', transaction);
+    expect(mocks.assign).not.toHaveBeenCalled();
+    expect(mocks.source).toHaveBeenCalledWith('course', 'learner', 'SELF', transaction);
     expect(mocks.webhook).toHaveBeenCalledWith('course', expect.anything(), {
       source: { method: 'self_enroll' },
       actorProfileId: 'learner'
@@ -125,8 +128,7 @@ describe('internal learner enrollment', () => {
 
   it.each([
     { type: 'COMPLIANCE', metadata: { allowSelfEnrollment: true } },
-    { type: 'SELF_PACED', metadata: { showInLibrary: true, allowSelfEnrollment: false } },
-    { type: 'SELF_PACED', metadata: { showInLibrary: false, allowSelfEnrollment: true } }
+    { type: 'SELF_PACED', metadata: { allowSelfEnrollment: false } }
   ])('rechecks current enrollment policy under the course lock: %j', async (course) => {
     mocks.lockCourse.mockResolvedValue(course);
     await expect(enrollInternalLearner('org', 'course', user)).rejects.toMatchObject({ statusCode: 403 });

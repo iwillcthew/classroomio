@@ -1,3 +1,4 @@
+import { courseLearnerCountSql, learningMembershipSql } from '../course/learning-access';
 import {
   analyticsLoginEvents,
   and,
@@ -24,7 +25,7 @@ export function getCourseStats(orgId: string) {
     .select({
       courseId: course.id,
       courseTitle: course.title,
-      totalStudents: sql<number>`COUNT(DISTINCT ${groupmember.id})`.as('total_students'),
+      totalStudents: courseLearnerCountSql(sql`${course.id}`, sql`${course.groupId}`).as('total_students'),
       totalLessons: sql<number>`COUNT(DISTINCT ${lesson.id})`.as('total_lessons'),
       completedLessons: sql<number>`
         COUNT(DISTINCT ${lessonCompletion.id}) 
@@ -37,7 +38,14 @@ export function getCourseStats(orgId: string) {
     })
     .from(course)
     .innerJoin(group, eq(group.id, course.groupId))
-    .leftJoin(groupmember, and(eq(groupmember.groupId, group.id), eq(groupmember.roleId, 3)))
+    .leftJoin(
+      groupmember,
+      and(
+        eq(groupmember.groupId, group.id),
+        eq(groupmember.roleId, 3),
+        learningMembershipSql(sql`${course.id}`, sql`${course.groupId}`, sql`${groupmember.profileId}`)
+      )
+    )
     .leftJoin(lesson, eq(lesson.courseId, course.id))
     .leftJoin(
       lessonCompletion,
@@ -83,7 +91,14 @@ export function getRecentEnrollments(orgId: string) {
     })
     .from(course)
     .innerJoin(group, eq(group.id, course.groupId))
-    .leftJoin(groupmember, and(eq(groupmember.groupId, group.id), eq(groupmember.roleId, 3)))
+    .leftJoin(
+      groupmember,
+      and(
+        eq(groupmember.groupId, group.id),
+        eq(groupmember.roleId, 3),
+        learningMembershipSql(sql`${course.id}`, sql`${course.groupId}`, sql`${groupmember.profileId}`)
+      )
+    )
     .innerJoin(profile, eq(profile.id, groupmember.profileId))
     .where(and(eq(course.status, 'ACTIVE'), eq(group.organizationId, orgId)))
     .groupBy(profile.id, course.id, course.title, groupmember.createdAt)

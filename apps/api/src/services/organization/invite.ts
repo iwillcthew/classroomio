@@ -350,7 +350,8 @@ async function enrollOrganizationInviteUser(
         cohortGroupIds,
         [{ profileId: params.profileId, email: params.email }],
         params.roleId,
-        tx
+        tx,
+        'CONTEXT'
       );
       enrolledMembers.push(...cohortCourseMembers);
       const enrollment = await ensureComplianceEnrollmentRecordsForProfiles(courseIdsToEnroll, [params.profileId], tx);

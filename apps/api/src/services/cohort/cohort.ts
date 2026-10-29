@@ -68,6 +68,7 @@ import type { StudentMilestoneNotification } from '../organization/student-limit
 import type { TGroupmember } from '@cio/db/types';
 import type { TEventSource } from '@cio/core/services/posthog';
 import { captureLearnersEnrolled } from '@api/services/product-events';
+import { ensureComplianceEnrollmentRecordsForProfiles, emitComplianceEnrollmentEvents } from '../course/compliance';
 
 type CohortMemberEnrollment = {
   profileId: string;
@@ -95,6 +96,7 @@ async function listCohortCourseGroups(cohortId: string): Promise<CohortCourseGro
 async function enrollCohortStudentsInGroups(
   organizationId: string,
   groupIds: string[],
+  courseIds: string[],
   members: CohortMemberEnrollment[],
   source: TEventSource
 ) {
@@ -126,6 +128,7 @@ async function enrollCohortStudentsInGroups(
     studentMembers.map((member) => ({
       groupId,
       roleId: ROLE.STUDENT,
+      learningAccessManaged: true,
       profileId: member.profileId,
       email: member.email?.trim() || undefined
     }))
@@ -134,16 +137,22 @@ async function enrollCohortStudentsInGroups(
   let studentMilestoneNotification: StudentMilestoneNotification | null = null;
   let createdOrganizationMembers: TOrganizationmember[] = [];
 
-  const enrolledMembers = await db.transaction(async (tx) => {
+  const { enrolledMembers, compliance } = await db.transaction(async (tx) => {
     studentMilestoneNotification = await assertStudentCapacityOrThrow(organizationId, newStudentProfileIds.size, tx, {
       deferNotification: true
     });
     createdOrganizationMembers = await insertOrganizationMembersOnConflictDoNothing(organizationMemberRows, tx);
 
-    return insertGroupMembersOnConflictDoNothing(groupMemberRows, tx);
+    const enrolledMembers = await insertGroupMembersOnConflictDoNothing(groupMemberRows, tx);
+    const compliance = await ensureComplianceEnrollmentRecordsForProfiles(courseIds, studentProfileIds, tx);
+
+    return { enrolledMembers, compliance };
   });
 
   captureLearnersEnrolled(enrolledMembers, 'cohort', source);
+  await emitComplianceEnrollmentEvents(compliance.createdRecords).catch((error) => {
+    console.error('emitComplianceEnrollmentEvents error:', error);
+  });
 
   for (const createdMember of createdOrganizationMembers) {
     await emitOrganizationMemberWebhookEvent('organization.member.added', organizationId, createdMember);
@@ -402,6 +411,9 @@ export async function addCohortMembersSettled(
           let studentMilestoneNotification: StudentMilestoneNotification | null = null;
           let enrolledMembers: TGroupmember[] = [];
           let createdOrgMembers: TOrganizationmember[] = [];
+          let complianceRecords: Awaited<
+            ReturnType<typeof ensureComplianceEnrollmentRecordsForProfiles>
+          >['createdRecords'] = [];
           const member = await addCohortMember(
             {
               cohortId,
@@ -443,11 +455,15 @@ export async function addCohortMembersSettled(
               validCourseGroupIds.map((groupId) => ({
                 groupId,
                 roleId: ROLE.STUDENT,
+                learningAccessManaged: true,
                 profileId: member.profileId,
                 email: normalizedEmail ?? undefined
               })),
               tx
             );
+            const courseIds = courseGroups.map((courseGroup) => courseGroup.courseId);
+            const compliance = await ensureComplianceEnrollmentRecordsForProfiles(courseIds, [member.profileId], tx);
+            complianceRecords = compliance.createdRecords;
           }
 
           if (member?.profileId && (member.roleId === ROLE.ADMIN || member.roleId === ROLE.TUTOR)) {
@@ -467,10 +483,13 @@ export async function addCohortMembersSettled(
             );
           }
 
-          return { member, studentMilestoneNotification, enrolledMembers, createdOrgMembers };
+          return { member, studentMilestoneNotification, enrolledMembers, createdOrgMembers, complianceRecords };
         });
 
         captureLearnersEnrolled(transactionResult.enrolledMembers, 'cohort', source);
+        await emitComplianceEnrollmentEvents(transactionResult.complianceRecords).catch((error) => {
+          console.error('emitComplianceEnrollmentEvents error:', error);
+        });
 
         if (transactionResult.studentMilestoneNotification) {
           notifyStudentMilestone(transactionResult.studentMilestoneNotification).catch((error) => {
@@ -697,7 +716,7 @@ export async function addCourseToCohortService(
     });
 
     if (students.length > 0 && courseGroupIds.length > 0) {
-      await enrollCohortStudentsInGroups(cohort.organizationId, courseGroupIds, students, source);
+      await enrollCohortStudentsInGroups(cohort.organizationId, courseGroupIds, [data.courseId], students, source);
     }
 
     return result;

@@ -271,6 +271,21 @@
     {@const lessonSummary = `${totalLessons} ${$t('courses.course_card.lessons_number')} · ${pluralizeLabel($t('courses.course_card.exercise'), totalExercises)}`}
     <div class="flex w-full flex-col gap-3">
       {#if isLMS && !isExplore && !isCertificateView}
+        {#if 'learningSources' in course && course.learningSources?.length}
+          <div class="flex flex-wrap gap-1 text-xs">
+            {#each course.learningSources.filter((source) => !source.revokedAt) as source (`${source.kind}:${source.sourceId}`)}
+              <Badge variant="outline"
+                >{$t(`training_assignment.source.${source.kind}`)}{source.name ? ` · ${source.name}` : ''}</Badge
+              >
+            {/each}
+            {#if course.isRequired}<Badge variant="secondary">{$t('training_assignment.required')}</Badge>{/if}
+          </div>
+          {#if course.learningDueDate}
+            <p class="ui:text-muted-foreground text-xs">
+              {$t('training_assignment.deadline')}: {formatDate(course.learningDueDate)}
+            </p>
+          {/if}
+        {/if}
         <div class="flex items-center gap-3">
           <Progress value={progressRate} class="h-1.5 flex-1" />
           <span class="ui:text-foreground w-9 text-right text-xs font-semibold tabular-nums">{progressRate}%</span>

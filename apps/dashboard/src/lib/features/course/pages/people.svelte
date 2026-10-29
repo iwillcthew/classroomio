@@ -20,6 +20,7 @@
   import * as Tooltip from '@cio/ui/base/tooltip';
   import { ComingSoon, RoleBasedSecurity, TablePagination, UpgradeBanner } from '$features/ui';
   import TruncatedWithTooltip from '$features/course/components/truncated-with-tooltip.svelte';
+  import LearningSources from '$features/course/components/people/learning-sources.svelte';
   import InvitationModal from '$features/course/components/people/invitation-modal.svelte';
   import DeleteConfirmation from '$features/course/components/people/delete-confirmation.svelte';
   import { isStudentLimitReached } from '$lib/utils/store/org';
@@ -124,8 +125,6 @@
 
     loadedQueryKey = queryKey;
     isLoadingMembers = true;
-    memberRows = [];
-    pagination = null;
     untrack(() => void loadMembers(courseId, activeQuery));
   });
 
@@ -138,7 +137,10 @@
   });
 
   function refreshCurrentPage() {
-    loadedQueryKey = null;
+    const courseId = courseApi.course?.id;
+    if (!courseId) return;
+
+    void loadMembers(courseId, query);
   }
 
   function handleFilterChange(patch: Partial<ListPeopleQuery>) {
@@ -164,6 +166,7 @@
   // Stage is resolved in TypeScript after pagination, so it has no server sort key.
   const tableColumns: { label: string; sortKey?: ListPeopleQuery['sortBy']; wide?: boolean }[] = $derived([
     { label: $t('course.navItem.people.name'), sortKey: 'name' },
+    { label: $t('training_assignment.sources') },
     { label: $t('course.navItem.people.progress'), sortKey: 'progress' },
     { label: $t('course.navItem.people.stage'), wide: true },
     { label: $t('course.navItem.people.last_login_at'), sortKey: 'lastLogin' },
@@ -255,6 +258,26 @@
 <DeleteConfirmation email={member.email || (member.profile && member.profile.email)} {deletePerson} />
 
 <section class="space-y-2">
+  <div class="flex gap-2">
+    <Button
+      size="sm"
+      variant={!query.audience || query.audience === 'learners' ? 'default' : 'outline'}
+      onclick={() => handleFilterChange({ audience: 'learners', roleId: undefined })}
+      >{$t('training_assignment.learners')}</Button
+    >
+    <Button
+      size="sm"
+      variant={query.audience === 'staff' ? 'default' : 'outline'}
+      onclick={() => handleFilterChange({ audience: 'staff', roleId: undefined })}
+      >{$t('training_assignment.staff')}</Button
+    >
+    <Button
+      size="sm"
+      variant={query.audience === 'history' ? 'default' : 'outline'}
+      onclick={() => handleFilterChange({ audience: 'history', roleId: undefined })}
+      >{$t('training_assignment.history')}</Button
+    >
+  </div>
   <div class="flex flex-col items-center justify-end gap-2 md:flex-row">
     <Search
       placeholder={$t('course.navItem.people.search')}
@@ -313,13 +336,13 @@
         <Table.Body>
           {#if isLoadingMembers && memberRows.length === 0}
             <Table.Row>
-              <Table.Cell colspan={6} class="ui:text-muted-foreground py-8 text-center text-sm">
+              <Table.Cell colspan={7} class="ui:text-muted-foreground py-8 text-center text-sm">
                 {$t('course.navItem.people.invite_modal.loading')}
               </Table.Cell>
             </Table.Row>
           {:else if memberRows.length === 0}
             <Table.Row>
-              <Table.Cell colspan={6} class="ui:text-muted-foreground py-8 text-center text-sm">
+              <Table.Cell colspan={7} class="ui:text-muted-foreground py-8 text-center text-sm">
                 {$t('course.search.empty')}
               </Table.Cell>
             </Table.Row>
@@ -422,6 +445,16 @@
                   {/if}
                 </Table.Cell>
 
+                <Table.Cell>
+                  {#if isStudentMember(person)}
+                    <LearningSources
+                      courseId={courseApi.course?.id ?? ''}
+                      sources={person.learningSources}
+                      compliance={courseApi.course?.type === 'COMPLIANCE'}
+                      onChanged={refreshCurrentPage}
+                    />
+                  {/if}
+                </Table.Cell>
                 <Table.Cell class="min-w-[140px]">
                   {#if isStudentMember(person)}
                     {@const progressPercent = getMemberProgressPercent(person) ?? 0}
@@ -526,17 +559,19 @@
                               {$t('course.navItem.people.view')}
                             </DropdownMenu.Item>
                           {/if}
-                          <DropdownMenu.Item
-                            class="text-red-600"
-                            onclick={(event) => {
-                              event.stopPropagation();
-                              member = person;
-                              $deleteMemberModal.open = true;
-                            }}
-                          >
-                            <TrashIcon class="mr-2 size-4" />
-                            {$t('course.navItem.people.delete_profile')}
-                          </DropdownMenu.Item>
+                          {#if person.roleId !== 3 || !person.profileId}
+                            <DropdownMenu.Item
+                              class="text-red-600"
+                              onclick={(event) => {
+                                event.stopPropagation();
+                                member = person;
+                                $deleteMemberModal.open = true;
+                              }}
+                            >
+                              <TrashIcon class="mr-2 size-4" />
+                              {$t('course.navItem.people.delete_profile')}
+                            </DropdownMenu.Item>
+                          {/if}
                         </DropdownMenu.Content>
                       </DropdownMenu.Root>
                     {/if}

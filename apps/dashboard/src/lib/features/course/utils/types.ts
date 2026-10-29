@@ -1,4 +1,11 @@
 import { classroomio, type InferRequestType, type InferResponseType } from '$lib/utils/services/api';
+export type AssignTrainingRequest =
+  (typeof classroomio.course)[':courseId']['members']['training-assignments']['$post'];
+export type AssignTrainingPayload = InferRequestType<AssignTrainingRequest>['json'];
+export type RevokeLearningSourceRequest =
+  (typeof classroomio.course)[':courseId']['members']['learning-sources'][':sourceId']['$delete'];
+export type LearningSourcesRequest = (typeof classroomio.course)[':courseId']['members']['learning-sources']['$get'];
+export type CourseLearningSources = Extract<InferResponseType<LearningSourcesRequest>, { success: true }>['data'];
 export type AvailableCourseEmployeesRequest = (typeof classroomio.course)[':courseId']['members']['available']['$get'];
 export type AvailableCourseEmployeesSuccess = Extract<
   InferResponseType<AvailableCourseEmployeesRequest>,
@@ -435,6 +442,7 @@ export type CourseMembers = ListPeopleSuccess['data'];
 export type CourseMember = CourseMembers[number];
 export type CourseMembersPagination = ListPeopleSuccess['pagination'];
 export type ListPeopleQuery = {
+  audience?: 'learners' | 'staff' | 'all' | 'history';
   page: number;
   limit: number;
   search?: string;

@@ -63,7 +63,6 @@ export const defaultCourse: Course = {
     grading: false,
     lessonDownload: true,
     allowSelfEnrollment: false,
-    showInLibrary: false,
     isContentGroupingEnabled: true
   }
 };

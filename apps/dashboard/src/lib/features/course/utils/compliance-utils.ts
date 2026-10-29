@@ -67,6 +67,10 @@ export function getStudentCourseProgressPercent(course: StudentEnrolledCourse) {
 }
 
 export function getStudentCourseComplianceDate(course: StudentEnrolledCourse) {
+  if (course.learningDueDate && !isStudentCourseComplete(course)) {
+    return { labelKey: 'courses.course_card.due_date', value: course.learningDueDate };
+  }
+
   if (course.type !== 'COMPLIANCE') {
     return null;
   }

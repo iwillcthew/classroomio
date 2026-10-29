@@ -1,3 +1,10 @@
+import {
+  assignCourseGroups,
+  revokeEnrollmentSource,
+  getLearningContexts,
+  learningMembershipSql,
+  courseDeadlineSql
+} from '../course/learning-access';
 import { and, asc, count, eq, gt, ilike, inArray, isNull, or, sql } from 'drizzle-orm';
 import { db, type DbOrTxClient } from '@db/drizzle';
 import * as schema from '@db/schema';
@@ -218,7 +225,7 @@ export async function getEmployeeAudit(employeeId: string, client: DbOrTxClient 
     .limit(100);
 }
 
-export async function getEmployeeAssignments(employeeId: string, client: DbOrTxClient = db) {
+export async function getEmployeeAssignments(employeeId: string, client: DbOrTxClient = db, provisioning = false) {
   const courses = await client
     .select()
     .from(schema.employeeCourse)
@@ -227,7 +234,35 @@ export async function getEmployeeAssignments(employeeId: string, client: DbOrTxC
     .select()
     .from(schema.employeeCohort)
     .where(eq(schema.employeeCohort.employeeId, employeeId));
-  const courseIds = courses.map((row) => row.courseId);
+  let courseIds = courses.map((row) => row.courseId);
+  const [identity] = await client
+    .select({
+      activatedAt: schema.employee.activatedAt,
+      profileId: schema.organizationmember.profileId,
+      organizationId: schema.employee.organizationId
+    })
+    .from(schema.employee)
+    .innerJoin(schema.organizationmember, eq(schema.organizationmember.id, schema.employee.memberId))
+    .where(eq(schema.employee.id, employeeId));
+  if (!provisioning && identity?.activatedAt && identity.profileId) {
+    const direct = await client
+      .select({ courseId: schema.courseEnrollmentSource.courseId })
+      .from(schema.courseEnrollmentSource)
+      .where(
+        and(
+          eq(schema.courseEnrollmentSource.profileId, identity.profileId),
+          eq(schema.courseEnrollmentSource.kind, 'DIRECT'),
+          isNull(schema.courseEnrollmentSource.revokedAt)
+        )
+      );
+    const scoped = await client
+      .select({ id: schema.course.id })
+      .from(schema.course)
+      .innerJoin(schema.group, eq(schema.group.id, schema.course.groupId))
+      .where(eq(schema.group.organizationId, identity.organizationId));
+    const allowed = new Set(scoped.map((course) => course.id));
+    courseIds = direct.flatMap((source) => (allowed.has(source.courseId) ? [source.courseId] : []));
+  }
   const cohortIds = cohorts.map((row) => row.cohortId);
   return { courseIds, cohortIds };
 }
@@ -236,7 +271,8 @@ export async function saveEmployeeAssignments(
   employeeId: string,
   courseIds: string[],
   cohortIds: string[],
-  client: DbOrTxClient = db
+  client: DbOrTxClient = db,
+  actorId: string | null = null
 ) {
   await client.delete(schema.employeeCourse).where(eq(schema.employeeCourse.employeeId, employeeId));
   await client.delete(schema.employeeCohort).where(eq(schema.employeeCohort.employeeId, employeeId));
@@ -248,10 +284,48 @@ export async function saveEmployeeAssignments(
     await client
       .insert(schema.employeeCohort)
       .values([...new Set(cohortIds)].map((cohortId) => ({ employeeId, cohortId })));
+  const [identity] = await client
+    .select({
+      profileId: schema.organizationmember.profileId,
+      activatedAt: schema.employee.activatedAt,
+      organizationId: schema.employee.organizationId
+    })
+    .from(schema.employee)
+    .innerJoin(schema.organizationmember, eq(schema.organizationmember.id, schema.employee.memberId))
+    .where(eq(schema.employee.id, employeeId));
+  if (identity?.activatedAt && identity.profileId) {
+    const assignedGroups = await client
+      .select({ groupId: schema.course.groupId })
+      .from(schema.course)
+      .innerJoin(schema.group, eq(schema.group.id, schema.course.groupId))
+      .where(and(inArray(schema.course.id, courseIds), eq(schema.group.organizationId, identity.organizationId)));
+    const groupIds = assignedGroups.flatMap((course) => (course.groupId ? [course.groupId] : []));
+    await assignCourseGroups(groupIds, [identity.profileId], actorId, client);
+    const sources = await client
+      .select()
+      .from(schema.courseEnrollmentSource)
+      .where(
+        and(
+          eq(schema.courseEnrollmentSource.profileId, identity.profileId),
+          eq(schema.courseEnrollmentSource.kind, 'DIRECT'),
+          isNull(schema.courseEnrollmentSource.revokedAt)
+        )
+      );
+    for (const source of sources) {
+      const context = await client
+        .select({ orgId: schema.group.organizationId })
+        .from(schema.course)
+        .innerJoin(schema.group, eq(schema.group.id, schema.course.groupId))
+        .where(eq(schema.course.id, source.courseId));
+      if (context[0]?.orgId !== identity.organizationId || courseIds.includes(source.courseId)) continue;
+
+      await revokeEnrollmentSource(source.courseId, source.id, actorId ?? identity.profileId, client);
+    }
+  }
 }
 
 export async function enrollEmployee(employeeId: string, profileId: string, email: string, client: DbOrTxClient = db) {
-  const assignments = await getEmployeeAssignments(employeeId, client);
+  const assignments = await getEmployeeAssignments(employeeId, client, true);
   if (assignments.cohortIds.length) {
     await client
       .update(schema.cohortMember)
@@ -295,9 +369,15 @@ export async function enrollEmployee(employeeId: string, profileId: string, emai
       );
     await client
       .insert(schema.groupmember)
-      .values(groups.map((groupId) => ({ groupId, profileId, email, roleId: 3 })))
+      .values(groups.map((groupId) => ({ groupId, profileId, email, roleId: 3, learningAccessManaged: true })))
       .onConflictDoNothing();
   }
+  const directGroups = await client
+    .select({ groupId: schema.course.groupId })
+    .from(schema.course)
+    .where(inArray(schema.course.id, assignments.courseIds));
+  const groupIds = directGroups.flatMap((course) => (course.groupId ? [course.groupId] : []));
+  await assignCourseGroups(groupIds, [profileId], null, client);
 }
 
 export async function issueEmployeeActivation(
@@ -432,13 +512,28 @@ export async function employeeLearningReport(orgId: string, employeeId: string, 
   const score = sql<
     number | null
   >`(select score from course_completion_record where course_id = ${schema.course.id} and profile_id = ${member.profileId} order by cycle_number desc limit 1)`;
-  return client
-    .select({ courseId: schema.course.id, title: schema.course.title, status, completedAt, dueDate, score })
+  const deadline = courseDeadlineSql(sql`${schema.course.id}`, member.profileId);
+  const rows = await client
+    .select({ courseId: schema.course.id, title: schema.course.title, status, completedAt, dueDate: deadline, score })
     .from(schema.course)
     .innerJoin(schema.group, eq(schema.course.groupId, schema.group.id))
     .innerJoin(
       schema.groupmember,
       and(eq(schema.groupmember.groupId, schema.group.id), eq(schema.groupmember.profileId, member.profileId))
     )
-    .where(eq(schema.group.organizationId, orgId));
+    .where(
+      and(
+        eq(schema.group.organizationId, orgId),
+        learningMembershipSql(sql`${schema.course.id}`, sql`${schema.course.groupId}`, member.profileId)
+      )
+    );
+  const contexts = await getLearningContexts(
+    orgId,
+    { profileIds: [member.profileId], courseIds: rows.map((row) => row.courseId) },
+    client
+  );
+  return rows.map((row) => ({
+    ...row,
+    learningSources: contexts.filter((context) => context.courseId === row.courseId)
+  }));
 }

@@ -1,24 +1,12 @@
 import { and, asc, count, desc, eq, ilike, not, or, sql } from 'drizzle-orm';
 import { db, type DbOrTxClient } from '@db/drizzle';
 import * as schema from '@db/schema';
+import { learningMembershipSql } from './learning-access';
 import { ROLE } from '@cio/utils/constants';
 import { canSelfEnrollInCourse, resolveCourseBannerImage } from '@cio/utils/functions';
 
 export function courseLearningMembershipSql(profileId: string) {
-  return sql<boolean>`(
-    exists (select 1 from ${schema.groupmember} as library_member
-      where library_member.group_id = ${schema.course.groupId} and library_member.profile_id = ${profileId})
-    or exists (select 1 from ${schema.programCourse} as library_program_course
-      join ${schema.program} as library_program on library_program.id = library_program_course.program_id
-      join ${schema.programMember} as library_program_member on library_program_member.program_id = library_program.id
-      where library_program_course.course_id = ${schema.course.id} and library_program_member.profile_id = ${profileId}
-        and library_program.status = 'ACTIVE' and library_program.organization_id = ${schema.group.organizationId})
-    or exists (select 1 from ${schema.cohortCourse} as library_cohort_course
-      join ${schema.cohort} as library_cohort on library_cohort.id = library_cohort_course.cohort_id
-      join ${schema.cohortMember} as library_cohort_member on library_cohort_member.cohort_id = library_cohort.id
-      where library_cohort_course.course_id = ${schema.course.id} and library_cohort_member.profile_id = ${profileId}
-        and library_cohort.status = 'ACTIVE' and library_cohort.organization_id = ${schema.group.organizationId})
-  )`;
+  return learningMembershipSql(sql`${schema.course.id}`, sql`${schema.course.groupId}`, profileId);
 }
 
 export function courseLibraryAccessSql(profileId: string) {
@@ -32,7 +20,7 @@ export function courseLibraryAccessSql(profileId: string) {
 }
 
 function courseLibraryVisibilitySql() {
-  return sql<boolean>`COALESCE(${schema.course.metadata}->>'showInLibrary',
+  return sql<boolean>`coalesce(${schema.course.type}::text, 'SELF_PACED') <> 'COMPLIANCE' and COALESCE(
     ${schema.course.metadata}->>'allowSelfEnrollment', ${schema.course.metadata}->>'allowNewStudent', 'true') = 'true'`;
 }
 
@@ -58,7 +46,7 @@ export async function getCourseLibrary(
     eq(schema.course.status, 'ACTIVE'),
     eq(schema.course.isPublished, true),
     eq(schema.course.isTemplate, false),
-    or(visibility, access),
+    options.courseId ? or(visibility, access) : visibility,
     options.courseId ? eq(schema.course.id, options.courseId) : undefined,
     searchPattern ? ilike(schema.course.title, searchPattern) : undefined,
     options.recommended ? not(access) : undefined

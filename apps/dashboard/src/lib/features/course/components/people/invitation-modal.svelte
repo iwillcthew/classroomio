@@ -8,6 +8,8 @@
   import * as UnderlineTabs from '@cio/ui/custom/underline-tabs';
   import { Button } from '@cio/ui/base/button';
   import { CheckboxField } from '@cio/ui/custom/checkbox-field';
+  import { InputField } from '@cio/ui/custom/input-field';
+  import { TextareaField } from '@cio/ui/custom/textarea-field';
   import { MultiSelectList } from '@cio/ui/custom/multi-select-list';
   import { DebouncedSearch } from '$lib/utils/functions/debounced-search.svelte';
   import { currentOrg, currentOrgPath, isOrgAdmin } from '$lib/utils/store/org';
@@ -28,6 +30,9 @@
   const isOpen = $derived(page.url.searchParams.get('add') === 'true');
   let activeTab = $state('students');
   let sendEmail = $state(true);
+  let required = $state(true);
+  let dueDate = $state('');
+  let message = $state('');
   let loadedContext = '';
   const availableEmployees = $derived(peopleApi.availableEmployees);
   const items = $derived(
@@ -70,7 +75,12 @@
   async function assignEmployees() {
     const roleId = activeTab === 'tutors' ? ROLE.TUTOR : ROLE.STUDENT;
     const members = [...selectedIds].map((profileId) => ({ profileId, roleId }));
-    const response = await peopleApi.add(courseId, members, sendEmail);
+    const deadline = dueDate ? new Date(dueDate).toISOString() : null;
+    const payload = { profileIds: [...selectedIds], required, dueDate: deadline, message, sendEmail };
+    const response =
+      activeTab === 'students'
+        ? await peopleApi.assignTraining(courseId, payload)
+        : await peopleApi.add(courseId, members, sendEmail);
     if (!response) return;
 
     selectedIds.clear();
@@ -89,6 +99,10 @@
       activeTab = 'students';
       search.reset();
       sendEmail = true;
+      peopleApi.errors = {};
+      required = true;
+      dueDate = '';
+      message = '';
       selectedIds.clear();
       peopleApi.availableEmployees = null;
       void peopleApi.listAvailableEmployees(courseId);
@@ -106,8 +120,8 @@
 >
   <Dialog.Content class="max-h-[80vh] w-[96vw] max-w-3xl! overflow-y-auto">
     <Dialog.Header>
-      <Dialog.Title>{$t('course.employee_enrollment.title')}</Dialog.Title>
-      <Dialog.Description>{$t('course.employee_enrollment.description')}</Dialog.Description>
+      <Dialog.Title>{$t('training_assignment.title')}</Dialog.Title>
+      <Dialog.Description>{$t('training_assignment.description')}</Dialog.Description>
     </Dialog.Header>
     <UnderlineTabs.Root value={activeTab} onValueChange={changeTab}>
       <UnderlineTabs.List>
@@ -133,6 +147,33 @@
       {$t('course.employee_enrollment.manage_hint')}
       <a class="ui:text-primary underline" href={`${$currentOrgPath}/employees`}>{$t('employees.title')}</a>
     </p>
+    {#if activeTab === 'students'}
+      <CheckboxField
+        name="training-required"
+        label={$t('training_assignment.required')}
+        bind:checked={required}
+        disabled={courseApi.course?.type === 'COMPLIANCE'}
+      />
+      {#if courseApi.course?.type === 'COMPLIANCE'}
+        <p class="ui:text-muted-foreground text-sm">{$t('training_assignment.compliance_controls')}</p>
+      {:else}
+        <InputField
+          name="training-deadline"
+          type="datetime-local"
+          label={$t('training_assignment.deadline')}
+          bind:value={dueDate}
+          errorMessage={peopleApi.errors.dueDate}
+          onInput={() => delete peopleApi.errors.dueDate}
+        />
+      {/if}
+      <TextareaField
+        name="training-message"
+        label={$t('training_assignment.message')}
+        aria-label={$t('training_assignment.message')}
+        bind:value={message}
+      />
+      <p class="ui:text-muted-foreground text-sm">{$t('training_assignment.existing_hint')}</p>
+    {/if}
     <CheckboxField
       name="notify-course-employees"
       label={$t('course.employee_enrollment.notify')}
@@ -141,12 +182,13 @@
     <Dialog.Footer>
       <Button size="sm" variant="outline" onclick={closeModal}>{$t('common.cancel')}</Button>
       <Button
+        testId="training-assignment-submit"
         size="sm"
         onclick={assignEmployees}
         loading={peopleApi.isLoading}
         disabled={!selectedIds.size || peopleApi.isLoading}
       >
-        {$t('course.employee_enrollment.assign', { count: selectedIds.size })}
+        {$t(activeTab === 'students' ? 'training_assignment.title' : 'course.employee_enrollment.instructors')} ({selectedIds.size})
       </Button>
     </Dialog.Footer>
   </Dialog.Content>

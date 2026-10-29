@@ -1,19 +1,15 @@
 import { db } from '@cio/db/drizzle';
 import { getCourseLibrary, lockCourseForEnrollment } from '@cio/db/queries/course/library';
-import {
-  getCourseEmployeeContext,
-  insertCourseEmployees,
-  assignEmployeeCourseRecords
-} from '@cio/db/queries/course/employees';
+import { getCourseEmployeeContext } from '@cio/db/queries/course/employees';
 import { getEmployeeAccess, lockEmployeeOrganization } from '@cio/db/queries/organization';
 import { canSelfEnrollInCourse } from '@cio/utils/functions';
-import { ROLE } from '@cio/utils/constants';
 import type { TGetRecommendedCourses } from '@cio/utils/validation/course';
 import { invalidateOrgStats } from '@cio/core/utils/redis/org-stats-cache';
 import { emitCourseMemberAddedWebhookEvent, buildMemberSource } from '@cio/core/services/webhook/emit';
 import { captureLearnersEnrolled } from '@api/services/product-events';
 import { AppError, ErrorCodes } from '@api/utils/errors';
 import { sendCourseAccessEmail } from './employees';
+import { createEnrollmentSource, ensureLearnerMembership } from '@cio/db/queries/course/learning-access';
 
 async function assertLibraryMember(organizationId: string, profileId: string) {
   const access = await getEmployeeAccess(organizationId, profileId);
@@ -67,9 +63,7 @@ export async function enrollInternalLearner(
     }
 
     const email = user.email.trim().toLowerCase();
-    const members = [{ groupId: context.groupId, profileId: user.id, email, roleId: ROLE.STUDENT }];
-    const inserted = await insertCourseEmployees(members, transaction);
-    const member = inserted[0];
+    const member = await ensureLearnerMembership(context.groupId, user.id, email, transaction);
     if (!member) {
       const refreshed = await getCourseLibrary(organizationId, user.id, { courseId }, transaction);
       if (refreshed.data[0]?.hasAccess) return null;
@@ -81,9 +75,7 @@ export async function enrollInternalLearner(
       );
     }
 
-    if (access.employeeId) {
-      await assignEmployeeCourseRecords([access.employeeId], courseId, transaction);
-    }
+    await createEnrollmentSource(courseId, user.id, 'SELF', transaction);
 
     return member;
   });

@@ -194,7 +194,7 @@ export const v1CourseMembersRouter = new Hono()
   .delete(
     '/:memberId',
     describeRoute({
-      description: `Permanently remove someone's access to a course, leaving their account and organization membership in place; ${COURSE_TEAM_RULE}.`,
+      description: `Remove a teaching-team member while retaining learner records; ${COURSE_TEAM_RULE}.`,
       tags: ['Course Members'],
       responses: {
         200: jsonResponse('Course member removed successfully', MemberResponse),
@@ -202,7 +202,10 @@ export const v1CourseMembersRouter = new Hono()
         401: errorResponses.unauthorized,
         403: forbiddenResponse,
         429: mcpRateLimitResponse,
-        404: { description: 'Course or member not found' }
+        404: { description: 'Course or member not found' },
+        409: {
+          description: 'Learner history is retained; cancel the individual learning source from the training dashboard'
+        }
       }
     }),
     validator('param', ZPublicApiCourseMemberParam),

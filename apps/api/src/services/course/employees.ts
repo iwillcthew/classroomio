@@ -9,7 +9,7 @@ import {
 import { getCourseWithOrgData } from '@cio/db/queries/course';
 import { getEmployeeAccess, lockEmployeeOrganization } from '@cio/db/queries/organization';
 import { isCourseTeamMemberOrOrgAdmin } from '@cio/db/queries/group';
-import { buildEmailBranding, buildEmailFromName } from '@cio/email';
+import { buildEmailBranding, buildEmailFromName, escapeHtml } from '@cio/email';
 import { getDashboardBaseUrl } from '@cio/core/config/dashboard-url';
 import { invalidateOrgStats } from '@cio/core/utils/redis/org-stats-cache';
 import { emitCourseMemberAddedWebhookEvent, buildMemberSource } from '@cio/core/services/webhook/emit';
@@ -21,12 +21,18 @@ import type { TAddCourseMembers } from '@cio/utils/validation/course/people';
 import { AppError, ErrorCodes } from '@api/utils/errors';
 import { enqueueTransactionalEmail } from '@api/services/jobs';
 import { emitComplianceEnrollmentEvents, ensureComplianceEnrollmentRecordsForProfiles } from './compliance';
+import {
+  createEnrollmentSource,
+  createTrainingAssignment,
+  ensureLearnerMembership
+} from '@cio/db/queries/course/learning-access';
+import { lockCourseForEnrollment } from '@cio/db/queries/course/library';
 
 export async function listAvailableCourseEmployees(courseId: string, search?: string) {
   const context = await getCourseEmployeeContext(courseId);
   if (!context?.organizationId || !context.groupId) throw new AppError('Course not found', ErrorCodes.NOT_FOUND, 404);
 
-  return findCourseEmployees(context.organizationId, { search, excludeGroupId: context.groupId });
+  return findCourseEmployees(context.organizationId, { search });
 }
 
 export async function enrollExistingCourseEmployees(
@@ -49,6 +55,12 @@ export async function enrollExistingCourseEmployees(
     await lockEmployeeOrganization(organizationId, transaction);
     const access = await getEmployeeAccess(organizationId, actorProfileId, transaction);
     if (!access) throw new AppError('Unauthorized', ErrorCodes.UNAUTHORIZED, 403);
+
+    const course = await lockCourseForEnrollment(courseId, transaction);
+    const allowed = await isCourseTeamMemberOrOrgAdmin(courseId, actorProfileId, transaction);
+    if (!allowed || !course || course.status !== 'ACTIVE' || course.isTemplate) {
+      throw new AppError('Course unavailable', ErrorCodes.FORBIDDEN, 403);
+    }
 
     if (members.some((member) => member.roleId !== ROLE.STUDENT) && access.role !== 'ADMIN') {
       throw new AppError('Only administrators can assign instructors', ErrorCodes.UNAUTHORIZED, 403);
@@ -80,29 +92,71 @@ export async function enrollExistingCourseEmployees(
 
     const values = members.map((member) => {
       const employee = employeeByProfile.get(member.profileId!)!;
-      return { groupId, profileId: member.profileId!, roleId: member.roleId, email: employee.email };
+      return {
+        groupId,
+        profileId: member.profileId!,
+        roleId: member.roleId,
+        email: employee.email,
+        learningAccessManaged: member.roleId === ROLE.STUDENT
+      };
     });
     const addedMembers = await insertCourseEmployees(values, transaction);
-    const assignedEmployeeIds = addedMembers.flatMap((member) =>
+    const trainingNotifications = [];
+    for (const member of members) {
+      if (member.roleId !== ROLE.STUDENT) continue;
+
+      const enrollment = await createEnrollmentSource(courseId, member.profileId!, 'DIRECT', transaction);
+      if (!enrollment.created) continue;
+
+      const learner = employeeByProfile.get(member.profileId!)!;
+      const identity = await ensureLearnerMembership(groupId, member.profileId!, learner.email, transaction);
+      if (!identity) throw new AppError('Course member conflict', ErrorCodes.CONFLICT, 409);
+
+      const assignment = await createTrainingAssignment(
+        enrollment.source.id,
+        {
+          assignedBy: actorProfileId,
+          required: true,
+          dueDate: null,
+          message: ''
+        },
+        transaction
+      );
+      trainingNotifications.push({ member: identity, assignmentId: assignment!.id });
+    }
+    const assignedEmployeeIds = members.flatMap((member) =>
       member.roleId === ROLE.STUDENT ? [employeeByProfile.get(member.profileId!)!.id] : []
     );
     await assignEmployeeCourseRecords(assignedEmployeeIds, courseId, transaction);
 
-    const learnerIds = addedMembers.flatMap((member) =>
+    const learnerIds = members.flatMap((member) =>
       member.roleId === ROLE.STUDENT && member.profileId ? [member.profileId] : []
     );
     const compliance = await ensureComplianceEnrollmentRecordsForProfiles([courseId], learnerIds, transaction);
-    return { addedMembers, compliance };
+    return { addedMembers, compliance, trainingNotifications };
   });
 
-  await invalidateOrgStats(organizationId);
   captureLearnersEnrolled(result.addedMembers, 'admin', eventSource);
-  await emitComplianceEnrollmentEvents(result.compliance.createdRecords);
-  const course = sendEmail ? await getCourseWithOrgData(courseId) : null;
-  for (const member of result.addedMembers) {
-    const source = webhookSource ?? buildMemberSource('admin');
-    await emitCourseMemberAddedWebhookEvent(courseId, member, { source, actorProfileId });
-    if (course) await sendCourseAccessEmail(courseId, member, organizationId, course);
+  const source = webhookSource ?? buildMemberSource('admin');
+  const effects: Promise<unknown>[] = [
+    invalidateOrgStats(organizationId),
+    emitComplianceEnrollmentEvents(result.compliance.createdRecords)
+  ];
+  const notificationMembers = result.addedMembers.filter((member) => member.roleId !== ROLE.STUDENT);
+  notificationMembers.push(...result.trainingNotifications.map((item) => item.member));
+  for (const member of notificationMembers) {
+    effects.push(emitCourseMemberAddedWebhookEvent(courseId, member, { source, actorProfileId }));
+    if (!sendEmail) continue;
+
+    const training = result.trainingNotifications.find((item) => item.member.id === member.id);
+    const notification = training
+      ? { idempotencyKey: `training-assignment:${training.assignmentId}`, message: '' }
+      : undefined;
+    effects.push(sendCourseAccessEmail(courseId, member, organizationId, undefined, notification));
+  }
+  const outcomes = await Promise.allSettled(effects);
+  for (const outcome of outcomes) {
+    if (outcome.status === 'rejected') console.error('Course assignment follow-up failed', outcome.reason);
   }
   return result.addedMembers;
 }
@@ -111,7 +165,8 @@ export async function sendCourseAccessEmail(
   courseId: string,
   member: TGroupmember,
   organizationId: string,
-  courseInfo?: NonNullable<Awaited<ReturnType<typeof getCourseWithOrgData>>>
+  courseInfo?: NonNullable<Awaited<ReturnType<typeof getCourseWithOrgData>>>,
+  notification?: { idempotencyKey: string; message: string }
 ) {
   const course = courseInfo ?? (await getCourseWithOrgData(courseId));
   if (!course || !member.email) return;
@@ -124,6 +179,7 @@ export async function sendCourseAccessEmail(
   });
   const loginUrl = new URL(`/courses/${courseId}`, baseUrl).href;
   const from = buildEmailFromName(course.orgName || 'MP Learning');
+  const customMessage = notification?.message ? escapeHtml(notification.message).replaceAll('\n', '<br>') : undefined;
   await enqueueTransactionalEmail('studentCourseWelcome', {
     to: member.email,
     from,
@@ -131,9 +187,10 @@ export async function sendCourseAccessEmail(
       orgName: course.orgName || 'MP Transformation',
       courseName: course.courseTitle || '',
       loginUrl,
+      customMessage,
       branding
     },
-    idempotencyKey: `employee-course-access:${member.id}`,
+    idempotencyKey: notification?.idempotencyKey ?? `employee-course-access:${member.id}`,
     preference: { organizationId, recipientProfileId: member.profileId ?? undefined }
   });
 }

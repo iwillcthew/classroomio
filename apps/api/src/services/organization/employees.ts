@@ -1,3 +1,4 @@
+import { getEmployeeDirectTraining } from '@cio/db/queries/course/learning-access';
 import { createHash, randomBytes } from 'node:crypto';
 import { auth } from '@cio/db/auth';
 import { db, type DbOrTxClient } from '@cio/db/drizzle';
@@ -162,7 +163,7 @@ export async function createEmployee(orgId: string, actorId: string, input: Crea
       activatedAt
     };
     const created = await insertEmployee(values, tx);
-    await saveEmployeeAssignments(created.id, fields.courseIds, fields.cohortIds, tx);
+    await saveEmployeeAssignments(created.id, fields.courseIds, fields.cohortIds, tx, actorId);
     if (profileId && activatedAt) {
       await updateEmployeeProfile(profileId, fields.fullname, tx);
       enrollmentRecords = await enrollEmployeeLearning(orgId, created.id, profileId, fields.email, tx);
@@ -199,6 +200,14 @@ export async function editEmployee(orgId: string, actorId: string, employeeId: s
     const access = await validateEmployeeFields(orgId, actorId, fields, employeeId, tx);
     const staff = await findEmployee(orgId, employeeId, tx);
     if (!staff) rejectEmployee('missing', 404);
+    const directTraining = await getEmployeeDirectTraining(employeeId, orgId, tx);
+    if (
+      directTraining.some(
+        (assignment) => assignment.type === 'COMPLIANCE' && !fields.courseIds.includes(assignment.courseId)
+      )
+    ) {
+      rejectEmployee('forbidden', 403);
+    }
 
     if (access.role !== 'ADMIN' && !['EMPLOYEE', 'MANAGER'].includes(staff.role)) rejectEmployee('forbidden', 403);
 
@@ -219,7 +228,7 @@ export async function editEmployee(orgId: string, actorId: string, employeeId: s
     const updated = await updateEmployee(employeeId, values, tx);
     const roleId = membershipRole(fields.role);
     await updateEmployeeMember(staff.memberId, { roleId }, tx);
-    await saveEmployeeAssignments(employeeId, fields.courseIds, fields.cohortIds, tx);
+    await saveEmployeeAssignments(employeeId, fields.courseIds, fields.cohortIds, tx, actorId);
     if (identity.member?.profileId) {
       await updateEmployeeProfile(identity.member.profileId, fields.fullname, tx);
       enrollmentRecords = await enrollEmployeeLearning(orgId, employeeId, identity.member.profileId, staff.email, tx);
