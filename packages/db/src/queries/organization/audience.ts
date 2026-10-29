@@ -7,6 +7,7 @@ import { AUDIENCE_ACTIVITY_WINDOW_DAYS } from '@cio/utils/validation/organizatio
 import { ROLE } from '@cio/utils/constants';
 import { type DbOrTxClient, db } from '@db/drizzle';
 import type {
+  EmployeeListQuery,
   TAudienceActivityWindow,
   TAudienceCertificate,
   TAudienceCompletion,
@@ -200,6 +201,23 @@ function certificateCondition(orgId: string, certificate: TAudienceCertificate):
   const certificateCount = certificateCountSql(orgId);
 
   return certificate === 'earned' ? sql`${certificateCount} > 0` : sql`${certificateCount} = 0`;
+}
+
+export function employeeLearningMemberIds(orgId: string, query: EmployeeListQuery, client: DbOrTxClient = db) {
+  return client
+    .select({ id: schema.organizationmember.id })
+    .from(schema.organizationmember)
+    .leftJoin(schema.profile, eq(schema.organizationmember.profileId, schema.profile.id))
+    .leftJoinLateral(enrolmentSummaryLateral(orgId), sql`true`)
+    .where(
+      and(
+        eq(schema.organizationmember.organizationId, orgId),
+        query.enrollment === 'enrolled' ? sql`${enrolledCountSql} > 0` : undefined,
+        query.enrollment === 'not_enrolled' ? sql`${enrolledCountSql} = 0` : undefined,
+        query.completion ? completionCondition(query.completion) : undefined,
+        query.certificate ? certificateCondition(orgId, query.certificate) : undefined
+      )
+    );
 }
 
 /**

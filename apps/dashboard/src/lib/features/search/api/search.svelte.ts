@@ -173,7 +173,7 @@ function mapSearchResults(data: SearchOrgData, currentOrgPath: string): GroupedS
       id: String(member.memberId),
       title: member.name,
       subtitle: member.email,
-      url: `${currentOrgPath}/audience?search=${encodeURIComponent(member.email || member.name)}`
+      url: `${currentOrgPath}/employees?search=${encodeURIComponent(member.email || member.name)}`
     })
   );
 

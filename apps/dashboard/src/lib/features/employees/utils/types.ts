@@ -1,7 +1,11 @@
-import { classroomio, type InferResponseType } from '$lib/utils/services/api';
+import { classroomio, type InferRequestType, type InferResponseType } from '$lib/utils/services/api';
 import type { CreateEmployee, EmployeeStatus } from '@cio/utils/validation/organization';
 
 export type ListEmployeesRequest = typeof classroomio.employees.$get;
+export type EmployeeLearningFilters = Pick<
+  InferRequestType<ListEmployeesRequest>['query'],
+  'enrollment' | 'completion' | 'certificate'
+>;
 export type EmployeeList = Extract<InferResponseType<ListEmployeesRequest>, { success: true }>['data'];
 export type EmployeeRow = EmployeeList['rows'][number];
 export type EmployeeAccess = EmployeeList['access'];

@@ -1,10 +1,26 @@
 <script lang="ts">
+  import { page } from '$app/state';
+  import * as DropdownMenu from '@cio/ui/base/dropdown-menu';
+  import * as Sheet from '@cio/ui/base/sheet';
+  import SearchIcon from '@lucide/svelte/icons/search';
+  import PlusIcon from '@lucide/svelte/icons/plus';
+  import DownloadIcon from '@lucide/svelte/icons/download';
+  import UploadIcon from '@lucide/svelte/icons/upload';
+  import MoreHorizontalIcon from '@lucide/svelte/icons/ellipsis';
+  import UsersIcon from '@lucide/svelte/icons/users-round';
+  import ChevronLeftIcon from '@lucide/svelte/icons/chevron-left';
+  import ChevronRightIcon from '@lucide/svelte/icons/chevron-right';
   import { onDestroy, untrack } from 'svelte';
   import { EmployeesApi } from '../api/employees.svelte';
   import { currentOrg } from '$lib/utils/store/org';
-  import { t } from '$lib/utils/functions/translations';
+  import { t, locale } from '$lib/utils/functions/translations';
   import { DebouncedSearch } from '$lib/utils/functions/debounced-search.svelte';
-  import { EMPLOYEE_ROLES, EMPLOYEE_STATUSES, type EmployeeStatus } from '@cio/utils/validation/organization';
+  import {
+    EMPLOYEE_ROLES,
+    EMPLOYEE_STATUSES,
+    ZEmployeeList,
+    type EmployeeStatus
+  } from '@cio/utils/validation/organization';
   import * as Page from '@cio/ui/base/page';
   import * as Field from '@cio/ui/base/field';
   import * as Dialog from '@cio/ui/base/dialog';
@@ -17,7 +33,7 @@
   import { Skeleton } from '@cio/ui/base/skeleton';
 
   const api = new EmployeesApi();
-  let loadedOrgId = '';
+  let loadedLocation = '';
   const search = new DebouncedSearch({
     onApply: (value) => {
       api.search = value;
@@ -41,23 +57,59 @@
 
   $effect(() => {
     const orgId = $currentOrg.id;
-    if (!orgId || loadedOrgId === orgId) return;
+    const location = `${orgId}:${page.url.search}`;
+    if (!orgId || loadedLocation === location) return;
 
-    loadedOrgId = orgId;
+    loadedLocation = location;
+    const parameters = new URLSearchParams(page.url.search);
     untrack(() => {
       api.roster = null;
       api.options = null;
       api.details = null;
       api.editorOpen = false;
       api.detailOpen = false;
+      api.importOpen = false;
       api.message = '';
-      void api.load();
+      void initialize(parameters, location);
     });
   });
   onDestroy(() => {
     search.destroy();
     department.destroy();
   });
+
+  async function initialize(parameters: URLSearchParams, location: string) {
+    const parsed = ZEmployeeList.safeParse(Object.fromEntries(parameters));
+    const query = parsed.success ? parsed.data : ZEmployeeList.parse({});
+    api.profileId = query.profileId;
+    api.learningFilters = {
+      enrollment: query.enrollment,
+      completion: query.completion,
+      certificate: query.certificate
+    };
+    api.search = query.search;
+    api.department = query.department;
+    api.status = query.status ?? '';
+    api.page = query.page;
+    search.sync(api.search);
+    department.sync(api.department);
+    await api.load();
+    if (loadedLocation !== location) return;
+
+    if (api.profileId && api.roster?.rows[0]) await api.view(api.roster.rows[0]);
+    if (parameters.get('action') === 'import' && api.roster?.access.canManage) await openImport();
+    if (parameters.get('action') === 'create' && api.roster?.access.canManage) await api.openCreate();
+  }
+
+  function initials(fullname: string) {
+    return fullname
+      .trim()
+      .split(/\s+/)
+      .map((part) => part[0])
+      .slice(-2)
+      .join('')
+      .toUpperCase();
+  }
 
   function filterStatus(value: string) {
     api.status = value === 'ALL' ? '' : (value as EmployeeStatus);
@@ -79,21 +131,24 @@
 
 <svelte:head><title>{$t('employees.title')} · MP Learning</title></svelte:head>
 
-<Page.Root class="mx-auto w-full max-w-6xl">
-  <Page.Header>
+<Page.Root class="employee-workspace mx-auto w-full max-w-[1600px] py-6 lg:py-9">
+  <Page.Header class="gap-4">
     <Page.HeaderContent>
-      <Page.Title>{$t('employees.title')}</Page.Title>
+      <p class="employee-eyebrow">{$t('employees.workspace_label')}</p>
+      <Page.Title class="text-3xl font-semibold tracking-tight">{$t('employees.title')}</Page.Title>
       <Page.Subtitle>{$t('employees.subtitle')}</Page.Subtitle>
     </Page.HeaderContent>
     {#if api.roster}
-      <Page.Action>
-        <Button variant="secondary" disabled={api.exporting || api.isLoading} onclick={() => api.exportEmployees()}
-          >{$t('employees.export')}</Button
+      <Page.Action class="flex-wrap">
+        <Button variant="outline" disabled={api.exporting || api.isLoading} onclick={() => api.exportEmployees()}
+          ><DownloadIcon size={16} />{$t('employees.export')}</Button
         >
         {#if canManage}
-          <Button variant="secondary" onclick={openImport} disabled={api.isLoading}>{$t('employees.import')}</Button>
+          <Button variant="outline" onclick={openImport} disabled={api.isLoading}
+            ><UploadIcon size={16} />{$t('employees.import')}</Button
+          >
           <Button onclick={() => api.openCreate()} disabled={api.isLoading} testId="employee-create"
-            >{$t('employees.add')}</Button
+            ><PlusIcon size={17} />{$t('employees.add')}</Button
           >
         {/if}
       </Page.Action>
@@ -101,141 +156,214 @@
   </Page.Header>
   <Page.Body>
     {#snippet child()}
-      <div class="space-y-5">
-        {#if api.message}<p role="alert" class="ui:text-destructive text-sm">{$t(api.message)}</p>{/if}
+      <section class="employee-directory">
+        <div class="directory-heading">
+          <div>
+            <h2>{$t('employees.directory')}</h2>
+            <p>{$t('employees.directory_hint')}</p>
+          </div>
+          {#if api.roster}<span class="directory-count">{$t('employees.total', { count: api.roster.total })}</span>{/if}
+        </div>
+        <div class="directory-tabs" role="group" aria-label={$t('employees.status_label')}>
+          {#each ['ALL', ...EMPLOYEE_STATUSES] as status (status)}<button
+              type="button"
+              class:tab-active={(api.status || 'ALL') === status}
+              aria-pressed={(api.status || 'ALL') === status}
+              onclick={() => filterStatus(status)}
+              >{$t(status === 'ALL' ? 'employees.all' : `employees.status.${status}`)}</button
+            >{/each}
+        </div>
+        <div class="directory-toolbar">
+          <div class="directory-search">
+            <SearchIcon size={17} class="search-symbol" /><Input
+              id="employee-search"
+              class="pl-10"
+              aria-label={$t('employees.search')}
+              placeholder={$t('employees.search')}
+              value={search.draft}
+              oninput={(event) => search.input(event.currentTarget.value)}
+            />
+          </div>
+          <Input
+            id="employee-department-filter"
+            class="department-filter"
+            aria-label={$t('employees.department')}
+            placeholder={$t('employees.department')}
+            value={department.draft}
+            oninput={(event) => department.input(event.currentTarget.value)}
+          />
+          {#if api.profileId || api.search || api.department || api.status || Object.values(api.learningFilters).some(Boolean)}<Button
+              size="sm"
+              variant="secondary"
+              onclick={() => {
+                api.profileId = undefined;
+                api.learningFilters = {};
+                api.search = '';
+                api.department = '';
+                api.status = '';
+                api.page = 1;
+                search.reset();
+                department.reset();
+                void api.load();
+              }}>{$t('employees.clear_filters')}</Button
+            >{/if}
+        </div>
+        {#if api.learningFilters.enrollment || api.learningFilters.completion || api.learningFilters.certificate}
+          <div class="flex flex-wrap gap-2 px-6 pb-4" aria-live="polite">
+            {#if api.learningFilters.enrollment}<span class="directory-count"
+                >{$t(`audience.filter.${api.learningFilters.enrollment}`)}</span
+              >{/if}
+            {#if api.learningFilters.completion}<span class="directory-count"
+                >{$t(`audience.filter.${api.learningFilters.completion}`)}</span
+              >{/if}
+            {#if api.learningFilters.certificate}<span class="directory-count"
+                >{$t(`audience.filter.certificate_${api.learningFilters.certificate}`)}</span
+              >{/if}
+          </div>
+        {/if}
+        {#if api.message}<p role="alert" class="ui:text-destructive px-6 py-4 text-sm">{$t(api.message)}</p>{/if}
         {#if !api.roster && !api.message}
-          {#each [0, 1, 2] as index (index)}<Skeleton class="h-20 w-full" />{/each}
+          <div class="space-y-4 p-6">
+            {#each [0, 1, 2, 3] as index (index)}<Skeleton class="h-16 w-full rounded-lg" />{/each}
+          </div>
         {:else if api.roster}
-          <div class="grid gap-3 sm:grid-cols-3">
-            <Field.Field
-              ><Field.Label for="employee-search">{$t('employees.search')}</Field.Label><Input
-                id="employee-search"
-                value={search.draft}
-                oninput={(event) => search.input(event.currentTarget.value)}
-              /></Field.Field
+          <Table.Root class="employee-table">
+            <Table.Header
+              ><Table.Row
+                ><Table.Head>{$t('employees.name')}</Table.Head><Table.Head>{$t('employees.code')}</Table.Head
+                ><Table.Head>{$t('employees.department')}</Table.Head><Table.Head
+                  >{$t('employees.role_label')}</Table.Head
+                ><Table.Head>{$t('employees.status_label')}</Table.Head><Table.Head>{$t('employees.start')}</Table.Head
+                ><Table.Head class="w-16"><span class="sr-only">{$t('employees.actions')}</span></Table.Head></Table.Row
+              ></Table.Header
             >
-            <Field.Field
-              ><Field.Label for="employee-department-filter">{$t('employees.department')}</Field.Label><Input
-                id="employee-department-filter"
-                value={department.draft}
-                oninput={(event) => department.input(event.currentTarget.value)}
-              /></Field.Field
-            >
-            <Field.Field>
-              <Field.Label>{$t('employees.status_label')}</Field.Label>
-              <Select.Root type="single" value={api.status || 'ALL'} onValueChange={filterStatus}>
-                <Select.Trigger class="w-full"
-                  >{$t(api.status ? `employees.status.${api.status}` : 'employees.all')}</Select.Trigger
-                >
-                <Select.Content
-                  ><Select.Item value="ALL">{$t('employees.all')}</Select.Item
-                  >{#each EMPLOYEE_STATUSES as status (status)}<Select.Item value={status}
-                      >{$t(`employees.status.${status}`)}</Select.Item
-                    >{/each}</Select.Content
-                >
-              </Select.Root>
-            </Field.Field>
-          </div>
-          <div class="ui:border-border overflow-x-auto rounded-lg border">
-            <Table.Root>
-              <Table.Header
-                ><Table.Row>
-                  <Table.Head>{$t('employees.code')}</Table.Head><Table.Head>{$t('employees.name')}</Table.Head
-                  ><Table.Head>{$t('employees.department')}</Table.Head><Table.Head
-                    >{$t('employees.role_label')}</Table.Head
-                  ><Table.Head>{$t('employees.status_label')}</Table.Head><Table.Head
-                    >{$t('employees.actions')}</Table.Head
-                  >
-                </Table.Row></Table.Header
-              >
-              <Table.Body>
-                {#each api.roster.rows as staff (staff.id)}
-                  <Table.Row>
-                    <Table.Cell class="font-medium">{staff.employeeCode}</Table.Cell>
-                    <Table.Cell
-                      ><div>{staff.fullname}</div>
-                      <div class="ui:text-muted-foreground text-xs">{staff.email}</div></Table.Cell
-                    >
-                    <Table.Cell
-                      ><div>{staff.department}</div>
-                      <div class="ui:text-muted-foreground text-xs">{staff.jobTitle}</div></Table.Cell
-                    >
-                    <Table.Cell>{$t(`employees.role.${staff.role}`)}</Table.Cell>
-                    <Table.Cell>{$t(`employees.status.${staff.status}`)}</Table.Cell>
-                    <Table.Cell>
-                      <div class="flex flex-wrap gap-1">
-                        <Button size="sm" variant="secondary" disabled={api.isLoading} onclick={() => api.view(staff)}
-                          >{$t('employees.details')}</Button
+            <Table.Body>
+              {#each api.roster.rows as staff (staff.id)}
+                <Table.Row class="employee-row">
+                  <Table.Cell
+                    ><div class="employee-identity">
+                      <span class="employee-avatar" aria-hidden="true">{initials(staff.fullname)}</span>
+                      <div class="min-w-0">
+                        <button type="button" class="employee-name" onclick={() => api.view(staff)}
+                          >{staff.fullname}</button
                         >
-                        {#if canManage}
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            disabled={api.isLoading}
-                            onclick={() => api.openEdit(staff)}>{$t('employees.edit')}</Button
+                        <p class="employee-email">{staff.email}</p>
+                        <div class="employee-mobile-meta">
+                          <span class="employee-code">{staff.employeeCode}</span>
+                          <span class="employee-status" data-status={staff.status}
+                            ><span aria-hidden="true"></span>{$t(`employees.status.${staff.status}`)}</span
                           >
-                          {#if staff.status === 'DRAFT' || staff.status === 'INVITED'}<Button
-                              size="sm"
-                              variant="outline"
-                              disabled={api.isLoading}
-                              onclick={() => api.resend(staff)}>{$t('employees.send')}</Button
-                            >{/if}
-                          {#if staff.status === 'ACTIVE'}<Button
-                              size="sm"
-                              variant="outline"
-                              onclick={() => api.openStatus(staff, 'SUSPENDED')}>{$t('employees.suspend')}</Button
-                            >{/if}
-                          {#if staff.status === 'SUSPENDED' || staff.status === 'LEFT'}<Button
-                              size="sm"
-                              variant="outline"
-                              onclick={() => api.openStatus(staff, 'ACTIVE')}>{$t('employees.restore')}</Button
-                            >{/if}
-                          {#if staff.status !== 'LEFT'}<Button
-                              size="sm"
-                              variant="outline"
-                              onclick={() => api.openStatus(staff, 'LEFT')}>{$t('employees.leave')}</Button
-                            >{/if}
-                        {/if}
+                        </div>
                       </div>
-                    </Table.Cell>
-                  </Table.Row>
-                {:else}<Table.Row
-                    ><Table.Cell colspan={6} class="py-12 text-center">{$t('employees.empty')}</Table.Cell></Table.Row
-                  >{/each}
-              </Table.Body>
-            </Table.Root>
-          </div>
-          <div class="flex items-center justify-between gap-3">
-            <p class="ui:text-muted-foreground text-sm">{$t('employees.total', { count: api.roster.total })}</p>
-            <div class="flex gap-2">
-              <Button
-                size="sm"
+                    </div></Table.Cell
+                  >
+                  <Table.Cell><span class="employee-code">{staff.employeeCode}</span></Table.Cell>
+                  <Table.Cell
+                    ><div class="employee-department">{staff.department || $t('employees.unassigned')}</div>
+                    <p class="employee-email">{staff.jobTitle}</p></Table.Cell
+                  >
+                  <Table.Cell><span class="employee-role">{$t(`employees.role.${staff.role}`)}</span></Table.Cell>
+                  <Table.Cell
+                    ><span class="employee-status" data-status={staff.status}
+                      ><span aria-hidden="true"></span>{$t(`employees.status.${staff.status}`)}</span
+                    ></Table.Cell
+                  >
+                  <Table.Cell class="ui:text-muted-foreground text-sm whitespace-nowrap"
+                    >{staff.startDate
+                      ? new Intl.DateTimeFormat($locale, { dateStyle: 'medium' }).format(
+                          new Date(`${staff.startDate}T00:00:00`)
+                        )
+                      : '—'}</Table.Cell
+                  >
+                  <Table.Cell>
+                    <DropdownMenu.Root
+                      ><DropdownMenu.Trigger
+                        >{#snippet child({ props })}<Button
+                            {...props}
+                            variant="secondary"
+                            size="icon"
+                            aria-label={`${$t('employees.actions')} · ${staff.fullname}`}
+                            ><MoreHorizontalIcon size={18} /></Button
+                          >{/snippet}</DropdownMenu.Trigger
+                      ><DropdownMenu.Content align="end" class="w-56">
+                        <DropdownMenu.Item onclick={() => api.view(staff)}>{$t('employees.details')}</DropdownMenu.Item>
+                        {#if canManage}<DropdownMenu.Item onclick={() => api.openEdit(staff)}
+                            >{$t('employees.edit')}</DropdownMenu.Item
+                          >
+                          {#if staff.status === 'DRAFT' || staff.status === 'INVITED'}<DropdownMenu.Item
+                              disabled={api.isLoading}
+                              onclick={() => api.resend(staff)}>{$t('employees.send')}</DropdownMenu.Item
+                            >{/if}
+                          {#if staff.memberId !== $currentOrg.memberId}<DropdownMenu.Separator />
+                            {#if staff.status === 'ACTIVE'}<DropdownMenu.Item
+                                onclick={() => api.openStatus(staff, 'SUSPENDED')}
+                                >{$t('employees.suspend')}</DropdownMenu.Item
+                              >{/if}
+                            {#if staff.status === 'SUSPENDED' || staff.status === 'LEFT'}<DropdownMenu.Item
+                                onclick={() => api.openStatus(staff, 'ACTIVE')}
+                                >{$t('employees.restore')}</DropdownMenu.Item
+                              >{/if}
+                            {#if staff.status !== 'LEFT'}<DropdownMenu.Item
+                                variant="destructive"
+                                onclick={() => api.openStatus(staff, 'LEFT')}>{$t('employees.leave')}</DropdownMenu.Item
+                              >{/if}
+                          {/if}
+                        {/if}
+                      </DropdownMenu.Content></DropdownMenu.Root
+                    >
+                  </Table.Cell>
+                </Table.Row>
+              {:else}<Table.Row
+                  ><Table.Cell colspan={7}
+                    ><div class="directory-empty">
+                      <span class="empty-icon"><UsersIcon size={28} /></span>
+                      <h3>{$t('employees.empty')}</h3>
+                      <p>{$t('employees.empty_hint')}</p>
+                      {#if canManage}<Button variant="outline" onclick={() => api.openCreate()}
+                          ><PlusIcon size={16} />{$t('employees.add')}</Button
+                        >{/if}
+                    </div></Table.Cell
+                  ></Table.Row
+                >{/each}
+            </Table.Body>
+          </Table.Root>
+          <div class="directory-footer">
+            <p>{$t('employees.total', { count: api.roster.total })}</p>
+            <div class="flex items-center gap-3">
+              <span
+                >{$t('employees.page_label', {
+                  page: api.page,
+                  pages: Math.max(1, Math.ceil(api.roster.total / 25))
+                })}</span
+              ><Button
+                size="icon"
                 variant="secondary"
+                aria-label={$t('employees.previous')}
                 disabled={api.page <= 1 || api.isLoading}
                 onclick={() => {
                   api.page--;
                   void api.load();
-                }}>{$t('employees.previous')}</Button
-              >
-              <Button
-                size="sm"
+                }}><ChevronLeftIcon size={16} /></Button
+              ><Button
+                size="icon"
                 variant="secondary"
+                aria-label={$t('employees.next')}
                 disabled={api.page * 25 >= api.roster.total || api.isLoading}
                 onclick={() => {
                   api.page++;
                   void api.load();
-                }}>{$t('employees.next')}</Button
+                }}><ChevronRightIcon size={16} /></Button
               >
             </div>
           </div>
         {/if}
-      </div>
+      </section>
     {/snippet}
   </Page.Body>
 </Page.Root>
 
 <Dialog.Root bind:open={api.editorOpen}>
-  <Dialog.Content class="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
+  <Dialog.Content class="max-h-[90vh] overflow-y-auto sm:max-w-3xl">
     <Dialog.Header
       ><Dialog.Title>{$t(api.editingId ? 'employees.edit' : 'employees.add')}</Dialog.Title><Dialog.Description
         >{$t('employees.form_hint')}</Dialog.Description
@@ -521,14 +649,37 @@
   </Dialog.Content>
 </Dialog.Root>
 
-<Dialog.Root bind:open={api.detailOpen}>
-  <Dialog.Content class="max-h-[90vh] overflow-y-auto sm:max-w-3xl">
-    <Dialog.Header
-      ><Dialog.Title>{api.details?.employee.fullname}</Dialog.Title><Dialog.Description
-        >{api.details?.employee.employeeCode} · {api.details?.employee.department}</Dialog.Description
-      ></Dialog.Header
+<Sheet.Root bind:open={api.detailOpen}>
+  <Sheet.Content side="right" class="employee-profile w-full overflow-y-auto p-6 sm:max-w-3xl sm:p-8">
+    <Sheet.Header
+      ><Sheet.Title>{api.details?.employee.fullname}</Sheet.Title><Sheet.Description
+        >{api.details?.employee.employeeCode} · {api.details?.employee.department}</Sheet.Description
+      ></Sheet.Header
     >
-    <h3 class="font-semibold">{$t('employees.learning_report')}</h3>
+    {#if api.details}
+      {@const staff = api.details.employee}
+      <div class="employee-profile-summary">
+        <span class="employee-avatar" aria-hidden="true">{initials(staff.fullname)}</span>
+        <div class="min-w-0 flex-1">
+          <p class="text-sm font-medium break-all">{staff.email}</p>
+          <p class="employee-email">{staff.jobTitle || $t('employees.unassigned')}</p>
+        </div>
+        <span class="employee-status" data-status={staff.status}
+          ><span aria-hidden="true"></span>{$t(`employees.status.${staff.status}`)}</span
+        >
+      </div>
+      <dl class="grid grid-cols-2 gap-4 text-sm">
+        <div>
+          <dt class="ui:text-muted-foreground mb-1 text-xs">{$t('employees.department')}</dt>
+          <dd>{staff.department || $t('employees.unassigned')}</dd>
+        </div>
+        <div>
+          <dt class="ui:text-muted-foreground mb-1 text-xs">{$t('employees.role_label')}</dt>
+          <dd>{$t(`employees.role.${staff.role}`)}</dd>
+        </div>
+      </dl>
+    {/if}
+    <h3 class="ui:border-border mt-6 border-b pb-3 text-base font-semibold">{$t('employees.learning_report')}</h3>
     <Table.Root
       ><Table.Header
         ><Table.Row
@@ -556,7 +707,9 @@
           >{/each}</Table.Body
       ></Table.Root
     >
-    {#if canManage}<h3 class="font-semibold">{$t('employees.history')}</h3>
+    {#if canManage}<h3 class="ui:border-border mt-6 border-b pb-3 text-base font-semibold">
+        {$t('employees.history')}
+      </h3>
       <ul class="space-y-2 text-sm">
         {#each api.details?.audit ?? [] as event (event.id)}<li>
             <span class="ui:text-muted-foreground">{new Date(event.createdAt).toLocaleString()}</span> · {$t(
@@ -565,17 +718,17 @@
               · {event.reason}{/if}
           </li>{/each}
       </ul>{/if}
-    <Dialog.Footer
+    <Sheet.Footer
       ><Button
         size="sm"
         variant="outline"
         onclick={() => {
           api.detailOpen = false;
         }}>{$t('employees.close')}</Button
-      ></Dialog.Footer
+      ></Sheet.Footer
     >
-  </Dialog.Content>
-</Dialog.Root>
+  </Sheet.Content>
+</Sheet.Root>
 
 <Dialog.Root
   open={!!api.statusTarget}
@@ -613,3 +766,293 @@
     >
   </Dialog.Content>
 </Dialog.Root>
+
+<style>
+  :global(.employee-workspace) {
+    --employee-accent: #175cd3;
+  }
+  :global(.employee-workspace [data-slot='page-header']) {
+    padding-top: 0;
+  }
+  :global(.employee-profile[data-slot='sheet-content']) {
+    width: min(100%, 768px);
+    max-width: 768px;
+  }
+  .employee-eyebrow {
+    color: var(--employee-accent);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .employee-directory {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    box-shadow: 0 2px 5px rgb(15 23 42 / 3%);
+    overflow: hidden;
+  }
+  .directory-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 24px 24px 18px;
+  }
+  .directory-heading h2 {
+    font-size: 17px;
+    font-weight: 650;
+    letter-spacing: -0.02em;
+  }
+  .directory-heading p {
+    color: var(--muted-foreground);
+    font-size: 13px;
+    margin-top: 5px;
+  }
+  .directory-count {
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 5px 10px;
+    font-size: 12px;
+    white-space: nowrap;
+    color: var(--muted-foreground);
+  }
+  .directory-tabs {
+    display: flex;
+    gap: 24px;
+    padding: 0 24px;
+    overflow-x: auto;
+    border-bottom: 1px solid var(--border);
+  }
+  .directory-tabs button {
+    white-space: nowrap;
+    padding: 14px 0;
+    color: var(--muted-foreground);
+    font-size: 13px;
+    font-weight: 500;
+    border-bottom: 2px solid transparent;
+  }
+  .directory-tabs button:hover {
+    color: var(--foreground);
+  }
+  .directory-tabs button:focus-visible,
+  .employee-name:focus-visible {
+    outline: 2px solid var(--employee-accent);
+    outline-offset: 4px;
+    border-radius: 3px;
+  }
+  .directory-tabs .tab-active {
+    color: var(--employee-accent);
+    border-color: var(--employee-accent);
+  }
+  .directory-toolbar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 18px 24px;
+  }
+  .directory-search {
+    flex: 1;
+    position: relative;
+    min-width: 220px;
+    max-width: 460px;
+  }
+  .directory-search :global(.search-symbol) {
+    position: absolute;
+    z-index: 1;
+    top: 10px;
+    left: 12px;
+    color: var(--muted-foreground);
+    pointer-events: none;
+  }
+  .directory-search :global(input) {
+    padding-left: 40px;
+  }
+  .directory-toolbar :global(.department-filter) {
+    width: 210px;
+  }
+  .employee-directory :global(th) {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    height: 46px;
+    background: var(--muted);
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  .employee-directory :global(td) {
+    padding: 19px 20px;
+    vertical-align: middle;
+  }
+  .employee-identity {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 240px;
+  }
+  .employee-mobile-meta {
+    display: none;
+  }
+  .employee-profile-summary {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .employee-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #eaf1fd;
+    color: #2756a2;
+    font-size: 12px;
+    font-weight: 650;
+  }
+  .employee-name {
+    color: var(--foreground);
+    font-size: 14px;
+    font-weight: 600;
+    text-align: left;
+  }
+  .employee-name:hover {
+    color: var(--employee-accent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .employee-email {
+    font-size: 12px;
+    color: var(--muted-foreground);
+    margin-top: 4px;
+  }
+  .employee-code {
+    font-family: ui-monospace, monospace;
+    font-size: 12px;
+    color: var(--muted-foreground);
+  }
+  .employee-department {
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .employee-role {
+    font-size: 12px;
+    color: var(--muted-foreground);
+    white-space: nowrap;
+  }
+  .employee-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 11px;
+    font-weight: 550;
+    white-space: nowrap;
+    background: var(--muted);
+    color: var(--muted-foreground);
+  }
+  .employee-status > span {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+  .employee-status[data-status='ACTIVE'] {
+    background: #ecfdf3;
+    color: #087443;
+  }
+  .employee-status[data-status='INVITED'] {
+    background: #eff6ff;
+    color: #175cd3;
+  }
+  .employee-status[data-status='SUSPENDED'] {
+    background: #fffaeb;
+    color: #a15c07;
+  }
+  .employee-status[data-status='LEFT'] {
+    background: #fff1f2;
+    color: #be3455;
+  }
+  .directory-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px 24px;
+    border-top: 1px solid var(--border);
+    color: var(--muted-foreground);
+    font-size: 12px;
+  }
+  .directory-empty {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 12px;
+    padding: 56px 16px;
+    text-align: center;
+  }
+  .empty-icon {
+    padding: 16px;
+    border-radius: 16px;
+    background: var(--muted);
+    color: var(--muted-foreground);
+  }
+  .directory-empty h3 {
+    font-size: 16px;
+    font-weight: 600;
+  }
+  .directory-empty p {
+    max-width: 380px;
+    color: var(--muted-foreground);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  @media (max-width: 767px) {
+    .employee-directory :global(th:nth-child(n + 2):not(:last-child)),
+    .employee-directory :global(td:nth-child(n + 2):not(:last-child)) {
+      display: none;
+    }
+    .employee-identity {
+      min-width: 0;
+      gap: 10px;
+    }
+    .employee-directory :global(td) {
+      padding: 16px 12px;
+    }
+    .employee-email {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 210px;
+    }
+    .employee-mobile-meta {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .directory-heading,
+    .directory-toolbar,
+    .directory-footer {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+    .directory-tabs {
+      padding: 0 16px;
+      gap: 18px;
+    }
+    .directory-toolbar :global(.department-filter) {
+      width: 100%;
+    }
+    .directory-footer {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+  }
+</style>

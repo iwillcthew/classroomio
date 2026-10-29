@@ -286,7 +286,7 @@
                   ><strong class="tabular-nums">{snapshot.overdue}</strong><ArrowUpRightIcon class="size-3.5" /></a
                 >
                 <a
-                  href={`${$currentOrgPath}/audience?enrollment=not_enrolled`}
+                  href={`${$currentOrgPath}/employees?enrollment=not_enrolled`}
                   class="ui:bg-muted ui:hover:bg-accent flex items-center gap-3 rounded-lg p-3 transition-colors"
                   ><UserPlusIcon class="ui:text-muted-foreground size-4 shrink-0" /><span
                     class="min-w-0 flex-1 text-xs leading-relaxed">{$t('learning_analytics.unassigned')}</span
@@ -295,7 +295,7 @@
                   /></a
                 >
                 <a
-                  href={`${$currentOrgPath}/audience?completion=not_started`}
+                  href={`${$currentOrgPath}/employees?completion=not_started`}
                   class="ui:bg-muted ui:hover:bg-accent flex items-center gap-3 rounded-lg p-3 transition-colors"
                   ><ClockIcon class="ui:text-muted-foreground size-4 shrink-0" /><span
                     class="min-w-0 flex-1 text-xs leading-relaxed">{$t('learning_analytics.review_not_started')}</span
@@ -424,14 +424,14 @@
             {#snippet action()}<Button
                 variant="ghost"
                 size="sm"
-                href={`${$currentOrgPath}/audience`}
+                href={`${$currentOrgPath}/employees`}
                 class="ui:text-primary"
                 >{$t('learning_analytics.employee_directory')}<ArrowRightIcon class="size-3.5" /></Button
               >{/snippet}
             <ul class="ui:divide-border divide-y">
               {#each snapshot.attention as employee (employee.id)}<li>
                   <a
-                    href={`${$currentOrgPath}/audience/${employee.id}`}
+                    href={`${$currentOrgPath}/employees?profileId=${employee.id}`}
                     class="ui:hover:bg-muted/50 flex flex-wrap items-center gap-3 rounded-lg py-3 transition-colors"
                     ><UserAvatar src={employee.avatarUrl} alt={employee.fullname} class="size-8" /><span
                       class="min-w-0 flex-1 text-sm font-medium">{employee.fullname}</span

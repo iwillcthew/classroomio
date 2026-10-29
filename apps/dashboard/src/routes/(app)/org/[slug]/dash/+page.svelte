@@ -52,7 +52,7 @@
         icon: UserPlusIcon,
         titleKey: 'dashboard.quick_actions.add_learners',
         descriptionKey: 'dashboard.quick_actions.add_learners_description',
-        href: `${$currentOrgPath}/audience/import`,
+        href: `${$currentOrgPath}/employees?action=create`,
         adminOnly: true
       },
       {
@@ -145,7 +145,7 @@
             percentage: totalStudents ?? 0,
             description: $t('dashboard.total_students_description'),
             hidePercentage: true,
-            href: $isOrgAdmin ? resolve(`${$currentOrgPath}/audience`, {}) : undefined
+            href: $isOrgAdmin ? resolve(`${$currentOrgPath}/employees`, {}) : undefined
           }}
         />
         <ActivityCard
@@ -165,7 +165,7 @@
             percentage: totalCertificates ?? 0,
             description: $t('dashboard.certificates_earned_description'),
             hidePercentage: true,
-            href: $isOrgAdmin ? resolve(`${$currentOrgPath}/audience?certificate=earned`, {}) : undefined
+            href: $isOrgAdmin ? resolve(`${$currentOrgPath}/analytics`, {}) : undefined
           }}
         />
       </div>

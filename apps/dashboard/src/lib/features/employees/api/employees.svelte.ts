@@ -14,6 +14,7 @@ import type {
   EmployeeDetailsRequest,
   EmployeeImportRow,
   EmployeeList,
+  EmployeeLearningFilters,
   EmployeeOptions,
   EmployeeOptionsRequest,
   EmployeeRow,
@@ -40,6 +41,8 @@ export class EmployeesApi extends BaseApiWithErrors {
   editorOpen = $state(false);
   detailOpen = $state(false);
   message = $state('');
+  profileId = $state<string | undefined>(undefined);
+  learningFilters = $state<EmployeeLearningFilters>({});
   search = $state('');
   department = $state('');
   status = $state<EmployeeStatus | ''>('');
@@ -76,7 +79,15 @@ export class EmployeesApi extends BaseApiWithErrors {
   async load() {
     const sequence = ++this.#loadSequence;
     const status = this.status || undefined;
-    const query = { search: this.search, department: this.department, status, page: String(this.page), limit: '25' };
+    const query = {
+      ...this.learningFilters,
+      profileId: this.profileId,
+      search: this.search,
+      department: this.department,
+      status,
+      page: String(this.page),
+      limit: '25'
+    };
     const response = await this.execute<ListEmployeesRequest>({
       requestFn: () => classroomio.employees.$get({ query }),
       logContext: 'loading employees',
@@ -292,11 +303,13 @@ export class EmployeesApi extends BaseApiWithErrors {
     const search = this.search;
     const department = this.department;
     const status = this.status || undefined;
+    const learningFilters = { ...this.learningFilters };
+    const profileId = this.profileId;
     try {
       const rows: EmployeeRow[] = [];
       let page = 1;
       for (;;) {
-        const query = { search, department, status, page: String(page), limit: '100' };
+        const query = { ...learningFilters, profileId, search, department, status, page: String(page), limit: '100' };
         const response = await this.execute<ListEmployeesRequest>({
           requestFn: () => classroomio.employees.$get({ query }),
           onError: (error) => {

@@ -2227,8 +2227,8 @@
     "org_overview_description": "Training activity across MP Transformation at a glance.",
     "quick_actions": {
       "title": "Admin shortcuts",
-      "add_learners": "Add employees",
-      "add_learners_description": "Import a list or invite by email",
+      "add_learners": "Add employee",
+      "add_learners_description": "Create an account and assign learning access",
       "create_cohort": "Open a training class",
       "create_cohort_description": "Group courses and learners by programme",
       "mandatory_training": "Track mandatory training",
@@ -6749,7 +6749,14 @@
     "import_running": "Importing employees. Keep this page open.",
     "export": "Export list",
     "show_password": "Show password",
-    "hide_password": "Hide password"
+    "hide_password": "Hide password",
+    "workspace_label": "People & access",
+    "directory": "Employee directory",
+    "directory_hint": "Manage your people, their accounts and learning access in one place.",
+    "clear_filters": "Clear filters",
+    "unassigned": "Not assigned",
+    "empty_hint": "Add your first employee or adjust the filters to find the people you need.",
+    "page_label": "Page {page} of {pages}"
   },
   "training_library": {
     "enrolled": "Enrolled",

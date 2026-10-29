@@ -6779,7 +6779,14 @@
     "import_running": "Importing employees. Keep this page open.",
     "export": "Export list",
     "show_password": "Show password",
-    "hide_password": "Hide password"
+    "hide_password": "Hide password",
+    "workspace_label": "People & access",
+    "directory": "Employee directory",
+    "directory_hint": "Manage your people, their accounts and learning access in one place.",
+    "clear_filters": "Clear filters",
+    "unassigned": "Not assigned",
+    "empty_hint": "Add your first employee or adjust the filters to find the people you need.",
+    "page_label": "Page {page} of {pages}"
   },
   "training_library": {
     "enrolled": "Eingeschrieben",

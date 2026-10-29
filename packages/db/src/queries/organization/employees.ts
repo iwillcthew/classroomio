@@ -9,6 +9,7 @@ import { and, asc, count, eq, gt, ilike, inArray, isNull, or, sql } from 'drizzl
 import { db, type DbOrTxClient } from '@db/drizzle';
 import * as schema from '@db/schema';
 import type { EmployeeListQuery } from '@cio/utils/validation/organization';
+import { employeeLearningMemberIds } from './audience';
 
 export async function findEmployee(orgId: string, employeeId: string, client: DbOrTxClient = db) {
   const [row] = await client
@@ -103,8 +104,14 @@ export async function listEmployees(
 ) {
   const filters = and(
     eq(schema.employee.organizationId, orgId),
+    query.enrollment || query.completion || query.certificate
+      ? inArray(schema.employee.memberId, employeeLearningMemberIds(orgId, query, client))
+      : undefined,
+    query.profileId
+      ? sql`${schema.employee.memberId} in (select id from organizationmember where profile_id = ${query.profileId} and organization_id = ${orgId})`
+      : undefined,
     managerId ? eq(schema.employee.managerId, managerId) : undefined,
-    query.department ? eq(schema.employee.department, query.department) : undefined,
+    query.department ? ilike(schema.employee.department, `%${query.department}%`) : undefined,
     query.status ? eq(schema.employee.status, query.status) : undefined,
     query.search
       ? or(

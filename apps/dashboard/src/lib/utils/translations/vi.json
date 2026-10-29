@@ -2228,8 +2228,8 @@
     "org_overview_description": "Toàn cảnh hoạt động đào tạo của MP Transformation.",
     "quick_actions": {
       "title": "Lối tắt quản trị",
-      "add_learners": "Thêm nhân viên học",
-      "add_learners_description": "Nhập danh sách hoặc mời qua email",
+      "add_learners": "Thêm nhân viên",
+      "add_learners_description": "Cấp tài khoản và giao quyền học tập",
       "create_cohort": "Mở lớp đào tạo",
       "create_cohort_description": "Gom khóa học và học viên theo chương trình",
       "mandatory_training": "Theo dõi đào tạo bắt buộc",
@@ -6789,7 +6789,14 @@
     "import_running": "Đang nhập nhân viên. Vui lòng giữ trang này mở.",
     "export": "Xuất danh sách",
     "show_password": "Hiện mật khẩu",
-    "hide_password": "Ẩn mật khẩu"
+    "hide_password": "Ẩn mật khẩu",
+    "workspace_label": "Nhân sự & quyền truy cập",
+    "directory": "Danh sách nhân viên",
+    "directory_hint": "Quản lý hồ sơ, tài khoản và quyền học tập tại một nơi.",
+    "clear_filters": "Xóa bộ lọc",
+    "unassigned": "Chưa cập nhật",
+    "empty_hint": "Thêm nhân viên mới hoặc điều chỉnh bộ lọc để tìm người bạn cần.",
+    "page_label": "Trang {page} / {pages}"
   },
   "training_library": {
     "enrolled": "Đã tham gia",

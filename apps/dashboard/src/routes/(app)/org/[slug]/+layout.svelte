@@ -17,6 +17,7 @@
   let { data, children } = $props();
   const isSettingsRoute = $derived(/\/settings(?:\/|$)/.test(page.url.pathname));
   const isCoursesList = $derived(/\/courses\/?$/.test(page.url.pathname));
+  const contentWidth = $derived(/\/employees\/?$/.test(page.url.pathname) ? 'max-w-[1600px]' : 'max-w-6xl');
 
   function redirect(siteName: string | null) {
     if (!siteName) return;
@@ -57,7 +58,7 @@
     <div
       class={isCoursesList
         ? 'flex w-full flex-1 flex-col'
-        : 'mx-auto flex w-full max-w-6xl flex-1 flex-col gap-4 px-4 md:px-8'}
+        : `mx-auto flex w-full ${contentWidth} flex-1 flex-col gap-4 px-4 md:px-8`}
     >
       {#if data.orgName === '*'}
         <div class="grid auto-rows-min gap-4 md:grid-cols-3">

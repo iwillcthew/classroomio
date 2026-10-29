@@ -350,6 +350,95 @@ integration('employee accounts on an isolated PostgreSQL database', () => {
     return { groupId, courseId };
   }
 
+  it('resolves profile links within the organization and the manager direct-report scope', async () => {
+    const manager = await activateDraft({ role: 'MANAGER' });
+    const report = await activateDraft({ managerId: manager.id });
+    const outsider = await activateDraft();
+    const query = { search: '', department: '', page: 1, limit: 25, profileId: report.profileId };
+    const administratorResult = await services.getEmployees(organizationId, administratorId, query);
+    expect(administratorResult.rows.map((staff) => staff.id)).toEqual([report.id]);
+    const departmentResult = await services.getEmployees(organizationId, administratorId, {
+      ...query,
+      department: 'oper'
+    });
+    expect(departmentResult.rows.map((staff) => staff.id)).toEqual([report.id]);
+    const managerResult = await services.getEmployees(organizationId, manager.profileId, query);
+    expect(managerResult.rows.map((staff) => staff.id)).toEqual([report.id]);
+    const forbiddenResult = await services.getEmployees(organizationId, manager.profileId, {
+      ...query,
+      profileId: outsider.profileId
+    });
+    expect(forbiddenResult.rows).toEqual([]);
+    expect(forbiddenResult.total).toBe(0);
+    const missingResult = await services.getEmployees(organizationId, administratorId, {
+      ...query,
+      profileId: randomUUID()
+    });
+    expect(missingResult.rows).toEqual([]);
+  });
+
+  it('preserves enrollment, progress and certificate filters from retired audience links', async () => {
+    const fixture = await courseFixture();
+    const lessonId = randomUUID();
+    await database.db.insert(database.lesson).values({
+      id: lessonId,
+      courseId: fixture.courseId,
+      title: 'Onboarding lesson',
+      slug: 'onboarding-lesson',
+      order: 1
+    });
+    const assigned = await activateDraft({ courseIds: [fixture.courseId] });
+    const unassigned = await draft();
+    const query = { search: '', department: '', page: 1, limit: 25, profileId: assigned.profileId };
+    const notStarted = await services.getEmployees(organizationId, administratorId, {
+      ...query,
+      completion: 'not_started'
+    });
+    expect(notStarted.rows.map((staff) => staff.id)).toEqual([assigned.id]);
+    const notEnrolled = await services.getEmployees(organizationId, administratorId, {
+      ...query,
+      enrollment: 'not_enrolled'
+    });
+    expect(notEnrolled.rows).toEqual([]);
+    const drafts = await services.getEmployees(organizationId, administratorId, {
+      ...query,
+      profileId: undefined,
+      search: unassigned.employee.employeeCode,
+      enrollment: 'not_enrolled'
+    });
+    expect(drafts.rows.map((staff) => staff.id)).toEqual([unassigned.employee.id]);
+    await database.db
+      .insert(database.lessonCompletion)
+      .values({ lessonId, profileId: assigned.profileId, isComplete: true });
+    const finished = await services.getEmployees(organizationId, administratorId, {
+      ...query,
+      completion: 'completed'
+    });
+    expect(finished.rows.map((staff) => staff.id)).toEqual([assigned.id]);
+    const started = await services.getEmployees(organizationId, administratorId, {
+      ...query,
+      completion: 'not_started'
+    });
+    expect(started.rows).toEqual([]);
+    const noCertificate = await services.getEmployees(organizationId, administratorId, {
+      ...query,
+      certificate: 'earned'
+    });
+    expect(noCertificate.rows).toEqual([]);
+    const certificateEarnedAt = new Date().toISOString();
+    await database.db
+      .update(database.groupmember)
+      .set({ certificateEarnedAt })
+      .where(
+        database.and(
+          database.eq(database.groupmember.groupId, fixture.groupId),
+          database.eq(database.groupmember.profileId, assigned.profileId)
+        )
+      );
+    const certified = await services.getEmployees(organizationId, administratorId, { ...query, certificate: 'earned' });
+    expect(certified.rows.map((staff) => staff.id)).toEqual([assigned.id]);
+  });
+
   it('uses the saved activation template and enforced language for actual delivery', async () => {
     await database.db.execute(
       database.sql`update organization set settings = '{"language":{"enforced":true,"locale":"vi"}}'::jsonb where id = ${organizationId}`

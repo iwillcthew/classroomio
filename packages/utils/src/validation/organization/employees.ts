@@ -40,6 +40,10 @@ export const ZActivateEmployee = z.object({
 });
 export const ZEmployeeToken = ZActivateEmployee.pick({ token: true });
 export const ZEmployeeList = z.object({
+  profileId: z.uuid().optional(),
+  enrollment: z.enum(['enrolled', 'not_enrolled']).optional(),
+  completion: z.enum(['not_started', 'in_progress', 'completed']).optional(),
+  certificate: z.enum(['earned', 'not_earned']).optional(),
   search: z.string().trim().max(150).default(''),
   department: z.string().max(150).default(''),
   status: z.enum(EMPLOYEE_STATUSES).optional(),
