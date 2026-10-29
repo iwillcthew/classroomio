@@ -1054,7 +1054,7 @@
         "access": "Quando desativado, os alunos só podem entrar por um link de convite ou sendo adicionados em {people}.",
         "access_people": "Pessoas",
         "publish": "Publicar curso",
-        "determines": "Isso determina se o seu curso será exibido na sua página de destino",
+        "determines": "A publicação permite que funcionários com acesso abram o curso. Ele aparece na biblioteca apenas quando a autoinscrição está ativada. Ao retirar a publicação, o curso fica oculto para os alunos e o progresso é preservado.",
         "published": "Publicado",
         "unpublished": "Não publicado",
         "type": "Tipo de curso",

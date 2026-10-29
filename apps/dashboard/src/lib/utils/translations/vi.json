@@ -4338,7 +4338,7 @@
         "access": "Khi tắt, học viên chỉ tham gia được qua liên kết mời hoặc khi được thêm từ mục {people}.",
         "access_people": "Thành viên",
         "publish": "Xuất bản khóa học",
-        "determines": "Xác định khóa học có hiển thị trên trang giới thiệu hay không",
+        "determines": "Xuất bản cho phép nhân viên đã được cấp quyền vào học. Khóa chỉ xuất hiện trong thư viện khi bật tự đăng ký. Gỡ xuất bản sẽ ẩn khóa với học viên và giữ nguyên tiến độ.",
         "published": "Đã xuất bản",
         "unpublished": "Chưa xuất bản",
         "certificate_deadline_required": "Cần đặt hạn hoàn thành trước",

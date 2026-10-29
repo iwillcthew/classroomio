@@ -1054,7 +1054,7 @@
         "access": "Wenn deaktiviert, können Studierende nur über einen Einladungslink beitreten oder indem sie unter {people} hinzugefügt werden.",
         "access_people": "Personen",
         "publish": "Kurs veröffentlichen",
-        "determines": "Dies bestimmt, ob Ihr Kurs auf Ihrer Zielseite angezeigt wird",
+        "determines": "Nach der Veröffentlichung können Mitarbeitende mit Lernzugriff den Kurs öffnen. Er erscheint nur bei aktivierter Selbstanmeldung in der Bibliothek. Wird die Veröffentlichung aufgehoben, wird der Kurs für Lernende ausgeblendet; ihr Fortschritt bleibt erhalten.",
         "published": "Veröffentlicht",
         "unpublished": "Unveröffentlicht",
         "type": "Kurstyp",

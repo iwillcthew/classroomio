@@ -4319,7 +4319,7 @@
         "access": "Kapalıyken, öğrenciler yalnızca bir davet bağlantısı aracılığıyla veya {people}'ten eklenerek katılabilirler.",
         "access_people": "People",
         "publish": "Kursu Yayınla",
-        "determines": "Bu, kursunuzun açılış sayfanızda görüntülenip görüntülenmeyeceğini belirler",
+        "determines": "Yayınlama, öğrenim erişimi olan çalışanların kursu açmasını sağlar. Kurs, yalnızca kendi kendine kayıt etkinse kütüphanede görünür. Yayından kaldırma, kursu öğrencilerden gizler ve ilerlemelerini korur.",
         "published": "Published",
         "unpublished": "Unpublished",
         "certificate_deadline_required": "Önce Sertifika Son Tarihini Ayarla",

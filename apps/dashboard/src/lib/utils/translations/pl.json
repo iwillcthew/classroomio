@@ -1054,7 +1054,7 @@
         "access": "Gdy wyłączone, uczniowie mogą dołączyć tylko przez link z zaproszeniem lub po dodaniu w sekcji {people}.",
         "access_people": "Osoby",
         "publish": "Publikuj kurs",
-        "determines": "Od tego zależy, czy Twój kurs wyświetli się na stronie docelowej",
+        "determines": "Po opublikowaniu pracownicy z dostępem mogą otworzyć kurs. Kurs pojawia się w bibliotece tylko przy włączonych samodzielnych zapisach. Cofnięcie publikacji ukrywa kurs przed uczestnikami i zachowuje ich postępy.",
         "published": "Opublikowano",
         "unpublished": "Niepublikowane",
         "type": "Typ kursu",

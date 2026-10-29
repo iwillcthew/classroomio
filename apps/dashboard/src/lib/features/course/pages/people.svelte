@@ -16,6 +16,7 @@
   import { Chip } from '@cio/ui/custom/chip';
   import * as Avatar from '@cio/ui/base/avatar';
   import { Badge } from '@cio/ui/base/badge';
+  import { Skeleton } from '@cio/ui/base/skeleton';
   import { Progress } from '@cio/ui/base/progress';
   import * as Tooltip from '@cio/ui/base/tooltip';
   import { ComingSoon, RoleBasedSecurity, TablePagination, UpgradeBanner } from '$features/ui';
@@ -60,7 +61,6 @@
     matchPeopleView
   } from '$features/course/utils/people-query-utils';
   import PeopleFilterPopover from '$features/course/components/people/people-filter-popover.svelte';
-  import PeopleViewSwitcher from '$features/course/components/people/people-view-switcher.svelte';
 
   let member: { id?: string; email?: string; profile?: { email: string } } = $state({});
   let copiedEmail = $state<string | null>(null);
@@ -70,8 +70,6 @@
   let membersRequestId = 0;
   let loadedQueryKey: string | null = null;
 
-  // The URL owns filters, sort and pagination, so a filtered roster is shareable
-  // and the browser Back button undoes a filter change.
   const query = $derived(getPeopleQueryFromSearchParams(page.url.searchParams));
   const activeView = $derived(matchPeopleView(query));
   const activeFilterCount = $derived(countActivePeopleFilters(query));
@@ -113,8 +111,6 @@
     }
   }
 
-  // Reloads when the course or the URL query changes. loadMembers is untracked so
-  // the local search box cannot retrigger it on every keystroke.
   $effect(() => {
     const courseId = courseApi.course?.id;
     const activeQuery = query;
@@ -163,13 +159,11 @@
     void navigatePeople(clearPeopleFilters(query));
   }
 
-  // Stage is resolved in TypeScript after pagination, so it has no server sort key.
   const tableColumns: { label: string; sortKey?: ListPeopleQuery['sortBy']; wide?: boolean }[] = $derived([
     { label: $t('course.navItem.people.name'), sortKey: 'name' },
     { label: $t('training_assignment.sources') },
     { label: $t('course.navItem.people.progress'), sortKey: 'progress' },
     { label: $t('course.navItem.people.stage'), wide: true },
-    { label: $t('course.navItem.people.last_login_at'), sortKey: 'lastLogin' },
     { label: $t('course.navItem.people.enrolled_at'), sortKey: 'enrolledAt' }
   ]);
 
@@ -257,8 +251,12 @@
 
 <DeleteConfirmation email={member.email || (member.profile && member.profile.email)} {deletePerson} />
 
-<section class="space-y-2">
-  <div class="flex gap-2">
+<section class="space-y-5">
+  <div
+    class="ui:border-border flex flex-wrap gap-1 border-b pb-3"
+    role="group"
+    aria-label={$t('course.navItem.people.title')}
+  >
     <Button
       size="sm"
       variant={!query.audience || query.audience === 'learners' ? 'default' : 'outline'}
@@ -278,7 +276,7 @@
       >{$t('training_assignment.history')}</Button
     >
   </div>
-  <div class="flex flex-col items-center justify-end gap-2 md:flex-row">
+  <div class="flex flex-col items-stretch justify-between gap-3 sm:flex-row sm:items-center">
     <Search
       placeholder={$t('course.navItem.people.search')}
       value={search.draft}
@@ -294,9 +292,9 @@
     />
   </div>
 
-  <div class="overflow-x-auto rounded-md border">
+  <div class="ui:bg-card ui:border-border overflow-x-auto rounded-xl border shadow-sm" aria-busy={isLoadingMembers}>
     <Tooltip.Provider>
-      <Table.Root class="min-w-[880px]">
+      <Table.Root class="min-w-[920px]">
         <Table.Header>
           <Table.Row>
             {#each tableColumns as column (column.label)}
@@ -335,14 +333,16 @@
         </Table.Header>
         <Table.Body>
           {#if isLoadingMembers && memberRows.length === 0}
-            <Table.Row>
-              <Table.Cell colspan={7} class="ui:text-muted-foreground py-8 text-center text-sm">
-                {$t('course.navItem.people.invite_modal.loading')}
-              </Table.Cell>
-            </Table.Row>
+            {#each [0, 1, 2, 3, 4] as row (row)}
+              <Table.Row>
+                {#each [0, 1, 2, 3, 4, 5] as column (column)}
+                  <Table.Cell class="py-5"><Skeleton class="h-5 w-full" /></Table.Cell>
+                {/each}
+              </Table.Row>
+            {/each}
           {:else if memberRows.length === 0}
             <Table.Row>
-              <Table.Cell colspan={7} class="ui:text-muted-foreground py-8 text-center text-sm">
+              <Table.Cell colspan={6} class="ui:text-muted-foreground py-8 text-center text-sm">
                 {$t('course.search.empty')}
               </Table.Cell>
             </Table.Row>
@@ -354,7 +354,7 @@
                 onclick={(event) => handleRowClick(person, event)}
                 onkeydown={(event) => handleRowKeydown(person, event)}
               >
-                <Table.Cell class="min-w-[220px]">
+                <Table.Cell class="min-w-[220px] py-4">
                   {@const roleLabel = getMemberRoleLabel(person)}
                   {#if person.profile}
                     <div class="flex items-start lg:items-center">
@@ -373,7 +373,7 @@
                       </Avatar.Root>
                       <div class="flex flex-col items-start lg:flex-row lg:items-center">
                         <div class="mr-2">
-                          <p class="flex items-center gap-1.5 text-base font-normal dark:text-white">
+                          <p class="ui:dark:text-white flex items-center gap-1.5 text-sm font-semibold">
                             <span class="truncate">{person.profile.fullname}</span>
                             {#if roleLabel}
                               <Badge variant="secondary" class="shrink-0 px-1.5 py-0 text-[10px] leading-4 font-medium">
@@ -381,7 +381,7 @@
                               </Badge>
                             {/if}
                           </p>
-                          <p class="ui:text-primary line-clamp-1 text-xs">
+                          <p class="ui:text-muted-foreground line-clamp-1 text-xs">
                             {obscureMemberEmail(getEmail(person))}
                           </p>
                         </div>
@@ -449,6 +449,7 @@
                   {#if isStudentMember(person)}
                     <LearningSources
                       courseId={courseApi.course?.id ?? ''}
+                      learnerName={person.profile?.fullname ?? person.email ?? ''}
                       sources={person.learningSources}
                       compliance={courseApi.course?.type === 'COMPLIANCE'}
                       onChanged={refreshCurrentPage}
@@ -516,16 +517,6 @@
                         </div>
                       </div>
                     {/if}
-                  {:else}
-                    <span class="ui:text-muted-foreground text-sm">—</span>
-                  {/if}
-                </Table.Cell>
-
-                <Table.Cell class="min-w-[110px]">
-                  {#if isStudentMember(person)}
-                    <span class="ui:text-muted-foreground text-sm">
-                      {formatPeopleShortDate(person.lastLoginAt)}
-                    </span>
                   {:else}
                     <span class="ui:text-muted-foreground text-sm">—</span>
                   {/if}

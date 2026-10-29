@@ -1054,7 +1054,7 @@
         "access": "Når det er slået fra, kan studerende kun deltage via et invitationslink eller ved at blive tilføjet under {people}.",
         "access_people": "Personer",
         "publish": "Udgiv kursus",
-        "determines": "Dette afgør, om dit kursus vises på din landingsside",
+        "determines": "Udgivelse giver medarbejdere med adgang mulighed for at åbne kurset. Kurset vises kun i biblioteket, når selvtilmelding er aktiveret. Hvis udgivelsen ophæves, skjules kurset for deltagere, mens deres fremskridt bevares.",
         "published": "Udgivet",
         "unpublished": "Upubliceret",
         "type": "Kursustype",
