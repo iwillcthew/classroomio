@@ -1,3 +1,4 @@
+import { listCourseLibrary, getCourseLibraryDetails } from '@api/services/course/library';
 import {
   ZAssignAudienceCourses,
   ZAudienceInviteByEmail,
@@ -101,7 +102,7 @@ import { searchRouter } from '@api/routes/organization/search';
 import { tagsRouter } from '@api/routes/organization/tags';
 import { widgetsRouter } from '@api/routes/organization/widgets';
 import { zValidator } from '@hono/zod-validator';
-import { ZGetRecommendedCourses } from '@cio/utils/validation/course';
+import { ZCourseLibraryParam, ZGetRecommendedCourses } from '@cio/utils/validation/course';
 import { studentEmailTemplatesRouter } from '@api/routes/organization/email-templates';
 
 const earlyAdopterClaimRateLimit = createRateLimiter({
@@ -590,6 +591,44 @@ export const organizationRouter = new Hono()
    * Gets enrolled courses for a user in an organization (used in lms)
    * Requires authentication and organization membership
    */
+  .get(
+    '/courses/library',
+    authMiddleware,
+    orgMemberMiddleware,
+    zValidator('query', ZGetRecommendedCourses),
+    async (c) => {
+      try {
+        const query = c.req.valid('query');
+        const organizationId = c.req.header('cio-org-id')!;
+        const profileId = c.get('user')!.id;
+        const result = await listCourseLibrary(organizationId, profileId, query);
+        const page = query.page ?? 1;
+        const limit = query.limit ?? 12;
+        const total = result.total;
+        const totalPages = Math.ceil(total / limit);
+        return c.json({ success: true, data: result.data, pagination: { page, limit, total, totalPages } });
+      } catch (error) {
+        return handleError(c, error, 'Failed to fetch training library');
+      }
+    }
+  )
+  .get(
+    '/courses/library/:courseId',
+    authMiddleware,
+    orgMemberMiddleware,
+    zValidator('param', ZCourseLibraryParam),
+    async (c) => {
+      try {
+        const organizationId = c.req.header('cio-org-id')!;
+        const profileId = c.get('user')!.id;
+        const { courseId } = c.req.valid('param');
+        const course = await getCourseLibraryDetails(organizationId, profileId, courseId);
+        return c.json({ success: true, data: course });
+      } catch (error) {
+        return handleError(c, error, 'Failed to fetch course overview');
+      }
+    }
+  )
   .get('/courses/enrolled', authMiddleware, orgMemberMiddleware, async (c) => {
     try {
       const user = c.get('user')!;
@@ -626,7 +665,7 @@ export const organizationRouter = new Hono()
         const orgId = c.req.header('cio-org-id')!;
         const { data, total } = await getRecommendedCourses(orgId, user.id, limit, page, search, sort);
 
-        const resolvedLimit = limit ?? total;
+        const resolvedLimit = limit ?? 12;
         const totalPages = resolvedLimit > 0 ? Math.ceil(total / resolvedLimit) : 1;
 
         return c.json(

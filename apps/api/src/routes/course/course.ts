@@ -6,7 +6,7 @@ import {
   ZCourseDeleteParam,
   ZCourseDownloadContent,
   ZCourseDownloadParam,
-  ZCourseEnrollBody,
+  ZInternalCourseEnrollBody,
   ZCourseEnrollParam,
   ZCourseGetBySlugParam,
   ZCourseGetParam,
@@ -52,7 +52,7 @@ import { canAccessCourseSubmissions } from '@cio/db/queries/group';
 import { courseTeamMemberOrAutomationKeyMiddleware } from '@api/middlewares/course-team-member-or-automation-key';
 import { courseTeamMemberMiddleware } from '@api/middlewares/course-team-member';
 import { createRateLimiter } from '@api/middlewares/rate-limiter';
-import { enrollInCourse } from '@api/services/course/invite';
+import { enrollInternalLearner } from '@api/services/course/library';
 import { exerciseRouter } from '@api/routes/course/exercise';
 import { extractClientIp } from '@api/utils/redis/key-generators';
 import { generateCertificatePdf, generateCertificatePng, slugifyForFilename } from '@api/utils/certificate';
@@ -164,35 +164,19 @@ export const courseRouter = new Hono()
       return handleError(c, error, 'Failed to create course');
     }
   })
-  /**
-   * POST /course/:courseId/enroll
-   * Unified enrollment: free courses enroll directly; paid/invited require inviteToken.
-   */
   .post(
     '/:courseId/enroll',
     authMiddleware,
+    orgMemberMiddleware,
     enrollRateLimit,
     zValidator('param', ZCourseEnrollParam),
-    zValidator('json', ZCourseEnrollBody),
+    zValidator('json', ZInternalCourseEnrollBody),
     async (c) => {
       try {
         const { courseId } = c.req.valid('param');
-        const body = c.req.valid('json');
         const user = c.get('user')!;
-
-        const result = await enrollInCourse(
-          courseId,
-          {
-            id: user.id,
-            email: user.email,
-            emailVerified: user.emailVerified
-          },
-          body,
-          {
-            ipAddress: extractClientIp(c),
-            userAgent: c.req.header('user-agent') || null
-          }
-        );
+        const organizationId = c.req.header('cio-org-id')!;
+        const result = await enrollInternalLearner(organizationId, courseId, user);
 
         return c.json(
           {

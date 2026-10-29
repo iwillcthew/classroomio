@@ -116,8 +116,7 @@
     let navigatingAway = false;
 
     try {
-      const body = data.token ? { inviteToken: data.token } : {};
-      const result = await courseApi.enroll(data.course.id, body);
+      const result = await courseApi.enroll(data.course.id);
 
       if (!result?.data) {
         enrollmentError = courseApi.errors.general || t.get('snackbar.invite.failed_join');

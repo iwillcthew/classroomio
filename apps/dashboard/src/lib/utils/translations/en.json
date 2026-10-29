@@ -6750,5 +6750,25 @@
     "export": "Export list",
     "show_password": "Show password",
     "hide_password": "Hide password"
+  },
+  "training_library": {
+    "enrolled": "Enrolled",
+    "available_to_you": "Available to you",
+    "self_enrollment": "Self-enrollment",
+    "assigned_only": "Assigned training",
+    "goals": "Learning goals",
+    "exercise_count": "{count} exercises",
+    "start_continue": "Start / continue learning",
+    "self_enrollment_hint": "Register to add this course to My learning.",
+    "enroll": "Enroll",
+    "assigned_only_hint": "This course is assigned by the training team. Contact HR/L&D or the instructor for access.",
+    "enrollment_error": "Unable to enroll. Reload the page to check availability and try again.",
+    "back": "Back to training library",
+    "settings_visibility": "Show in the company training library",
+    "settings_visibility_hint": "Let active employees discover this published course. Existing learners keep their access when this is off.",
+    "settings_self_enrollment": "Allow employee self-enrollment",
+    "compliance_hint": "Mandatory training is assigned by the training team. Self-enrollment is unavailable.",
+    "settings_self_enrollment_hint": "Employees can enroll when this course is published and visible in the company library. Turning this off does not remove existing learners.",
+    "enrolled_success": "You have enrolled successfully."
   }
 }

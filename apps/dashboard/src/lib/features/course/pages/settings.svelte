@@ -40,7 +40,7 @@
   } from '$features/ui';
   import { Button } from '@cio/ui/base/button';
 
-  import { settings } from '$features/course/utils/settings-store';
+  import { createCourseSettings } from '$features/course/utils/settings-store';
   import Copy from '@lucide/svelte/icons/copy';
   import * as Alert from '@cio/ui/base/alert';
   import LockOpenIcon from '@lucide/svelte/icons/lock-open';
@@ -49,7 +49,12 @@
   import { t } from '$lib/utils/functions/translations';
   import { isObject } from '$lib/utils/functions/isObject';
   import { snackbar } from '$features/ui/snackbar/store';
-  import { generateSlug, isPublishedComplianceMissingDeadline, isSelfEnrollmentAllowed } from '@cio/utils/functions';
+  import {
+    generateSlug,
+    isPublishedComplianceMissingDeadline,
+    isSelfEnrollmentAllowed,
+    isCourseShownInLibrary
+  } from '@cio/utils/functions';
   import { DEFAULT_COMPLIANCE_SETTINGS } from '../utils/compliance-utils';
   import { DeleteModal } from '$features/ui';
   import { contentApi, courseApi } from '$features/course/api';
@@ -68,6 +73,7 @@
   }
 
   let { hasUnsavedChanges = $bindable(false) }: Props = $props();
+  const settings = createCourseSettings();
 
   let isLoading = $state(false);
   let isDeleting = $state(false);
@@ -202,9 +208,7 @@
       return;
     }
 
-    // Otherwise, publish normally
     $settings.isPublished = true;
-    $settings.allowSelfEnrollment = true;
     hasUnsavedChanges = true;
   }
 
@@ -264,7 +268,8 @@
         lessonTabsOrder: $settings.tabs,
         grading: $settings.grading,
         lessonDownload: $settings.lessonDownload,
-        allowSelfEnrollment: $settings.allowSelfEnrollment,
+        allowSelfEnrollment: $settings.type !== 'COMPLIANCE' && $settings.allowSelfEnrollment,
+        showInLibrary: $settings.showInLibrary,
         allowMarkdownExport: $settings.allowMarkdownExport,
         isContentGroupingEnabled: $settings.isContentGroupingEnabled,
         progressionMode: $settings.progressionMode,
@@ -334,31 +339,39 @@
 
     const isConversionFlowActive = publicConversionFlow.isActive && publicConversionFlow.courseId === course.id;
 
+    const allowSelfEnrollment = course.type !== 'COMPLIANCE' && isSelfEnrollmentAllowed(course.metadata);
+    const showInLibrary = isCourseShownInLibrary(course.metadata);
+    const callout = normalizeCallout(course.callout);
+    const reminderOffsets = resolveLiveSessionReminderOffsets(course.metadata?.liveSessionReminderOffsetsMinutes);
+    const liveSessionReminders = reminderOffsets.map(createReminderRow);
+
     untrack(() => {
-      settings.set({
-        courseTitle: course.title,
-        type: isConversionFlowActive
-          ? ('PUBLIC' as TCourseType)
-          : (course.type as TCourseType) || ('SELF_PACED' as TCourseType),
-        courseDescription: course.description,
-        bannerImage: course.bannerImage || '',
-        tabs: course.metadata?.lessonTabsOrder || $settings.tabs,
-        grading: !!course.metadata?.grading,
-        lessonDownload: !!course.metadata?.lessonDownload,
-        allowMarkdownExport: !!course.metadata?.allowMarkdownExport,
-        isPublished: !!course.isPublished,
-        allowSelfEnrollment: isSelfEnrollmentAllowed(course.metadata),
-        isContentGroupingEnabled: course.metadata?.isContentGroupingEnabled ?? true,
-        progressionMode: course.metadata?.progressionMode ?? 'free',
-        commentsEnabled: course.metadata?.commentsEnabled ?? true,
-        callout: normalizeCallout(course.callout),
-        welcomeEmailMessage: course.metadata?.welcomeEmailMessage ?? '',
-        liveSessionReminders: resolveLiveSessionReminderOffsets(course.metadata?.liveSessionReminderOffsetsMinutes).map(
-          createReminderRow
-        ),
-        certificate: {
-          deadline: course.certificate?.deadline ?? null
-        }
+      settings.update((current) => {
+        Object.assign(current, {
+          courseTitle: course.title,
+          type: isConversionFlowActive
+            ? ('PUBLIC' as TCourseType)
+            : (course.type as TCourseType) || ('SELF_PACED' as TCourseType),
+          courseDescription: course.description,
+          bannerImage: course.bannerImage || '',
+          tabs: course.metadata?.lessonTabsOrder || $settings.tabs,
+          grading: !!course.metadata?.grading,
+          lessonDownload: !!course.metadata?.lessonDownload,
+          allowMarkdownExport: !!course.metadata?.allowMarkdownExport,
+          isPublished: !!course.isPublished,
+          allowSelfEnrollment,
+          showInLibrary,
+          isContentGroupingEnabled: course.metadata?.isContentGroupingEnabled ?? true,
+          progressionMode: course.metadata?.progressionMode ?? 'free',
+          commentsEnabled: course.metadata?.commentsEnabled ?? true,
+          callout,
+          welcomeEmailMessage: course.metadata?.welcomeEmailMessage ?? '',
+          liveSessionReminders,
+          certificate: {
+            deadline: course.certificate?.deadline ?? null
+          }
+        });
+        return current;
       });
     });
   }
@@ -503,17 +516,6 @@
   const courseLink = $derived(
     courseApi.course?.id ? new URL(`/courses/${courseApi.course.id}/lessons`, $page.url.origin).toString() : '#'
   );
-
-  const PEOPLE_LINK_MARKER = '@@people@@';
-
-  const peoplePageHref = $derived(courseApi.course?.id ? resolve(`/courses/${courseApi.course.id}/people`, {}) : '#');
-
-  const selfEnrollmentAccessParts = $derived.by(() => {
-    const accessText = $t('course.navItem.settings.access', { people: PEOPLE_LINK_MARKER });
-    const [before = '', after = ''] = accessText.split(PEOPLE_LINK_MARKER);
-
-    return { before, after };
-  });
 
   // Completion rules change the certificate settings, which the API only accepts on plans with certificates.
   const areCompletionRulesLocked = $derived($isFreePlan);
@@ -887,6 +889,7 @@
         </Field.Label>
         <Field.Description>{$t('course.navItem.settings.drag')}</Field.Description>
         <ReorderMaterialTabs
+          bind:tabs={$settings.tabs}
           onchange={() => {
             hasUnsavedChanges = true;
           }}
@@ -1041,23 +1044,41 @@
   <SettingsCard id="access" title={$t('course.navItem.settings.access_card_title')}>
     <Field.Group>
       {#if !courseApi.course?.isTemplate}
+        <Field.Set>
+          <Field.Field orientation="horizontal">
+            <Field.Content>
+              <Field.Label for="show-in-library">{$t('training_library.settings_visibility')}</Field.Label>
+              <Field.Description>{$t('training_library.settings_visibility_hint')}</Field.Description>
+            </Field.Content>
+            <Switch
+              id="show-in-library"
+              checked={$settings.showInLibrary}
+              onCheckedChange={(checked) => {
+                $settings.showInLibrary = checked;
+                hasUnsavedChanges = true;
+              }}
+            />
+          </Field.Field>
+        </Field.Set>
+        <SettingsSeparator />
         <Field.Set id="self-enrollment" class="scroll-mt-24">
           <Field.Field orientation="horizontal">
             <Field.Content>
               <Field.Label for="allow-self-enrollment">
-                <a href="#self-enrollment" class="hover:underline">{$t('course.navItem.settings.allow')}</a>
+                <a href="#self-enrollment" class="hover:underline">{$t('training_library.settings_self_enrollment')}</a>
               </Field.Label>
               <Field.Description>
-                {selfEnrollmentAccessParts.before}<a
-                  href={peoplePageHref}
-                  data-testid="course-settings-people-link"
-                  class="ui:text-primary">{$t('course.navItem.settings.access_people')}</a
-                >{selfEnrollmentAccessParts.after}
+                {$t(
+                  $settings.type === 'COMPLIANCE'
+                    ? 'training_library.compliance_hint'
+                    : 'training_library.settings_self_enrollment_hint'
+                )}
               </Field.Description>
             </Field.Content>
             <Switch
               id="allow-self-enrollment"
-              checked={$settings.allowSelfEnrollment}
+              checked={$settings.type !== 'COMPLIANCE' && $settings.allowSelfEnrollment}
+              disabled={$settings.type === 'COMPLIANCE'}
               onCheckedChange={(checked) => {
                 $settings.allowSelfEnrollment = checked;
                 hasUnsavedChanges = true;

@@ -832,6 +832,7 @@ export const course = pgTable(
       grading?: boolean;
       lessonDownload?: boolean;
       allowSelfEnrollment?: boolean;
+      showInLibrary?: boolean;
       /** @deprecated Read-only legacy key; use `allowSelfEnrollment`. Kept because there is no backfill. */
       allowNewStudent?: boolean;
       /** When true, public lesson pages expose a Copy Page / Markdown export surface. Off by default. */

@@ -9,24 +9,25 @@ export const SELF_ENROLLMENT_METADATA_KEY = 'allowSelfEnrollment';
 export const LEGACY_SELF_ENROLLMENT_METADATA_KEY = 'allowNewStudent';
 
 type SelfEnrollmentMetadata = {
+  showInLibrary?: boolean | null;
   allowSelfEnrollment?: boolean | null;
   /** @deprecated Read-only legacy key. See {@link LEGACY_SELF_ENROLLMENT_METADATA_KEY}. */
   allowNewStudent?: boolean | null;
 };
 
-/**
- * Whether students may enroll themselves in this course from its landing page
- * or from Explore.
- *
- * This gates *self*-enrollment only. Course invite links and People > Add people
- * bypass it by design, and it never affects students who already joined.
- *
- * Absent means allowed: a course that has never had the setting saved is open,
- * which is what every read site did before the setting was centralized here.
- *
- * The SQL equivalent lives in `getExploreCourses` (packages/db) and must stay in
- * lockstep with this fallback order.
- */
 export function isSelfEnrollmentAllowed(metadata: SelfEnrollmentMetadata | null | undefined): boolean {
   return metadata?.allowSelfEnrollment ?? metadata?.allowNewStudent ?? true;
+}
+
+export function isCourseShownInLibrary(metadata: SelfEnrollmentMetadata | null | undefined): boolean {
+  return metadata?.showInLibrary ?? isSelfEnrollmentAllowed(metadata);
+}
+
+export function canSelfEnrollInCourse(course: {
+  type: string | null;
+  metadata: SelfEnrollmentMetadata | null | undefined;
+}): boolean {
+  return (
+    course.type !== 'COMPLIANCE' && isCourseShownInLibrary(course.metadata) && isSelfEnrollmentAllowed(course.metadata)
+  );
 }

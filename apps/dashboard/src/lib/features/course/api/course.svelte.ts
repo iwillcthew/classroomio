@@ -342,18 +342,12 @@ export class CourseApi extends BaseApiWithErrors {
     return this.ensureCourse(courseId, profileId);
   }
 
-  /**
-   * Enrolls the current user in a course (free: direct enroll; paid: requires inviteToken).
-   * @param courseId Course ID
-   * @param body Optional invite token for paid/invited courses
-   * @returns Success data with redirectTo, or undefined on error
-   */
-  async enroll(courseId: string, body: { inviteToken?: string } = {}) {
+  async enroll(courseId: string) {
     return this.execute<EnrollCourseRequest>({
       requestFn: () =>
         classroomio.course[':courseId'].enroll.$post({
           param: { courseId },
-          json: body
+          json: {}
         }),
       logContext: 'enrolling in course',
       onSuccess: () => {

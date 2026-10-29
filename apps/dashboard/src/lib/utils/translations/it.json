@@ -6750,5 +6750,25 @@
     "export": "Export list",
     "show_password": "Show password",
     "hide_password": "Hide password"
+  },
+  "training_library": {
+    "enrolled": "Iscritto",
+    "available_to_you": "Disponibile per te",
+    "self_enrollment": "Iscrizione autonoma",
+    "assigned_only": "Formazione assegnata",
+    "goals": "Obiettivi di apprendimento",
+    "exercise_count": "{count} esercizi",
+    "start_continue": "Inizia / continua",
+    "self_enrollment_hint": "Iscriviti per aggiungere il corso ai tuoi corsi.",
+    "enroll": "Iscriviti",
+    "assigned_only_hint": "Questo corso è assegnato dal team di formazione. Contatta le risorse umane o il docente.",
+    "enrollment_error": "Iscrizione non riuscita. Ricarica la pagina e riprova.",
+    "back": "Torna al catalogo",
+    "settings_visibility": "Mostra nel catalogo di tutta l’azienda",
+    "settings_visibility_hint": "I dipendenti attivi possono scoprire il corso pubblicato. Gli iscritti mantengono il loro accesso.",
+    "settings_self_enrollment": "Consenti l’iscrizione autonoma dei dipendenti",
+    "compliance_hint": "La formazione obbligatoria viene assegnata. L’iscrizione autonoma non è disponibile.",
+    "settings_self_enrollment_hint": "I dipendenti possono iscriversi ai corsi pubblicati e visibili nel catalogo. Disattivare questa opzione non rimuove gli iscritti.",
+    "enrolled_success": "Iscrizione completata."
   }
 }

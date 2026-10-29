@@ -17,6 +17,7 @@ import { ROLE } from '@cio/utils/constants';
 import type { TCourseType } from '@cio/utils/constants/course-type';
 import { db, type DbOrTxClient } from '@db/drizzle';
 import { contentWriteBumpsTimestamp } from './content-timestamp';
+import { courseLearningMembershipSql } from './library';
 import { getCourseContentItems, type CourseContentItemRow } from './content';
 import { isExerciseCompletedSql } from './progression';
 import { getUpcomingSessionsForCourseIds, type CourseUpcomingSession } from './session';
@@ -567,7 +568,9 @@ export async function getCourseWithRelations(
 
 export async function createCourse(newCourse: TNewCourse, dbClient: DbOrTxClient = db) {
   try {
-    return await dbClient.insert(schema.course).values(newCourse).returning();
+    const metadata = { ...newCourse.metadata, showInLibrary: false, allowSelfEnrollment: false };
+    const values = { ...newCourse, metadata };
+    return await dbClient.insert(schema.course).values(values).returning();
   } catch (error) {
     console.error('createCourse error:', error);
     throw Object.assign(
@@ -1212,7 +1215,7 @@ export const getEnrolledCourses = async ({
           eq(schema.course.status, 'ACTIVE'),
           eq(schema.course.isTemplate, false),
           eq(schema.course.isPublished, true),
-          or(isNotNull(schema.groupmember.id), isNotNull(schema.programMember.id))
+          courseLearningMembershipSql(profileId)
         )
       )
       .groupBy(schema.course.id, schema.groupmember.id, schema.courseCompletionRecord.id)
@@ -1237,111 +1240,6 @@ export const getEnrolledCourses = async ({
   } catch (error) {
     console.error('getEnrolledCourses error:', error);
     throw new Error(`Failed to get enrolled courses: ${error instanceof Error ? error.message : 'Unknown error'}`);
-  }
-};
-
-interface GetExploreCoursesOptions {
-  orgId: string;
-  profileId: string;
-  limit?: number;
-  page?: number;
-  search?: string;
-  sort?: 'date_created' | 'last_updated_at' | 'published' | 'lessons';
-}
-
-export interface GetExploreCoursesResult {
-  data: TBaseCourse[];
-  total: number;
-}
-
-/**
- * Gets recommended courses (published courses user isn't enrolled in) for an organization
- *
- * @param options.orgId Organization ID
- * @param options.profileId Profile ID to exclude enrolled courses
- * @param options.limit Optional max number of courses to return
- * @param options.page Optional page number (1-based, used with limit)
- * @returns Courses with explore-level data and total count
- */
-export const getExploreCourses = async ({
-  orgId,
-  profileId,
-  limit,
-  page = 1,
-  search,
-  sort = 'date_created'
-}: GetExploreCoursesOptions): Promise<GetExploreCoursesResult> => {
-  try {
-    const whereCondition = and(
-      eq(schema.group.organizationId, orgId),
-      eq(schema.course.status, 'ACTIVE'),
-      eq(schema.course.isPublished, true),
-      eq(schema.course.isTemplate, false),
-      isNull(schema.groupmember.id),
-      search ? ilike(schema.course.title, `%${search.replace(/[\\%_]/g, '\\$&')}%`) : undefined,
-      // Mirrors isSelfEnrollmentAllowed in @cio/utils: current key, then the
-      // legacy allowNewStudent, then open. `->>` yields NULL for a JSON null,
-      // so COALESCE falls through exactly as `??` does.
-      sql`COALESCE(${schema.course.metadata}->>'allowSelfEnrollment', ${schema.course.metadata}->>'allowNewStudent', 'true') != 'false'`
-    );
-
-    const courseSelect = {
-      course: schema.course,
-      lessonCount: sql<number>`COUNT(DISTINCT ${schema.lesson.id})`.as('total_lessons'),
-      exerciseCount: sql<number>`(
-        SELECT COUNT(*)::bigint
-        FROM ${schema.exercise} as ex
-        LEFT JOIN ${schema.lesson} as el ON el.id = ex.lesson_id
-        WHERE ${or(eq(sql`ex.course_id`, schema.course.id), eq(sql`el.course_id`, schema.course.id))}
-      )`.as('exercise_count')
-    };
-
-    const sortColumn =
-      sort === 'lessons'
-        ? sql`COUNT(DISTINCT ${schema.lesson.id})`
-        : sort === 'last_updated_at'
-          ? sql`COALESCE(${schema.course.updatedAt}, ${schema.course.createdAt})`
-          : schema.course.createdAt;
-
-    const baseSelect = db
-      .select(courseSelect)
-      .from(schema.course)
-      .innerJoin(schema.group, eq(schema.course.groupId, schema.group.id))
-      .leftJoin(schema.lesson, eq(schema.course.id, schema.lesson.courseId))
-      .leftJoin(
-        schema.groupmember,
-        and(eq(schema.groupmember.groupId, schema.course.groupId), eq(schema.groupmember.profileId, profileId))
-      )
-      .where(whereCondition)
-      .groupBy(schema.course.id, schema.group.id)
-      .orderBy(desc(sortColumn), asc(schema.course.id));
-
-    const countSelect = db
-      .select({ total: count(schema.course.id) })
-      .from(schema.course)
-      .innerJoin(schema.group, eq(schema.course.groupId, schema.group.id))
-      .leftJoin(
-        schema.groupmember,
-        and(eq(schema.groupmember.groupId, schema.course.groupId), eq(schema.groupmember.profileId, profileId))
-      )
-      .where(whereCondition);
-
-    const [countRows, rows] = await Promise.all([
-      countSelect,
-      limit ? baseSelect.limit(limit).offset((page - 1) * limit) : baseSelect
-    ]);
-
-    return {
-      data: rows.map((row) => ({
-        ...withResolvedCourseBannerImage(row.course),
-        lessonCount: Number(row.lessonCount),
-        exerciseCount: Number(row.exerciseCount)
-      })),
-      total: Number(countRows[0]?.total ?? 0)
-    };
-  } catch (error) {
-    console.error('getExploreCourses error:', error);
-    throw new Error(`Failed to get explore courses: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 };
 

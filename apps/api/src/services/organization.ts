@@ -1,3 +1,4 @@
+import { listCourseLibrary } from './course/library';
 import { emitOrganizationMemberWebhookEvent } from '@cio/core/services/webhook/emit';
 import { AppError, ErrorCodes } from '@api/utils/errors';
 import type { OrgAudienceMember, OrgAudiencePagination, OrgAudienceQuery } from '@api/types/org';
@@ -36,7 +37,6 @@ import {
   getCoursesBySiteNameForSetup,
   getEnrolledCourses,
   getExercisesBySiteName,
-  getExploreCourses,
   getLessonsBySiteName,
   getOrgCourses,
   getPublishedCoursesBySiteName,
@@ -586,7 +586,8 @@ export async function getRecommendedCourses(
   sort?: 'date_created' | 'last_updated_at' | 'published' | 'lessons'
 ) {
   try {
-    return getExploreCourses({ orgId, profileId: userId, limit, page, search, sort });
+    const query = { limit, page, search, sort };
+    return listCourseLibrary(orgId, userId, query, true);
   } catch (error) {
     if (error instanceof AppError) throw error;
     throw new AppError(

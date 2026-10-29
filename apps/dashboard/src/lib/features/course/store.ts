@@ -62,7 +62,8 @@ export const defaultCourse: Course = {
     lessonTabsOrder: defaultLessonTabsOrder,
     grading: false,
     lessonDownload: true,
-    allowSelfEnrollment: true,
+    allowSelfEnrollment: false,
+    showInLibrary: false,
     isContentGroupingEnabled: true
   }
 };

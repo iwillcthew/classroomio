@@ -6780,5 +6780,25 @@
     "export": "Export list",
     "show_password": "Show password",
     "hide_password": "Hide password"
+  },
+  "training_library": {
+    "enrolled": "Inscrito",
+    "available_to_you": "Disponible para ti",
+    "self_enrollment": "Autoinscripción",
+    "assigned_only": "Formación asignada",
+    "goals": "Objetivos de aprendizaje",
+    "exercise_count": "{count} ejercicios",
+    "start_continue": "Empezar / continuar",
+    "self_enrollment_hint": "Inscríbete para añadir el curso a Mis cursos.",
+    "enroll": "Inscribirse",
+    "assigned_only_hint": "El equipo de formación asigna este curso. Contacta con RR. HH. o el instructor.",
+    "enrollment_error": "No se ha podido realizar la inscripción. Actualiza la página e inténtalo de nuevo.",
+    "back": "Volver al catálogo",
+    "settings_visibility": "Mostrar en el catálogo de toda la empresa",
+    "settings_visibility_hint": "Los empleados activos pueden descubrir el curso publicado. Los participantes conservan su acceso.",
+    "settings_self_enrollment": "Permitir la autoinscripción de empleados",
+    "compliance_hint": "La formación obligatoria se asigna. No se permite la autoinscripción.",
+    "settings_self_enrollment_hint": "Los empleados pueden inscribirse en cursos publicados y visibles en el catálogo. Desactivar esta opción no elimina participantes.",
+    "enrolled_success": "Te has inscrito correctamente."
   }
 }

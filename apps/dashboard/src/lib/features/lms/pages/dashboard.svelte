@@ -23,9 +23,8 @@
   import { LearningWorkspaceApi } from '../api/learning-workspace.svelte';
   import CourseCover from '$features/course/components/course-cover.svelte';
   import UpcomingSessionsCard from '$features/lms/components/upcoming-sessions-card.svelte';
-  import CoursePreviewModal from '$features/lms/components/course-preview-modal.svelte';
+  import LibraryCourseCard from '../components/library-course-card.svelte';
   import SectionCard from '$features/ui/section-card.svelte';
-  import type { RecommendedCourses } from '$features/course/types';
   import {
     getStudentCourseComplianceDate,
     getStudentCourseComplianceStatusKey,
@@ -37,8 +36,6 @@
 
   const learningApi = new LearningWorkspaceApi();
   let loadedOrganization = $state('');
-  let selectedCourse = $state<RecommendedCourses[number] | null>(null);
-  let previewOpen = $state(false);
   const now = Date.now();
   const summary = $derived(getLearningSummary(learningApi.enrolledCourses, now));
   const heroCourse = $derived(summary.pending[0] ?? null);
@@ -396,24 +393,7 @@
             {#each [0, 1, 2] as index (index)}<Skeleton class="h-56 w-full rounded-xl" />{/each}
           {:else}
             {#each learningApi.recommendedCourses as course (course.id)}
-              <button
-                type="button"
-                class="group ui:bg-card ui:shadow-card ui:hover:border-primary/40 flex flex-col overflow-hidden rounded-xl border text-left transition-colors"
-                onclick={() => {
-                  selectedCourse = course;
-                  previewOpen = true;
-                }}
-              >
-                <CourseCover title={course.title} src={course.bannerImage} class="aspect-[16/7] w-full" /><span
-                  class="flex flex-1 flex-col gap-3 p-4"
-                  ><span class="line-clamp-2 text-sm leading-relaxed font-semibold">{course.title}</span><span
-                    class="ui:text-muted-foreground mt-auto flex items-center justify-between text-xs"
-                    ><span>{$t('lms_home.lesson_count', { count: course.lessonCount ?? 0 })}</span><ArrowUpRightIcon
-                      class="ui:text-primary size-4"
-                    /></span
-                  ></span
-                >
-              </button>
+              <LibraryCourseCard {course} />
             {/each}
           {/if}
         </div>
@@ -421,7 +401,6 @@
     {/if}
   {/if}
 </div>
-{#if selectedCourse}<CoursePreviewModal course={selectedCourse} bind:open={previewOpen} />{/if}
 
 <style>
   .learning-focus {
@@ -449,7 +428,7 @@
     background: var(--warning-soft);
     color: var(--warning-foreground);
   }
-  .learning-workspace :is(a, button):focus-visible {
+  .learning-workspace :global(:is(a, button):focus-visible) {
     outline: 2px solid var(--ring);
     outline-offset: 4px;
   }

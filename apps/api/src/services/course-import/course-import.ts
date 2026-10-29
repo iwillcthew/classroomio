@@ -909,7 +909,8 @@ export async function publishCourseImportDraftService(
       courseId = courseResult.course.id;
       await reserveDraftPublishedCourseId(orgId, draftId, draft, existing.summary, courseId);
       if (courseMetadata) {
-        await updateCourse(courseId, { metadata: courseMetadata });
+        const privateMetadata = { ...courseMetadata, showInLibrary: false, allowSelfEnrollment: false };
+        await updateCourse(courseId, { metadata: privateMetadata });
       }
     }
 

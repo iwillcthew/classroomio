@@ -1,4 +1,5 @@
 import { db } from '@cio/db/drizzle';
+import type { TGroupmember } from '@cio/db/types';
 import {
   assignEmployeeCourseRecords,
   findCourseEmployees,
@@ -97,36 +98,42 @@ export async function enrollExistingCourseEmployees(
   await invalidateOrgStats(organizationId);
   captureLearnersEnrolled(result.addedMembers, 'admin', eventSource);
   await emitComplianceEnrollmentEvents(result.compliance.createdRecords);
-  const course = await getCourseWithOrgData(courseId);
+  const course = sendEmail ? await getCourseWithOrgData(courseId) : null;
   for (const member of result.addedMembers) {
     const source = webhookSource ?? buildMemberSource('admin');
     await emitCourseMemberAddedWebhookEvent(courseId, member, { source, actorProfileId });
-    if (!sendEmail || !course || !member.email) continue;
-
-    const branding = buildEmailBranding({
-      name: course.orgName,
-      avatarUrl: course.orgAvatarUrl,
-      theme: course.orgTheme
-    });
-    const baseUrl = getDashboardBaseUrl({
-      siteName: course.orgSiteName,
-      customDomain: course.orgCustomDomain,
-      isCustomDomainVerified: course.orgIsCustomDomainVerified
-    });
-    const loginUrl = new URL(`/courses/${courseId}`, baseUrl).href;
-    const from = buildEmailFromName(course.orgName || 'MP Learning');
-    await enqueueTransactionalEmail('studentCourseWelcome', {
-      to: member.email,
-      from,
-      fields: {
-        orgName: course.orgName || 'MP Transformation',
-        courseName: course.courseTitle || '',
-        loginUrl,
-        branding
-      },
-      idempotencyKey: `employee-course-access:${member.id}`,
-      preference: { organizationId, recipientProfileId: member.profileId ?? undefined }
-    });
+    if (course) await sendCourseAccessEmail(courseId, member, organizationId, course);
   }
   return result.addedMembers;
+}
+
+export async function sendCourseAccessEmail(
+  courseId: string,
+  member: TGroupmember,
+  organizationId: string,
+  courseInfo?: NonNullable<Awaited<ReturnType<typeof getCourseWithOrgData>>>
+) {
+  const course = courseInfo ?? (await getCourseWithOrgData(courseId));
+  if (!course || !member.email) return;
+
+  const branding = buildEmailBranding({ name: course.orgName, avatarUrl: course.orgAvatarUrl, theme: course.orgTheme });
+  const baseUrl = getDashboardBaseUrl({
+    siteName: course.orgSiteName,
+    customDomain: course.orgCustomDomain,
+    isCustomDomainVerified: course.orgIsCustomDomainVerified
+  });
+  const loginUrl = new URL(`/courses/${courseId}`, baseUrl).href;
+  const from = buildEmailFromName(course.orgName || 'MP Learning');
+  await enqueueTransactionalEmail('studentCourseWelcome', {
+    to: member.email,
+    from,
+    fields: {
+      orgName: course.orgName || 'MP Transformation',
+      courseName: course.courseTitle || '',
+      loginUrl,
+      branding
+    },
+    idempotencyKey: `employee-course-access:${member.id}`,
+    preference: { organizationId, recipientProfileId: member.profileId ?? undefined }
+  });
 }

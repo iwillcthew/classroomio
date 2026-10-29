@@ -6790,5 +6790,25 @@
     "export": "Xuất danh sách",
     "show_password": "Hiện mật khẩu",
     "hide_password": "Ẩn mật khẩu"
+  },
+  "training_library": {
+    "enrolled": "Đã tham gia",
+    "available_to_you": "Bạn có quyền học",
+    "self_enrollment": "Tự đăng ký",
+    "assigned_only": "Khóa học theo phân công",
+    "goals": "Mục tiêu học tập",
+    "exercise_count": "{count} bài tập",
+    "start_continue": "Bắt đầu / Tiếp tục học",
+    "self_enrollment_hint": "Đăng ký để thêm khóa này vào Khóa học của tôi.",
+    "enroll": "Đăng ký học",
+    "assigned_only_hint": "Khóa học này do bộ phận đào tạo phân công. Liên hệ HR/L&D hoặc giảng viên để được cấp quyền học.",
+    "enrollment_error": "Chưa thể đăng ký. Hãy tải lại trang để kiểm tra khóa học và thử lại.",
+    "back": "Về thư viện đào tạo",
+    "settings_visibility": "Hiển thị trong thư viện toàn công ty",
+    "settings_visibility_hint": "Cho phép nhân viên đang hoạt động tìm thấy khóa đã xuất bản. Tắt tùy chọn này không thu hồi quyền của người đã tham gia.",
+    "settings_self_enrollment": "Cho phép nhân viên tự đăng ký",
+    "compliance_hint": "Đào tạo bắt buộc do bộ phận đào tạo phân công, không hỗ trợ tự đăng ký.",
+    "settings_self_enrollment_hint": "Nhân viên có thể đăng ký khi khóa đã xuất bản và hiển thị trong thư viện toàn công ty. Tắt tùy chọn này không xóa người đã tham gia.",
+    "enrolled_success": "Đăng ký khóa học thành công."
   }
 }

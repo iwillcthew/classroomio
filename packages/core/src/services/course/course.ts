@@ -16,6 +16,7 @@ import {
   createGroup,
   getCourseOrgAdminAccess,
   getCourseProgramAccess,
+  getCourseCohortAccess,
   getGroupMemberIdByCourseAndProfile,
   insertGroupMembersOnConflictDoNothing
 } from '@cio/db/queries/group';
@@ -30,7 +31,12 @@ import { getStudentCourseProgressImpactCounts } from '@cio/db/queries/course/res
 import { getCourseGroupId } from '@cio/db/queries/course/people';
 
 import { ContentType, ROLE, resolveLiveSessionReminderOffsets } from '@cio/utils/constants';
-import { isPublishedComplianceMissingDeadline, resolveCourseCertificateDeadline } from '@cio/utils/functions';
+import {
+  isPublishedComplianceMissingDeadline,
+  resolveCourseCertificateDeadline,
+  isCourseShownInLibrary,
+  isSelfEnrollmentAllowed
+} from '@cio/utils/functions';
 import type { TCourse } from '@cio/db/types';
 import type { DbOrTxClient } from '@cio/db/drizzle';
 import {
@@ -87,7 +93,8 @@ async function isStudentLimitReached(orgId: string): Promise<boolean> {
 }
 
 export async function ensureProgramCourseAccess(courseId: string, profileId: string) {
-  const access = await getCourseProgramAccess(courseId, profileId);
+  const access =
+    (await getCourseProgramAccess(courseId, profileId)) ?? (await getCourseCohortAccess(courseId, profileId));
   if (!access) {
     return false;
   }
@@ -460,6 +467,19 @@ export async function updateCourse(
     }
 
     const nextType = sanitizedData.type ?? currentCourse.type;
+    if (data.metadata) {
+      const showInLibrary = data.metadata.showInLibrary ?? isCourseShownInLibrary(currentCourse.metadata);
+      const allowSelfEnrollment =
+        nextType === 'COMPLIANCE'
+          ? false
+          : (data.metadata.allowSelfEnrollment ??
+            data.metadata.allowNewStudent ??
+            isSelfEnrollmentAllowed(currentCourse.metadata));
+      sanitizedData.metadata = { ...sanitizedData.metadata, showInLibrary, allowSelfEnrollment };
+    } else if (nextType === 'COMPLIANCE') {
+      const showInLibrary = isCourseShownInLibrary(currentCourse.metadata);
+      sanitizedData.metadata = { ...currentCourse.metadata, showInLibrary, allowSelfEnrollment: false };
+    }
     const nextIsPublished = data.isPublished ?? currentCourse.isPublished;
     const nextDeadline = resolveCourseCertificateDeadline(currentCourse.certificate?.deadline, data.certificate);
 

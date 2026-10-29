@@ -6760,5 +6760,25 @@
     "export": "Export list",
     "show_password": "Show password",
     "hide_password": "Hide password"
+  },
+  "training_library": {
+    "enrolled": "Kayıtlı",
+    "available_to_you": "Erişiminiz var",
+    "self_enrollment": "Kendi kendine kayıt",
+    "assigned_only": "Atanan eğitim",
+    "goals": "Öğrenme hedefleri",
+    "exercise_count": "{count} alıştırma",
+    "start_continue": "Başla / devam et",
+    "self_enrollment_hint": "Kursu Kurslarım bölümüne eklemek için kaydolun.",
+    "enroll": "Kaydol",
+    "assigned_only_hint": "Bu kurs eğitim ekibi tarafından atanır. İK veya eğitmenle iletişime geçin.",
+    "enrollment_error": "Kayıt yapılamadı. Sayfayı yenileyip tekrar deneyin.",
+    "back": "Eğitim kataloğuna dön",
+    "settings_visibility": "Şirket genelindeki eğitim kataloğunda göster",
+    "settings_visibility_hint": "Aktif çalışanlar yayımlanan kursu keşfedebilir. Mevcut katılımcılar erişimlerini korur.",
+    "settings_self_enrollment": "Çalışanların kendi kendine kaydolmasına izin ver",
+    "compliance_hint": "Zorunlu eğitim atanır. Kendi kendine kayıt kullanılamaz.",
+    "settings_self_enrollment_hint": "Çalışanlar yayımlanmış ve katalogda görünen kurslara kaydolabilir. Bu seçeneği kapatmak katılımcıları kaldırmaz.",
+    "enrolled_success": "Başarıyla kaydoldunuz."
   }
 }

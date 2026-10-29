@@ -60,6 +60,7 @@ export const baseNavConfig: NavItemConfig[] = [
   {
     titleKey: 'lms_navigation.explore',
     path: '/explore',
+    supportsDynamicSegment: true,
     icon: LibraryBigIcon,
     matchPattern: '^/lms/explore(/.*)?$'
   },

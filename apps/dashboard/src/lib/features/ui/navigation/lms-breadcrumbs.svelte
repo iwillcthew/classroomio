@@ -14,7 +14,9 @@
   const navItems = $derived(getLmsNavigationItems($currentOrg, $t, page.url.pathname));
 
   // Get breadcrumb title from store for LMS community posts
-  const breadcrumbTitle = $derived($currentCommunityQuestion.title);
+  const breadcrumbTitle = $derived(
+    page.url.pathname.startsWith('/lms/explore/') ? page.data.breadcrumb : $currentCommunityQuestion.title
+  );
 
   const breadcrumbs = $derived(
     generateLmsBreadcrumbs(

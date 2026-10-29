@@ -6780,5 +6780,25 @@
     "export": "Export list",
     "show_password": "Show password",
     "hide_password": "Hide password"
+  },
+  "training_library": {
+    "enrolled": "Tilmeldt",
+    "available_to_you": "Tilgængelig for dig",
+    "self_enrollment": "Selvtilmelding",
+    "assigned_only": "Tildelt uddannelse",
+    "goals": "Læringsmål",
+    "exercise_count": "{count} opgaver",
+    "start_continue": "Start / fortsæt",
+    "self_enrollment_hint": "Tilmeld dig for at føje kurset til Mine kurser.",
+    "enroll": "Tilmeld",
+    "assigned_only_hint": "Uddannelsesteamet tildeler kurset. Kontakt HR eller underviseren.",
+    "enrollment_error": "Tilmelding mislykkedes. Genindlæs siden, og prøv igen.",
+    "back": "Tilbage til kursuskataloget",
+    "settings_visibility": "Vis i hele virksomhedens kursuskatalog",
+    "settings_visibility_hint": "Aktive medarbejdere kan finde det udgivne kursus. Deltagere beholder deres adgang.",
+    "settings_self_enrollment": "Tillad medarbejderes selvtilmelding",
+    "compliance_hint": "Obligatorisk uddannelse tildeles. Selvtilmelding er ikke tilgængelig.",
+    "settings_self_enrollment_hint": "Medarbejdere kan tilmelde sig udgivne kurser, der er synlige i kataloget. Deaktivering fjerner ikke deltagere.",
+    "enrolled_success": "Du er nu tilmeldt."
   }
 }

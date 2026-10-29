@@ -6780,5 +6780,25 @@
     "export": "Export list",
     "show_password": "Show password",
     "hide_password": "Hide password"
+  },
+  "training_library": {
+    "enrolled": "Inscrito",
+    "available_to_you": "Disponível para você",
+    "self_enrollment": "Autoinscrição",
+    "assigned_only": "Treinamento atribuído",
+    "goals": "Objetivos de aprendizagem",
+    "exercise_count": "{count} exercícios",
+    "start_continue": "Iniciar / continuar",
+    "self_enrollment_hint": "Inscreva-se para adicionar o curso aos seus cursos.",
+    "enroll": "Inscrever-se",
+    "assigned_only_hint": "A equipe de treinamento atribui este curso. Contate o RH ou o instrutor.",
+    "enrollment_error": "Não foi possível fazer a inscrição. Atualize a página e tente novamente.",
+    "back": "Voltar ao catálogo",
+    "settings_visibility": "Exibir no catálogo de toda a empresa",
+    "settings_visibility_hint": "Funcionários ativos podem descobrir o curso publicado. Os participantes mantêm o acesso.",
+    "settings_self_enrollment": "Permitir autoinscrição dos funcionários",
+    "compliance_hint": "O treinamento obrigatório é atribuído. A autoinscrição não está disponível.",
+    "settings_self_enrollment_hint": "Os funcionários podem se inscrever em cursos publicados e visíveis no catálogo. Desativar esta opção não remove participantes.",
+    "enrolled_success": "Inscrição realizada com sucesso."
   }
 }

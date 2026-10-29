@@ -6780,5 +6780,25 @@
     "export": "Export list",
     "show_password": "Show password",
     "hide_password": "Hide password"
+  },
+  "training_library": {
+    "enrolled": "Zapisano",
+    "available_to_you": "Dostępne dla Ciebie",
+    "self_enrollment": "Samodzielny zapis",
+    "assigned_only": "Przydzielone szkolenie",
+    "goals": "Cele nauki",
+    "exercise_count": "{count} ćwiczeń",
+    "start_continue": "Rozpocznij / kontynuuj",
+    "self_enrollment_hint": "Zapisz się, aby dodać kurs do swoich kursów.",
+    "enroll": "Zapisz się",
+    "assigned_only_hint": "Ten kurs przydziela zespół szkoleniowy. Skontaktuj się z HR lub prowadzącym.",
+    "enrollment_error": "Nie udało się zapisać. Odśwież stronę i spróbuj ponownie.",
+    "back": "Wróć do katalogu",
+    "settings_visibility": "Pokaż w katalogu całej firmy",
+    "settings_visibility_hint": "Aktywni pracownicy mogą znaleźć opublikowany kurs. Uczestnicy zachowują dostęp.",
+    "settings_self_enrollment": "Zezwól pracownikom na samodzielny zapis",
+    "compliance_hint": "Szkolenia obowiązkowe są przydzielane. Samodzielny zapis jest niedostępny.",
+    "settings_self_enrollment_hint": "Pracownicy mogą zapisywać się na opublikowane kursy widoczne w katalogu. Wyłączenie nie usuwa uczestników.",
+    "enrolled_success": "Zapis zakończył się powodzeniem."
   }
 }

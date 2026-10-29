@@ -51,6 +51,8 @@ export type TCourseEnrollParam = z.infer<typeof ZCourseEnrollParam>;
 export const ZCourseEnrollBody = z.object({
   inviteToken: z.string().min(1).optional()
 });
+export const ZInternalCourseEnrollBody = z.strictObject({});
+export const ZCourseLibraryParam = z.object({ courseId: z.uuid() });
 export type TCourseEnrollBody = z.infer<typeof ZCourseEnrollBody>;
 
 export const ZCourseDownloadParam = z.object({
@@ -411,6 +413,7 @@ const ZCourseMetadataFields = z.object({
   grading: z.boolean().optional(),
   lessonDownload: z.boolean().optional(),
   allowSelfEnrollment: z.boolean().optional(),
+  showInLibrary: z.boolean().optional(),
   /** @deprecated Read-only legacy key; use `allowSelfEnrollment`. */
   allowNewStudent: z.boolean().optional(),
   allowMarkdownExport: z.boolean().optional(),

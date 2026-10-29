@@ -63,6 +63,18 @@ pnpm --filter @cio/api exec vitest run src/__tests__/employee-accounts.integrati
 Trước khi vận hành với dữ liệu thật, kiểm tra nhận thư qua SMTP thật và luồng HR tạo → nhân viên kích hoạt → đăng nhập bằng mã → học → HR khóa → phiên cũ bị từ chối.
 
 
+## Thư viện đào tạo và tự đăng ký nội bộ
+
+**Thư viện đào tạo** giúp nhân viên tìm hiểu các khóa được giới thiệu trong công ty và xem lại khóa mình có quyền học. **Khóa học của tôi** tập trung vào các khóa đã được giao hoặc đăng ký thành công, tiến độ và hạn hoàn thành. Một khóa có thể xuất hiện ở cả hai nơi.
+
+Xuất bản chỉ đưa nội dung vào trạng thái sẵn sàng học. Trong cài đặt quyền truy cập của khóa, **Hiển thị trong thư viện toàn công ty** và **Cho phép nhân viên tự đăng ký** là hai lựa chọn độc lập. Khóa mới, kể cả khóa nhập, sao chép và tạo từ mẫu, mặc định chỉ được giao học và không hiển thị rộng. Khóa cũ giữ cấu hình trước đây; lần lưu cài đặt tiếp theo ghi rõ lựa chọn hiển thị độc lập.
+
+Nhân viên mở trang giới thiệu trong hệ thống nội bộ trước khi đăng ký. Chỉ tài khoản nội bộ đang hoạt động được tự đăng ký khóa đã xuất bản, hiển thị trong thư viện và đang cho phép tự đăng ký. Khóa **Đào tạo bắt buộc** luôn do người có quyền giao học; nhân viên không thể tự đăng ký loại khóa này. Khóa chỉ giao học vẫn có thể được giới thiệu trong thư viện với hướng dẫn liên hệ HR/L&D hoặc giảng viên.
+
+Đăng ký thành công đưa khóa vào **Khóa học của tôi** và mở trang học. Khóa vẫn xuất hiện trong thư viện với trạng thái đã tham gia. Quyền được giao qua chương trình hoặc nhóm học tập cũng được nhận diện; thao tác đăng ký lại không tạo thêm ghi danh hoặc đặt lại tiến độ.
+
+Ẩn khóa khỏi thư viện chung hoặc tắt tự đăng ký không thu hồi quyền đã cấp. Gỡ xuất bản ẩn khóa khỏi học viên nhưng giữ ghi danh và kết quả. Thư viện chỉ cung cấp thông tin giới thiệu; xem được giới thiệu không đồng nghĩa được đọc bài giảng hoặc tải tài liệu. Đợt này chưa có chức năng yêu cầu và duyệt tham gia.
+
 ## Course enrollment and employee emails
 
 Course members can only be selected from active employees of the same organization. Search supports employee code, name, and email. New accounts must be created and activated in Employees. Instructors can assign learners; organization administrators assign existing employees with ADMIN or TUTOR roles as instructors.

@@ -1,6 +1,5 @@
 import { generateSlug } from '@cio/utils/functions';
 import { ZPaymentLink } from '@cio/utils/validation/course';
-import { isObject } from '$lib/utils/functions/isObject';
 import { isCoursePaid } from '$lib/utils/functions/course';
 import { courseApi } from '$features/course/api';
 import { snackbar } from '$features/ui/snackbar/store';
@@ -57,18 +56,12 @@ export async function publishCourse(course: Course): Promise<PublishCourseResult
     slug = generateSlug(course.title, { appendTimestamp: true });
   }
 
-  const metadataPayload = {
-    ...(isObject(course.metadata) ? course.metadata : {}),
-    allowSelfEnrollment: true
-  };
-
   const result = await courseApi.update(
     course.id,
     {
       isPublished: true,
       slug,
-      cost: course.cost ?? 0,
-      metadata: metadataPayload
+      cost: course.cost ?? 0
     },
     { showSuccessToast: true }
   );

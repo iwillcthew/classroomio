@@ -6780,5 +6780,25 @@
     "export": "Export list",
     "show_password": "Show password",
     "hide_password": "Hide password"
+  },
+  "training_library": {
+    "enrolled": "Eingeschrieben",
+    "available_to_you": "Für Sie verfügbar",
+    "self_enrollment": "Selbsteinschreibung",
+    "assigned_only": "Zugewiesene Schulung",
+    "goals": "Lernziele",
+    "exercise_count": "{count} Übungen",
+    "start_continue": "Lernen beginnen / fortsetzen",
+    "self_enrollment_hint": "Melden Sie sich an, um den Kurs zu Ihren Kursen hinzuzufügen.",
+    "enroll": "Einschreiben",
+    "assigned_only_hint": "Das Schulungsteam weist diesen Kurs zu. Wenden Sie sich an HR oder die Kursleitung.",
+    "enrollment_error": "Einschreibung nicht möglich. Laden Sie die Seite neu und versuchen Sie es erneut.",
+    "back": "Zurück zum Schulungskatalog",
+    "settings_visibility": "Im unternehmensweiten Schulungskatalog anzeigen",
+    "settings_visibility_hint": "Aktive Mitarbeitende können den veröffentlichten Kurs finden. Bestehende Zugriffsrechte bleiben erhalten.",
+    "settings_self_enrollment": "Selbsteinschreibung für Mitarbeitende erlauben",
+    "compliance_hint": "Pflichtschulungen werden zugewiesen. Eine Selbsteinschreibung ist nicht möglich.",
+    "settings_self_enrollment_hint": "Mitarbeitende können sich in veröffentlichte, im Katalog sichtbare Kurse einschreiben. Bestehende Teilnehmende bleiben erhalten.",
+    "enrolled_success": "Sie wurden erfolgreich eingeschrieben."
   }
 }
