@@ -5,16 +5,23 @@ import {
   learningMembershipSql,
   courseDeadlineSql
 } from '../course/learning-access';
-import { and, asc, count, eq, gt, ilike, inArray, isNull, or, sql } from 'drizzle-orm';
+import { and, asc, count, eq, getTableColumns, gt, ilike, inArray, isNull, or, sql } from 'drizzle-orm';
 import { db, type DbOrTxClient } from '@db/drizzle';
 import * as schema from '@db/schema';
 import type { EmployeeListQuery } from '@cio/utils/validation/organization';
 import { employeeLearningMemberIds } from './audience';
 
-export async function findEmployee(orgId: string, employeeId: string, client: DbOrTxClient = db) {
-  const [row] = await client
-    .select()
+function employeeProfiles(client: DbOrTxClient) {
+  const employeeColumns = getTableColumns(schema.employee);
+  return client
+    .select({ ...employeeColumns, avatarUrl: schema.profile.avatarUrl })
     .from(schema.employee)
+    .leftJoin(schema.organizationmember, eq(schema.employee.memberId, schema.organizationmember.id))
+    .leftJoin(schema.profile, eq(schema.organizationmember.profileId, schema.profile.id));
+}
+
+export async function findEmployee(orgId: string, employeeId: string, client: DbOrTxClient = db) {
+  const [row] = await employeeProfiles(client)
     .where(and(eq(schema.employee.organizationId, orgId), eq(schema.employee.id, employeeId)))
     .limit(1);
   return row ?? null;
@@ -121,9 +128,7 @@ export async function listEmployees(
         )
       : undefined
   );
-  const rows = await client
-    .select()
-    .from(schema.employee)
+  const rows = await employeeProfiles(client)
     .where(filters)
     .orderBy(asc(schema.employee.employeeCode))
     .limit(query.limit)

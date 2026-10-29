@@ -377,6 +377,31 @@ integration('employee accounts on an isolated PostgreSQL database', () => {
     expect(missingResult.rows).toEqual([]);
   });
 
+  it('reads the current account avatar in the directory and details while retaining employees without accounts', async () => {
+    const pending = await draft();
+    const query = { search: pending.employee.employeeCode, department: '', page: 1, limit: 25 };
+    const pendingResult = await services.getEmployees(organizationId, administratorId, query);
+    expect(pendingResult.total).toBe(1);
+    expect(pendingResult.rows[0]).toMatchObject({ id: pending.employee.id, avatarUrl: null });
+    const staff = await activateDraft();
+    const avatarUrl = '/images/avatars/employee-avatar.svg';
+    await database.db
+      .update(database.profile)
+      .set({ avatarUrl })
+      .where(database.eq(database.profile.id, staff.profileId));
+    const staffQuery = { ...query, search: staff.employeeCode };
+    const roster = await services.getEmployees(organizationId, administratorId, staffQuery);
+    expect(roster.rows[0].avatarUrl).toBe(avatarUrl);
+    const details = await services.getEmployeeDetails(organizationId, administratorId, staff.id);
+    expect(details.employee.avatarUrl).toBe(avatarUrl);
+    await database.db
+      .update(database.profile)
+      .set({ avatarUrl: null })
+      .where(database.eq(database.profile.id, staff.profileId));
+    const updatedDetails = await services.getEmployeeDetails(organizationId, administratorId, staff.id);
+    expect(updatedDetails.employee.avatarUrl).toBeNull();
+  });
+
   it('preserves enrollment, progress and certificate filters from retired audience links', async () => {
     const fixture = await courseFixture();
     const lessonId = randomUUID();

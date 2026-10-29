@@ -31,6 +31,7 @@
   import { Checkbox } from '@cio/ui/base/checkbox';
   import { Button } from '@cio/ui/base/button';
   import { Skeleton } from '@cio/ui/base/skeleton';
+  import { UserAvatar } from '@cio/ui/custom/user-avatar';
 
   const api = new EmployeesApi();
   let loadedLocation = '';
@@ -99,16 +100,6 @@
     if (api.profileId && api.roster?.rows[0]) await api.view(api.roster.rows[0]);
     if (parameters.get('action') === 'import' && api.roster?.access.canManage) await openImport();
     if (parameters.get('action') === 'create' && api.roster?.access.canManage) await api.openCreate();
-  }
-
-  function initials(fullname: string) {
-    return fullname
-      .trim()
-      .split(/\s+/)
-      .map((part) => part[0])
-      .slice(-2)
-      .join('')
-      .toUpperCase();
   }
 
   function filterStatus(value: string) {
@@ -242,7 +233,7 @@
                 <Table.Row class="employee-row">
                   <Table.Cell
                     ><div class="employee-identity">
-                      <span class="employee-avatar" aria-hidden="true">{initials(staff.fullname)}</span>
+                      <UserAvatar src={staff.avatarUrl} alt={staff.fullname} class="size-10 shrink-0" />
                       <div class="min-w-0">
                         <button type="button" class="employee-name" onclick={() => api.view(staff)}
                           >{staff.fullname}</button
@@ -659,7 +650,7 @@
     {#if api.details}
       {@const staff = api.details.employee}
       <div class="employee-profile-summary">
-        <span class="employee-avatar" aria-hidden="true">{initials(staff.fullname)}</span>
+        <UserAvatar src={staff.avatarUrl} alt={staff.fullname} class="size-10 shrink-0" />
         <div class="min-w-0 flex-1">
           <p class="text-sm font-medium break-all">{staff.email}</p>
           <p class="employee-email">{staff.jobTitle || $t('employees.unassigned')}</p>
@@ -901,19 +892,6 @@
     gap: 12px;
     padding: 18px 0;
     border-bottom: 1px solid var(--border);
-  }
-  .employee-avatar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: #eaf1fd;
-    color: #2756a2;
-    font-size: 12px;
-    font-weight: 650;
   }
   .employee-name {
     color: var(--foreground);
