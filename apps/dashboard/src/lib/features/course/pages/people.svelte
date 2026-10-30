@@ -14,7 +14,7 @@
   import ArrowDownIcon from '@lucide/svelte/icons/arrow-down';
 
   import { Chip } from '@cio/ui/custom/chip';
-  import * as Avatar from '@cio/ui/base/avatar';
+  import { UserAvatar } from '@cio/ui/custom/user-avatar';
   import { Badge } from '@cio/ui/base/badge';
   import { Skeleton } from '@cio/ui/base/skeleton';
   import { Progress } from '@cio/ui/base/progress';
@@ -36,8 +36,6 @@
   } from '$features/course/utils/types';
   import { courseApi } from '$features/course/api';
   import { t } from '$lib/utils/functions/translations';
-  import UserIcon from '@lucide/svelte/icons/user';
-  import { shortenName } from '$lib/utils/functions/string';
   import { peopleApi } from '$features/course/api';
   import { deleteMemberModal } from '$features/course/components/people/store';
   import { Search } from '@cio/ui/custom/search';
@@ -358,19 +356,11 @@
                   {@const roleLabel = getMemberRoleLabel(person)}
                   {#if person.profile}
                     <div class="flex items-start lg:items-center">
-                      <Avatar.Root class="mr-3">
-                        {#if getMemberAvatarUrl(person)}
-                          <Avatar.Image
-                            src={getMemberAvatarUrl(person)}
-                            alt={person.profile.fullname
-                              ? person.profile.fullname
-                              : $t('course.navItem.news_feed.user')}
-                          />
-                        {/if}
-                        <Avatar.Fallback>
-                          <UserIcon class="ui:size-4 ui:text-muted-foreground" />
-                        </Avatar.Fallback>
-                      </Avatar.Root>
+                      <UserAvatar
+                        src={getMemberAvatarUrl(person)}
+                        alt={person.profile.fullname || $t('course.navItem.news_feed.user')}
+                        class="mr-3 size-8"
+                      />
                       <div class="flex flex-col items-start lg:flex-row lg:items-center">
                         <div class="mr-2">
                           <p class="ui:dark:text-white flex items-center gap-1.5 text-sm font-semibold">
@@ -411,7 +401,7 @@
                     </div>
                   {:else}
                     <div class="flex w-2/4 items-start lg:items-center">
-                      <Chip value={shortenName(person.email)} className="mr-3" />
+                      <UserAvatar alt={person.email || $t('course.navItem.news_feed.user')} class="mr-3 size-8" />
                       <a href="mailto:{person.email}" class="text-md ui:text-primary mr-2 dark:text-white">
                         {person.email}
                       </a>
